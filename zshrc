@@ -1,26 +1,30 @@
-source ~/AUR/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-eval "$(starship init zsh)"
+# zsh-autocomplete
+source ~/git/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 
-alias ls='ls -lhsX --color=auto --group-directories-first'
+# Lines configured by zsh-newuser-install
+HISTFILE=~/.histfile
+HISTSIZE=1000
+SAVEHIST=1000
+# End of lines configured by zsh-newuser-install
+
+alias ls='ls -clhos --color=auto --group-directories-first'
+alias feh='feh -Fd'
+alias free='free -h'
+
 function cd {
     builtin cd "$@" && ls
 }
 
-# 履歴ファイルの保存先
-export HISTFILE=${HOME}/.zsh_history
-# メモリに保存される履歴の件数
-export HISTSIZE=1000
-# 履歴ファイルに保存される履歴の件数
+export HISTZSIZE=1000
 export SAVEHIST=100000
-# zsh: do you wish to see all N possibilities ?
-export LISTMAX=1000
-# 重複を記録しない
 setopt hist_ignore_dups
-# 開始と終了を記録
 setopt EXTENDED_HISTORY
-
-export WORDCHARS='*?_.[]~-=&;!#$%^(){}<>'
+export WORDCHAR='*?_.[]~-=&;:#$%^(){}<>'
 export PATH=~/.npm-global/bin:$PATH
+export PATH=~/.cargo/bin:$PATH
 
+# starship
+eval "$(starship init zsh)"
+
+# zsh-autosuggestions
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-

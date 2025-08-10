@@ -1,0 +1,43 @@
+[[plugins]]
+repo = "sainnhe/everforest"
+hook_add = '''
+    colorscheme everforest
+'''
+
+[[plugins]]
+repo = "nvim-treesitter/nvim-treesitter"
+rev = "master"
+lua_source = '''
+    require("nvim-treesitter.configs").setup({
+        ensure_installed = {
+            "bash",
+            "c",
+            "cpp",
+            "dockerfile",
+            "git_config",
+            "git_rebase",
+            "gitcommit",
+            "gitignore",
+            "json",
+            "json5",
+            "lua",
+            "make",
+            "markdown",
+            "markdown_inline",
+            "python",
+            "rust",
+            "ssh_config",
+            "tmux",
+            "typescript",
+            "vim",
+            "vimdoc",
+            "zig",
+        },
+        highlight = {
+            enable = true,
+        },
+        indent = {
+            enable = true,
+        },
+    })
+'''

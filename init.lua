@@ -36,6 +36,19 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     end
 })
 
+-- その他
+vim.opt.number = true
+vim.opt.scrolloff = 5
+vim.opt.sidescrolloff = 10
+vim.opt.cursorline = true
+vim.opt.showbreak = "> "
+vim.opt.termguicolors = true
+vim.opt.undofile = true
+vim.opt.wrap = false
+vim.opt.wildignorecase = true
+
+-- dpp setup
+
 vim.env.XDG_CONFIG_HOME = vim.fs.joinpath(vim.env.HOME, ".config")
 vim.env.XDG_CACHE_HOME = vim.fs.joinpath(vim.env.HOME, ".cache")
 

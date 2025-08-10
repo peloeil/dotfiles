@@ -5,6 +5,23 @@ end
 -- 検索
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+
+-- インデント
+vim.opt.expandtab = true
+vim.opt.shiftround = true
+vim.opt.shiftwidth = 4
+vim.opt.smartindent = true
+vim.opt.list = true
+vim.opt.listchars = { tab = "|->", trail = "-" }
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+    group = vim.api.nvim_create_augroup("__42tokyo_norm", { clear = true }),
+    pattern = vim.fn.expand("~") .. "/**/42tokyo/**/*",
+    callback = function(args)
+        vim.bo[args.buf].expandtab = false
+        vim.bo[args.buf].tabstop = 4
+        vim.notify("42tokyo project file opened", vim.log.levels.INFO)
+    end
+})
 vim.api.nvim_create_autocmd("ColorScheme", {
     group = vim.api.nvim_create_augroup("__set_bg_opacity", { clear = true }),
     callback = function()

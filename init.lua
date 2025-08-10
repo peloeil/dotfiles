@@ -66,13 +66,6 @@ local function dpp_load()
             nested = true,
             callback = function()
                 dpp.load_state(dpp_base)
-                vim.api.nvim_create_autocmd("User", {
-                    pattern = "Dpp:makeStatePost",
-                    group = dpp_autocmds,
-                    callback = function()
-                        vim.cmd.quit({ bang = true })
-                    end
-                })
             end
         })
         vim.fn["denops#server#wait_async"](function()

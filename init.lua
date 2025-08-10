@@ -1,8 +1,10 @@
 if vim.loader then
     vim.loader.enable()
 end
-vim.opt.number = true
-vim.opt.wrap = false
+
+-- 検索
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 vim.api.nvim_create_autocmd("ColorScheme", {
     group = vim.api.nvim_create_augroup("__set_bg_opacity", { clear = true }),
     callback = function()

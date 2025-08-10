@@ -28,6 +28,9 @@ vim.opt.encoding = "utf-8"
 vim.opt.fileencoding = "utf-8"
 vim.opt.fileencodings = "utf-8"
 
+-- 透明度
+vim.opt.winblend = 20
+vim.opt.pumblend = 20
 vim.api.nvim_create_autocmd("ColorScheme", {
     group = vim.api.nvim_create_augroup("__set_bg_opacity", { clear = true }),
     callback = function()

@@ -3,6 +3,13 @@ if vim.loader then
 end
 vim.opt.number = true
 vim.opt.wrap = false
+vim.api.nvim_create_autocmd("ColorScheme", {
+    group = vim.api.nvim_create_augroup("__set_bg_opacity", { clear = true }),
+    callback = function()
+        vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
+        vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
+    end
+})
 
 vim.env.XDG_CONFIG_HOME = vim.fs.joinpath(vim.env.HOME, ".config")
 vim.env.XDG_CACHE_HOME = vim.fs.joinpath(vim.env.HOME, ".cache")

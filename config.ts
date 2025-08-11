@@ -48,7 +48,7 @@ export class Config extends BaseConfig {
         "toml",
         "load",
         {
-          path: configDir + "/dpp.toml",
+          path: configDir + "/toml/dpp.toml",
           options: {
             lazy: false,
           },
@@ -63,7 +63,7 @@ export class Config extends BaseConfig {
         "toml",
         "load",
         {
-          path: configDir + "/dpp_lazy.toml",
+          path: configDir + "/toml/dpp_lazy.toml",
           options: {
             lazy: true,
           },

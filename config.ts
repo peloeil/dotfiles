@@ -9,6 +9,7 @@ import {
   type ConfigReturn,
 } from "jsr:@shougo/dpp-vim@4.5.0/config";
 import { type Toml } from "jsr:@shougo/dpp-ext-toml";
+import { type LazyMakeStateResult } from "jsr:@shougo/dpp-ext-lazy";
 import { type Denops } from "jsr:@denops/core@7.0.1";
 import * as fn from "jsr:@denops/std@7.6.0/function";
 import { expandGlobSync } from "jsr:@std/fs@1.0.19";
@@ -54,6 +55,21 @@ export class Config extends BaseConfig {
         },
       ) as Toml,
     );
+    tomls.push(
+      await args.dpp.extAction(
+        args.denops,
+        context,
+        options,
+        "toml",
+        "load",
+        {
+          path: configDir + "/dpp_lazy.toml",
+          options: {
+            lazy: true,
+          },
+        },
+      ) as Toml,
+    );
 
     const plugins: Plugin[] = [];
     for (const toml of tomls) {
@@ -62,9 +78,21 @@ export class Config extends BaseConfig {
       }
     }
 
+    const lazyResult = await args.dpp.extAction(
+      args.denops,
+      context,
+      options,
+      "lazy",
+      "makeState",
+      {
+        plugins: plugins,
+      },
+    ) as LazyMakeStateResult;
+
     return {
       checkFiles: gatherCheckFiles(configDir, "**/*.@(ts|toml|lua)"),
       plugins: plugins,
+      stateLines: lazyResult.stateLines,
     };
   }
 }

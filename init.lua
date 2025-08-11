@@ -19,7 +19,6 @@ vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
     callback = function(args)
         vim.bo[args.buf].expandtab = false
         vim.bo[args.buf].tabstop = 4
-        vim.notify("42tokyo project file opened", vim.log.levels.INFO)
     end
 })
 
@@ -99,19 +98,11 @@ local function dpp_load()
     end
 
     local dpp = require("dpp")
-    vim.api.nvim_create_autocmd("User", {
-        pattern = "Dpp:makeStatePost",
-        group = dpp_autocmds,
-        callback = function()
-            vim.notify("dpp make_state() is done", vim.log.levels.INFO)
-        end
-    })
     if dpp.load_state(dpp_base) then
         vim.api.nvim_create_autocmd("User", {
             pattern = "Dpp:makeStatePost",
             group = dpp_autocmds,
             once = true,
-            nested = true,
             callback = function()
                 dpp.load_state(dpp_base)
             end
@@ -124,7 +115,6 @@ local function dpp_load()
         pattern = all_config_files(),
         group = dpp_autocmds,
         callback = function()
-            vim.notify("dpp check_files() is run", vim.log.levels.INFO)
             dpp.check_files()
         end
     })

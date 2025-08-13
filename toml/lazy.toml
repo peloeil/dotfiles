@@ -6,3 +6,7 @@ lua_source = '''
         check_ts = true,
     })
 '''
+
+[[plugins]]
+repo = "hiphish/rainbow-delimiters.nvim"
+on_event = ["BufNewFile", "BufReadPost"]

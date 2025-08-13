@@ -37,45 +37,44 @@ export class Config extends BaseConfig {
 
     const [context, options] = await args.contextBuilder.get(args.denops);
     const configDir = await fn.expand(args.denops, "~/.config/nvim");
+    const tomlDir = configDir + "/toml/";
 
-    // toml の読み込み
-    const tomls: Toml[] = [];
-    tomls.push(
-      await args.dpp.extAction(
-        args.denops,
-        context,
-        options,
-        "toml",
-        "load",
-        {
-          path: configDir + "/toml/no_lazy.toml",
-          options: {
-            lazy: false,
-          },
+    const noLazyPlugins = await args.dpp.extAction(
+      args.denops,
+      context,
+      options,
+      "toml",
+      "load",
+      {
+        path: tomlDir + "no_lazy.toml",
+        options: {
+          lazy: false,
         },
-      ) as Toml,
-    );
-    tomls.push(
-      await args.dpp.extAction(
-        args.denops,
-        context,
-        options,
-        "toml",
-        "load",
-        {
-          path: configDir + "/toml/lazy.toml",
-          options: {
-            lazy: true,
-          },
-        },
-      ) as Toml,
-    );
+      },
+    ) as Toml;
 
-    const plugins: Plugin[] = [];
-    for (const toml of tomls) {
-      for (const plugin of toml.plugins) {
-        plugins.push(plugin);
-      }
+    const lazyPlugins = await args.dpp.extAction(
+      args.denops,
+      context,
+      options,
+      "toml",
+      "load",
+      {
+        path: tomlDir + "lazy.toml",
+        options: {
+          lazy: true,
+        },
+      },
+    ) as Toml;
+
+
+    const record: Record<string, Plugin> = {};
+
+    for (const plugin of noLazyPlugins.plugins) {
+      record[plugin.name] = plugin;
+    }
+    for (const plugin of lazyPlugins.plugins) {
+      record[plugin.name] = plugin;
     }
 
     const lazyResult = await args.dpp.extAction(
@@ -85,13 +84,13 @@ export class Config extends BaseConfig {
       "lazy",
       "makeState",
       {
-        plugins: plugins,
+        plugins: Object.values(record),
       },
     ) as LazyMakeStateResult;
 
     return {
       checkFiles: gatherCheckFiles(configDir, "**/*.@(ts|toml|lua)"),
-      plugins: plugins,
+      plugins: Object.values(record),
       stateLines: lazyResult.stateLines,
     };
   }

@@ -67,6 +67,19 @@ export class Config extends BaseConfig {
       },
     ) as Toml;
 
+    const dppPlugins = await args.dpp.extAction(
+      args.denops,
+      context,
+      options,
+      "toml",
+      "load",
+      {
+        path: tomlDir + "dpp.toml",
+        options: {
+          lazy: false,
+        },
+      },
+    ) as Toml;
 
     const record: Record<string, Plugin> = {};
 
@@ -74,6 +87,9 @@ export class Config extends BaseConfig {
       record[plugin.name] = plugin;
     }
     for (const plugin of lazyPlugins.plugins) {
+      record[plugin.name] = plugin;
+    }
+    for (const plugin of dppPlugins.plugins) {
       record[plugin.name] = plugin;
     }
 

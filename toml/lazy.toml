@@ -10,3 +10,11 @@ lua_source = '''
 [[plugins]]
 repo = "hiphish/rainbow-delimiters.nvim"
 on_event = ["BufNewFile", "BufReadPost"]
+
+[[plugins]]
+repo = "42paris/42header"
+on_cmd = "Stdheader"
+hook_add = '''
+    let g:user42 = 'sota'
+    let g:mail42 = 'sota@student.42tokyo.jp'
+'''

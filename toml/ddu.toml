@@ -5,8 +5,14 @@ on_func = "ddu#start"
 # ui
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
-depends = ["ddu.vim", "ddu-source-file_rec", "ddu-filter-matcher_substring", "ddu-kind-file"]
 on_func = "ddu#start"
+depends = [
+    "ddu.vim",
+    "ddu-source-file_rec",
+    "ddu-filter-matcher_substring",
+    "ddu-kind-file",
+    "ddu-column-icon_filename"
+]
 lua_add = '''
     vim.api.nvim_create_autocmd("FileType", {
         pattern = "ddu-ff",

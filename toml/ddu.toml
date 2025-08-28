@@ -7,6 +7,16 @@ on_func = "ddu#start"
 repo = "Shougo/ddu-ui-ff"
 depends = ["ddu.vim", "ddu-source-file_rec", "ddu-kind-file"]
 on_func = "ddu#start"
+lua_add = '''
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = "ddu-ff",
+        callback = function()
+            local opts = { noremap = true, silent = true, buffer = true }
+            vim.keymap.set("n", "q", [[<cmd>call ddu#ui#async_action("quit")<cr>]], opts)
+            vim.keymap.set("n", "<cr>", [[<cmd>call ddu#ui#async_action("itemAction")<cr>]], opts)
+        end
+    })
+'''
 lua_post_source = '''
     vim.fn["ddu#custom#patch_local"]("file_recursive", {
         ui = "ff",
@@ -20,14 +30,6 @@ lua_post_source = '''
                 defaultAction = "open",
             }
         },
-    })
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = "ddu-ff",
-        callback = function()
-            local opts = { noremap = true, silent = true, buffer = true }
-            vim.keymap.set("n", "q", [[<cmd>call ddu#ui#async_action("quit")<cr>]], opts)
-            vim.keymap.set("n", "<cr>", [[<cmd>call ddu#ui#async_action("itemAction")<cr>]], opts)
-        end
     })
 '''
 

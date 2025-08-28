@@ -1,6 +1,12 @@
 [[plugins]]
 repo = "Shougo/ddu.vim"
 on_func = "ddu#start"
+
+# ui
+[[plugins]]
+repo = "Shougo/ddu-ui-ff"
+depends = ["ddu.vim", "ddu-source-file_rec", "ddu-kind-file"]
+on_func = "ddu#start"
 lua_post_source = '''
     vim.fn["ddu#custom#patch_local"]("file_recursive", {
         ui = "ff",
@@ -9,30 +15,34 @@ lua_post_source = '''
                 name = { "file_rec" },
             },
         },
+        kindOptions = {
+            file = {
+                defaultAction = "open",
+            }
+        },
+    })
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = "ddu-ff",
+        callback = function()
+            local opts = { noremap = true, silent = true, buffer = true }
+            vim.keymap.set("n", "q", [[<cmd>call ddu#ui#async_action("quit")<cr>]], opts)
+            vim.keymap.set("n", "<cr>", [[<cmd>call ddu#ui#async_action("itemAction")<cr>]], opts)
+        end
     })
 '''
-
-# ui
-[[plugins]]
-repo = "Shougo/ddu-ui-ff"
-on_func = "ddu#start"
 
 # source
 [[plugins]]
 repo = "Shougo/ddu-source-file_rec"
-on_func = "ddu#start"
 
 # filter
 [[plugins]]
 repo = "Shougo/ddu-filter-matcher_substring"
-on_func = "ddu#start"
 
 # kind
 [[plugins]]
 repo = "Shougo/ddu-kind-file"
-on_func = "ddu#start"
 
 # column
 [[plugins]]
 repo = "Shougo/ddu-column-icon_filename"
-on_func = "ddu#start"

@@ -1,22 +1,38 @@
 [[plugins]]
 repo = "Shougo/ddu.vim"
+on_func = "ddu#start"
+lua_post_source = '''
+    vim.fn["ddu#custom#patch_local"]("file_recursive", {
+        ui = "ff",
+        sources = {
+            {
+                name = { "file_rec" },
+            },
+        },
+    })
+'''
 
 # ui
 [[plugins]]
-repo = "Shougo/ddu-ui-filer"
+repo = "Shougo/ddu-ui-ff"
+on_func = "ddu#start"
 
 # source
 [[plugins]]
 repo = "Shougo/ddu-source-file_rec"
+on_func = "ddu#start"
 
 # filter
 [[plugins]]
 repo = "Shougo/ddu-filter-matcher_substring"
+on_func = "ddu#start"
 
 # kind
 [[plugins]]
 repo = "Shougo/ddu-kind-file"
+on_func = "ddu#start"
 
 # column
 [[plugins]]
 repo = "Shougo/ddu-column-icon_filename"
+on_func = "ddu#start"

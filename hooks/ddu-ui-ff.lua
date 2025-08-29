@@ -63,4 +63,10 @@ vim.keymap.set(
     [[<cmd>call ddu#start(#{name:"file_recursive"})<cr>]],
     opts
 )
+vim.api.nvim_create_autocmd("User", {
+    pattern = "Ddu:uiDone",
+    group = vim.api.nvim_create_augroup("__ddu_ui_done", { clear = true }),
+    nested = true,
+    command = [[call ddu#ui#async_action("openFilterWindow")]],
+})
 -- }}}

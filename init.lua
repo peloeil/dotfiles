@@ -3,6 +3,7 @@ if vim.loader then
 end
 
 require("options")
+require("keymaps")
 
 -- dpp setup
 

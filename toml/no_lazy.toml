@@ -8,7 +8,7 @@ hook_add = '''
 repo = "nvim-treesitter/nvim-treesitter"
 rev = "master"
 hook_post_update = '''
-    TSUpdateSync bash c cpp dockerfile git_config git_rebase gitcommit gitignore json json5 lua make markdown markdown_inline python rust ssh_config tmux typescript vim vimdoc zig
+    TSUpdateSync bash c cpp dockerfile git_config git_rebase gitignore json json5 lua make markdown markdown_inline python rust ssh_config tmux typescript vim vimdoc zig
 '''
 lua_source = '''
     require("nvim-treesitter.configs").setup({

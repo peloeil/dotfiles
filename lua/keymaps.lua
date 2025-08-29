@@ -8,3 +8,5 @@ vim.api.nvim_create_user_command(
     end,
     { nargs = '*' }
 )
+
+vim.keymap.set("n", "<esc><esc>", [[<cmd>nohlsearch<cr>]], opts)

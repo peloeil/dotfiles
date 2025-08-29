@@ -5,7 +5,6 @@ on_func = "ddu#start"
 # ui
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
-on_func = "ddu#start"
 depends = [
     "ddu.vim",
     "ddu-source-file_rec",
@@ -13,6 +12,7 @@ depends = [
     "ddu-kind-file",
     "ddu-column-icon_filename"
 ]
+on_map = { n = "<leader>ff" }
 lua_add = '''
     vim.api.nvim_create_autocmd("FileType", {
         pattern = "ddu-ff",
@@ -56,6 +56,12 @@ lua_post_source = '''
             }
         },
     })
+    vim.keymap.set(
+        "n",
+        "<leader>ff",
+        [[<cmd>call ddu#start(#{name:"file_recursive"})<cr>]],
+        opts
+    )
 '''
 
 # source

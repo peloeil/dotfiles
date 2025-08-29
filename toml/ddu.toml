@@ -9,13 +9,14 @@ on_func = "ddu#start"
 depends = [
     "ddu.vim",
     "ddu-source-file_rec",
-    "ddu-filter-matcher_substring",
+    "ddu-filter-fzf",
     "ddu-kind-file",
     "ddu-column-icon_filename"
 ]
 lua_add = '''
     vim.api.nvim_create_autocmd("FileType", {
         pattern = "ddu-ff",
+        group = vim.api.nvim_create_augroup("__ddu_ff", { clear = true }),
         callback = function()
             local opts = { noremap = true, silent = true, buffer = true }
             vim.keymap.set("n", "q", [[<cmd>call ddu#ui#async_action("quit")<cr>]], opts)
@@ -32,7 +33,10 @@ lua_post_source = '''
                 name = { "file_rec" },
                 options = {
                     matchers = {
-                        "matcher_substring",
+                        "matcher_fzf",
+                    },
+                    sorters = {
+                        "sorter_fzf",
                     },
                 },
                 params = {
@@ -61,6 +65,8 @@ repo = "Shougo/ddu-source-file_rec"
 # filter
 [[plugins]]
 repo = "Shougo/ddu-filter-matcher_substring"
+[[plugins]]
+repo = "yuki-yano/ddu-filter-fzf"
 
 # kind
 [[plugins]]

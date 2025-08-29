@@ -7,7 +7,6 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.keymap.set("n", "q", [[<cmd>call ddu#ui#async_action("quit")<cr>]], opts)
         vim.keymap.set("n", "<cr>", [[<cmd>call ddu#ui#async_action("itemAction")<cr>]], opts)
         vim.keymap.set("n", "i", [[<cmd>call ddu#ui#async_action("openFilterWindow")<cr>]], opts)
-        vim.keymap.set("n", "p", [[<cmd>call ddu#ui#async_action("togglePreview")<cr>]], opts)
     end
 })
 -- }}}
@@ -17,13 +16,17 @@ vim.fn["ddu#custom#patch_local"]("file_recursive", {
     ui = "ff",
     uiParams = {
         ff = {
+            split = "floating",
             floatingBorder = "rounded",
             floatingTitle = "files",
             previewFloating = true,
             previewFloatingBorder = "rounded",
             previewFloatingTitle = "preview",
             previewSplit = "horizontal",
-            split = "floating",
+            startAutoAction = true,
+            autoAction = {
+                name = "preview",
+            },
         },
     },
     sources = {

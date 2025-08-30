@@ -13,7 +13,7 @@ depends = [
     "ddu-column-icon_filename"
 ]
 on_map = { n = "<leader>ff" }
-hooks_file = "/home/sota/.config/nvim/hooks/ddu-ui-ff.lua"
+hooks_file = "~/.config/nvim/hooks/ddu-ui-ff.lua"
 
 # source
 [[plugins]]

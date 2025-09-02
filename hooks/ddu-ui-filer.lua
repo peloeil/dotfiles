@@ -25,7 +25,9 @@ vim.fn["ddu#custom#patch_local"]("filer", {
     sources = {
         {
             name = "file",
-            options = {},
+            options = {
+                columns = { "icon_filename" },
+            },
             params = {},
         },
     },

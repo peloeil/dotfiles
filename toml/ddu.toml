@@ -43,4 +43,4 @@ repo = "Shougo/ddu-kind-file"
 
 # column
 [[plugins]]
-repo = "Shougo/ddu-column-icon_filename"
+repo = "ryota2357/ddu-column-icon_filename"

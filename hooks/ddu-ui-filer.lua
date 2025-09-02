@@ -6,8 +6,17 @@ vim.api.nvim_create_autocmd("FileType", {
         local opts = { noremap = true, silent = true, buffer = true }
         vim.keymap.set("n", "q", [[<cmd>call ddu#ui#do_action("quit", {}, "filer")<cr>]], opts)
         vim.keymap.set("n", "o", [[<cmd>call ddu#ui#do_action("expandItem", #{ mode: "toggle" }, "filer")<cr>]], opts)
-        vim.keymap.set("n", "<cr>", [[<cmd>call ddu#ui#do_action("itemAction", {}, "filer")<cr>]], opts)
-        vim.keymap.set("n", "<space>", [[<cmd>call ddu#ui#do_action("toggleSelectItem", {}, "filer")<cr>]], opts)
+        vim.keymap.set("n", "..", [[<cmd>call ddu#ui#do_action("itemAction", #{name: "narrow", params: #{path: ".."}})<cr>]], opts)
+        vim.keymap.set("n", "mv", [[<cmd>call ddu#ui#do_action("itemAction", #{name: "rename"})<cr>]], opts)
+        vim.keymap.set("n", "dd", [[<cmd>call ddu#ui#do_action("itemAction", #{name: "delete"})<cr>]], opts)
+        vim.keymap.set("n", "c", [[<cmd>call ddu#ui#do_action("itemAction", #{name: "newFile"})<cr>]], opts)
+        vim.keymap.set("n", "<cr>", function()
+            if vim.fn["ddu#ui#get_item"]().isTree then
+                vim.fn["ddu#ui#do_action"]("itemAction", { name = "narrow" }, "filer")
+            else
+                vim.fn["ddu#ui#do_action"]("itemAction", { name = "open" }, "filer")
+            end
+        end, opts)
     end
 })
 -- }}}

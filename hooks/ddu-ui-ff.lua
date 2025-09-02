@@ -4,9 +4,9 @@ vim.api.nvim_create_autocmd("FileType", {
     group = vim.api.nvim_create_augroup("__ddu_ff", { clear = true }),
     callback = function()
         local opts = { noremap = true, silent = true, buffer = true }
-        vim.keymap.set("n", "q", [[<cmd>call ddu#ui#async_action("quit")<cr>]], opts)
-        vim.keymap.set("n", "<cr>", [[<cmd>call ddu#ui#async_action("itemAction")<cr>]], opts)
-        vim.keymap.set("n", "i", [[<cmd>call ddu#ui#async_action("openFilterWindow")<cr>]], opts)
+        vim.keymap.set("n", "q", [[<cmd>call ddu#ui#do_action("quit", {}, "file_recursive")<cr>]], opts)
+        vim.keymap.set("n", "<cr>", [[<cmd>call ddu#ui#do_action("itemAction", {}, "file_recursive")<cr>]], opts)
+        vim.keymap.set("n", "i", [[<cmd>call ddu#ui#do_action("openFilterWindow", {}, "file_recursive")<cr>]], opts)
     end
 })
 -- }}}

@@ -10,12 +10,24 @@ depends = [
     "ddu-source-file_rec",
     "ddu-filter-fzf",
     "ddu-kind-file",
-    "ddu-column-icon_filename"
 ]
 on_map = { n = "<leader>ff" }
 hooks_file = "~/.config/nvim/hooks/ddu-ui-ff.lua"
 
+[[plugins]]
+repo = "Shougo/ddu-ui-filer"
+depends = [
+    "ddu.vim",
+    "ddu-source-file",
+    "ddu-kind-file",
+    "ddu-column-icon_filename",
+]
+on_map = { n = "<C-n>" }
+hooks_file = "~/.config/nvim/hooks/ddu-ui-filer.lua"
+
 # source
+[[plugins]]
+repo = "Shougo/ddu-source-file"
 [[plugins]]
 repo = "Shougo/ddu-source-file_rec"
 

@@ -13,6 +13,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- lua_post_source {{{
 vim.fn["ddu#custom#patch_local"]("file_recursive", {
+    -- ddu-ui-ff
     ui = "ff",
     uiParams = {
         ff = {
@@ -29,35 +30,34 @@ vim.fn["ddu#custom#patch_local"]("file_recursive", {
             },
         },
     },
-    sources = {
-        {
-            name = "file_rec",
-            options = {
-                ignoreCase = true,
-                matchers = {
-                    "matcher_fzf",
-                },
-                sorters = {
-                    "sorter_fzf",
-                },
-            },
-            params = {
-                ignoreDirectories = {
-                    ".git",
-                    ".venv",
-                    ".vscode",
-                    "__pycache__",
-                    "node_modules",
-                },
-            }
+    -- ddu-source-file_rec
+    sources = { "file_rec" },
+    sourceOptions = {
+        file_rec = {
+            ignoreCase = true,
+            matchers = { "matcher_fzf" },
+            sorters = { "sorter_fzf" },
         },
     },
+    sourceParams = {
+        file_rec = {
+            ignoreDirectories = {
+                ".git",
+                ".venv",
+                ".vscode",
+                "__pycache__",
+                "node_modules",
+            },
+        },
+    },
+    -- ddu-kind-file
     kindOptions = {
         file = {
             defaultAction = "open",
         }
     },
 })
+
 local opts = { noremap = true, silent = true }
 vim.keymap.set(
     "n",

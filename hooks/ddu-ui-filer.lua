@@ -14,6 +14,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- lua_post_source {{{
 vim.fn["ddu#custom#patch_local"]("filer", {
+    -- ddu-ui-filer
     ui = "filer",
     uiParams = {
         filer = {
@@ -22,21 +23,21 @@ vim.fn["ddu#custom#patch_local"]("filer", {
             splitDirection = "topleft",
         },
     },
-    sources = {
-        {
-            name = "file",
-            options = {
-                columns = { "icon_filename" },
-            },
-            params = {},
+    -- ddu-source-file
+    sources = { "file" },
+    sourceOptions = {
+        file = {
+            columns = { "icon_filename" },
         },
     },
+    -- ddu-kind-file
     kindOptions = {
         file = {
             defaultAction = "open",
         },
     },
 })
+
 local opts = { noremap = true, silent = true }
 vim.keymap.set(
     "n",

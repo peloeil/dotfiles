@@ -31,8 +31,9 @@ vim.fn["ddu#custom#patch_local"]("file_recursive", {
     },
     sources = {
         {
-            name = { "file_rec" },
+            name = "file_rec",
             options = {
+                ignoreCase = true,
                 matchers = {
                     "matcher_fzf",
                 },

@@ -8,6 +8,18 @@ vim.fn["ddu#custom#patch_local"]("filer", {
             splitDirection = "topleft",
         },
     },
+    sources = {
+        {
+            name = "file",
+            options = {},
+            params = {},
+        },
+    },
+    kindOptions = {
+        file = {
+            defaultAction = "open",
+        },
+    },
 })
 local opts = { noremap = true, silent = true }
 vim.keymap.set(

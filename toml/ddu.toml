@@ -11,7 +11,7 @@ depends = [
     "ddu-filter-fzf",
     "ddu-kind-file",
 ]
-on_map = { n = "<leader>ff" }
+on_map = { n = "<leader>f" }
 hooks_file = "~/.config/nvim/hooks/ddu-ui-ff.lua"
 
 [[plugins]]
@@ -22,7 +22,7 @@ depends = [
     "ddu-kind-file",
     "ddu-column-icon_filename",
 ]
-on_map = { n = "<C-n>" }
+on_map = { n = "<leader>e" }
 hooks_file = "~/.config/nvim/hooks/ddu-ui-filer.lua"
 
 # source

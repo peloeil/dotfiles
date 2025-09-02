@@ -60,7 +60,7 @@ vim.fn["ddu#custom#patch_local"]("file_recursive", {
 local opts = { noremap = true, silent = true }
 vim.keymap.set(
     "n",
-    "<leader>ff",
+    "<leader>f",
     [[<cmd>call ddu#start(#{name:"file_recursive"})<cr>]],
     opts
 )

@@ -38,8 +38,8 @@ vim.fn["ddu#custom#patch_local"]("filer", {
 local opts = { noremap = true, silent = true }
 vim.keymap.set(
     "n",
-    "<C-n>",
-    [[<cmd>call ddu#start(#{name:"filer"})<cr>]],
+    "<leader>e",
+    [[<cmd>call ddu#start(#{name: "filer", searchPath: expand("%:p")})<cr>]],
     opts
 )
 -- }}}

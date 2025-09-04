@@ -95,6 +95,20 @@ export class Config extends BaseConfig {
       },
     ) as Toml;
 
+    const ddcPlugins = await args.dpp.extAction(
+      args.denops,
+      context,
+      options,
+      "toml",
+      "load",
+      {
+        path: tomlDir + "ddc.toml",
+        options: {
+          lazy: true,
+        },
+      },
+    ) as Toml;
+
     const record: Record<string, Plugin> = {};
 
     for (const plugin of noLazyPlugins.plugins) {
@@ -107,6 +121,9 @@ export class Config extends BaseConfig {
       record[plugin.name] = plugin;
     }
     for (const plugin of dduPlugins.plugins) {
+      record[plugin.name] = plugin;
+    }
+    for (const plugin of ddcPlugins.plugins) {
       record[plugin.name] = plugin;
     }
 

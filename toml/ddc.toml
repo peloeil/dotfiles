@@ -1,2 +1,41 @@
 [[plugins]]
 repo = "Shougo/ddc.vim"
+depends = [
+    "ddc-ui-native",
+    "ddc-source-around",
+    "ddc-filter-matcher_head",
+    "ddc-filter-sorter_rank",
+]
+on_event = "InsertEnter"
+lua_post_source = '''
+vim.fn["ddc#custom#patch_global"]({
+    ui = "native",
+    sources = { "around" },
+    sourceOptions = {
+        around = {
+            mark = "[A]",
+            matchers = { "matcher_head" },
+            sorters = { "sorter_rank" },
+        },
+    },
+})
+vim.cmd([[call ddc#enable()]])
+'''
+
+# ui
+[[plugins]]
+repo = "Shougo/ddc-ui-native"
+
+# source
+[[plugins]]
+repo = "Shougo/ddc-source-around"
+[[plugins]]
+repo = "matsui54/ddc-source-buffer"
+
+# filter
+[[plugins]]
+repo = "Shougo/ddc-filter-matcher_head"
+[[plugins]]
+repo = "Shougo/ddc-filter-sorter_rank"
+[[plugins]]
+repo = "tani/ddc-fuzzy"

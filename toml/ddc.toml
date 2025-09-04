@@ -34,6 +34,27 @@ repo = "Shougo/ddc-ui-native"
 repo = "Shougo/ddc-source-around"
 [[plugins]]
 repo = "matsui54/ddc-source-buffer"
+[[plugins]]
+repo = "Shougo/ddc-source-lsp"
+on_ft = ["lua"]
+lua_post_source = '''
+    vim.diagnostic.config({ virtual_text = true })
+    vim.lsp.config('*', {
+        capabilities = require("ddc_source_lsp").make_client_capabilities(),
+    })
+
+    local server_langs = {
+        lua_ls = { "lua" },
+    }
+    for server, langs in pairs(server_langs) do
+        vim.api.nvim_create_autocmd("FileType", {
+            pattern = langs,
+            callback = function()
+                vim.lsp.enable(server)
+            end
+        })
+    end
+'''
 
 # filter
 [[plugins]]

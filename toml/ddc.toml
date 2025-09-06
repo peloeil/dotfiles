@@ -3,15 +3,18 @@ repo = "Shougo/ddc.vim"
 depends = [
     "denops.vim",
     "ddc-ui-native",
-    "ddc-source-around",
     "ddc-source-lsp",
+    "ddc-source-around",
     "ddc-fuzzy",
 ]
 on_event = "InsertEnter"
 lua_post_source = '''
 vim.fn["ddc#custom#patch_global"]({
     ui = "native",
-    sources = { "around", "lsp" },
+    sources = {
+        "lsp",
+        "around",
+    },
     sourceOptions = {
         _ = {
             matchers = { "matcher_fuzzy" },
@@ -19,8 +22,18 @@ vim.fn["ddc#custom#patch_global"]({
             ignoreCase = true,
             minAutoCompleteLength = 1,
         },
+        lsp = {
+            mark = "[lsp]",
+            isVolatile = true,
+            forceCompletionPattern = "\\.\\w*|:\\w*|->\\w*",
+        },
         around = { mark = "[arnd]" },
-        lsp = { mark = "[lsp]" },
+    },
+    sourceParams = {
+        lsp = {
+            enableResolveItem = true,
+            enableAdditionalTextEdit = true,
+        },
     },
 })
 vim.cmd([[call ddc#enable()]])

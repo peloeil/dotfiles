@@ -25,7 +25,7 @@ lua_source = '''
 repo = "Shougo/ddc-source-lsp"
 lua_source = '''
     vim.diagnostic.config({ virtual_text = true })
-    vim.lsp.config('*', {
+    vim.lsp.config("*", {
         capabilities = require("ddc_source_lsp").make_client_capabilities(),
     })
 

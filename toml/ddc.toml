@@ -1,6 +1,7 @@
 [[plugins]]
 repo = "Shougo/ddc.vim"
 depends = [
+    "denops.vim",
     "ddc-ui-native",
     "ddc-source-around",
     "ddc-fuzzy",

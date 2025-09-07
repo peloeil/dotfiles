@@ -31,6 +31,7 @@ lua_source = '''
 
     local server_langs = {
         lua_ls = { "lua" },
+        clangd = { "c", "cpp" },
     }
     for server, langs in pairs(server_langs) do
         vim.api.nvim_create_autocmd("FileType", {
@@ -41,3 +42,6 @@ lua_source = '''
         })
     end
 '''
+
+[[plugins]]
+repo = "neovim/nvim-lspconfig"

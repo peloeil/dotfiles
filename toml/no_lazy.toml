@@ -45,3 +45,6 @@ lua_source = '''
 
 [[plugins]]
 repo = "neovim/nvim-lspconfig"
+
+[[plugins]]
+repo = "xiyaowong/transparent.nvim"

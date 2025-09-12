@@ -25,3 +25,10 @@ on_ft = "lua"
 lua_source = '''
     require("lazydev").setup({})
 '''
+
+[[plugins]]
+repo = "j-hui/fidget.nvim"
+on_event = ["BufNewFile", "BufReadPost"]
+lua_source = '''
+    require("fidget").setup({})
+'''

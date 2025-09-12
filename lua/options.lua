@@ -10,8 +10,13 @@ vim.opt.smartindent = true
 vim.opt.list = true
 vim.opt.listchars = { tab = "|->", trail = "-" }
 vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
-    group = vim.api.nvim_create_augroup("__42tokyo_norm", { clear = true }),
-    pattern = vim.fn.expand("~") .. "/**/42tokyo/**/*",
+    group = vim.api.nvim_create_augroup("__42projects_norm", { clear = true }),
+    pattern = {
+        vim.fn.expand("~") .. "/**/42cursus/**/*",
+        vim.fn.expand("~") .. "/**/minishell/**/*",
+        vim.fn.expand("~") .. "/**/minirt/**/*",
+        vim.fn.expand("~") .. "/**/Makefile",
+    },
     callback = function(args)
         vim.bo[args.buf].expandtab = false
         vim.bo[args.buf].tabstop = 4

@@ -1,0 +1,11 @@
+[user]
+	email = peloeil20@gmail.com
+	name = Shun Ota
+[init]
+	defaultBranch = main
+[diff]
+	external = difft
+[core]
+	editor = nvim
+[commit]
+	verbose = true

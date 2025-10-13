@@ -1,0 +1,6 @@
+{{/*.chezmoi.toml.tmpl */}}
+{{- $email := promptStringOnce. "email" "Enter your Git email address" -}}
+{{- $name := promptStringOnce. "name" "Enter your Git full name" -}}
+[data]
+  email = "{{ $email }}"
+  name = "{{ $name }}"

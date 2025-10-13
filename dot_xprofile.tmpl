@@ -1,0 +1,7 @@
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+fcitx5 -d &
+if [ -x "{{ lookPath "picom" }}" ]; then
+    picom -b &
+end

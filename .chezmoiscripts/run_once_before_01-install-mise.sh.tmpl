@@ -1,18 +1,13 @@
 #!/bin/sh
 set -euf
 
-# miseが既にインストールされている場合は終了する
-# lookPathは$PATHから実行ファイルを探すchezmoiのテンプレート関数
-if [ -x "{{ lookPath "mise" }}" ]; then
+{{ if lookPath "mise" }}
   echo "mise is already installed."
   exit 0
-fi
-
-{{ if (or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin")) -}}
+{{ else if (or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin")) }}
 echo "Installing mise..."
-# miseの公式インストールスクリプトを実行
 curl -fsSL https://mise.run | sh
-{{ else -}}
+{{ else }}
 echo "Unsupported OS for mise installation: {{.chezmoi.os }}" >&2
 exit 1
-{{ end -}}
+{{ end }}

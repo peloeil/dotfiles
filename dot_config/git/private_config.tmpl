@@ -7,3 +7,7 @@
 	editor = nvim
 [commit]
 	verbose = true
+{{ if lookPath "difft" }}
+[diff]
+	external = "difft"
+{{ end }}

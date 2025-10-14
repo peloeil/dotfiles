@@ -1,2 +1,6 @@
+[settings]
+experimental = true
+jobs = 4
+
 [tools]
 uv = "latest"

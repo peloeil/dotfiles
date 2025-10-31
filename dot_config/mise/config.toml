@@ -3,4 +3,19 @@ experimental = true
 jobs = 4
 
 [tools]
+bat = "latest"
+btop = "latest"
+chezmoi = "latest"
+deno = "latest"
+fastfetch = "latest"
+fd = "latest"
+fzf = "latest"
+lsd = "latest"
+lua-language-server = "latest"
+neovim = "latest"
+ripgrep = "latest"
+shellcheck = "latest"
+stylua = "latest"
+tmux = "latest"
 uv = "latest"
+vim = "latest"

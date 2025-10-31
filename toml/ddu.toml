@@ -5,7 +5,7 @@ depends = [
 ]
 on_func = "ddu#start"
 
-# ui
+# fuzzy finder
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
 depends = [
@@ -15,8 +15,9 @@ depends = [
     "ddu-kind-file",
 ]
 on_map = { n = "<leader>f" }
-hooks_file = "~/.config/nvim/hooks/ddu-ui-ff.lua"
+hooks_file = "~/.config/nvim/hooks/ff.lua"
 
+# filer
 [[plugins]]
 repo = "Shougo/ddu-ui-filer"
 depends = [
@@ -26,7 +27,7 @@ depends = [
     "ddu-column-icon_filename",
 ]
 on_map = { n = "<leader>e" }
-hooks_file = "~/.config/nvim/hooks/ddu-ui-filer.lua"
+hooks_file = "~/.config/nvim/hooks/filer.lua"
 
 # source
 [[plugins]]

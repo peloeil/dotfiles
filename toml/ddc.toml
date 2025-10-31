@@ -24,7 +24,6 @@ vim.fn["ddc#custom#patch_global"]({
         },
         lsp = {
             mark = "[lsp]",
-            isVolatile = true,
             forceCompletionPattern = "\\.\\w*|:\\w*|->\\w*",
         },
         around = { mark = "[arnd]" },

@@ -1,4 +1,0 @@
-[".config/nvim"]
-    type = "git-repo"
-    url = "https://github.com/peloeil/neovim-config.git"
-    refreshPeriod = "168h"

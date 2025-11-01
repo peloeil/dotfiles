@@ -1,0 +1,55 @@
+[[plugins]]
+repo = "Shougo/ddc.vim"
+depends = [
+    "denops.vim",
+    "ddc-ui-native",
+    "ddc-source-lsp",
+    "ddc-source-around",
+    "ddc-fuzzy",
+]
+on_event = "InsertEnter"
+lua_post_source = '''
+vim.fn["ddc#custom#patch_global"]({
+    ui = "native",
+    sources = {
+        "lsp",
+        "around",
+    },
+    sourceOptions = {
+        _ = {
+            matchers = { "matcher_fuzzy" },
+            sorters = { "sorter_fuzzy" },
+            ignoreCase = true,
+            minAutoCompleteLength = 1,
+        },
+        lsp = {
+            mark = "[lsp]",
+            forceCompletionPattern = "\\.\\w*|:\\w*|->\\w*",
+        },
+        around = { mark = "[arnd]" },
+    },
+    sourceParams = {
+        lsp = {
+            enableResolveItem = true,
+            enableAdditionalTextEdit = true,
+        },
+    },
+})
+vim.cmd([[call ddc#enable()]])
+'''
+
+# ui
+[[plugins]]
+repo = "Shougo/ddc-ui-native"
+
+# source
+## ddc-source-lsp config is in `no_lazy.toml`
+[[plugins]]
+repo = "Shougo/ddc-source-around"
+[[plugins]]
+repo = "matsui54/ddc-source-buffer"
+
+
+# filter
+[[plugins]]
+repo = "tani/ddc-fuzzy"

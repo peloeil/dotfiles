@@ -1,0 +1,50 @@
+[[plugins]]
+repo = "sainnhe/everforest"
+hook_add = '''
+    colorscheme everforest
+'''
+
+[[plugins]]
+repo = "nvim-treesitter/nvim-treesitter"
+rev = "master"
+hook_post_update = '''
+    TSUpdateSync bash c cpp dockerfile git_config git_rebase gitignore json json5 lua make markdown markdown_inline python rust ssh_config tmux typescript vim vimdoc zig
+'''
+lua_source = '''
+    require("nvim-treesitter.configs").setup({
+        highlight = {
+            enable = true,
+        },
+        indent = {
+            enable = true,
+        },
+    })
+'''
+
+[[plugins]]
+repo = "Shougo/ddc-source-lsp"
+lua_source = '''
+    vim.diagnostic.config({ virtual_text = true })
+    vim.lsp.config("*", {
+        capabilities = require("ddc_source_lsp").make_client_capabilities(),
+    })
+
+    local server_langs = {
+        lua_ls = { "lua" },
+        clangd = { "c", "cpp" },
+    }
+    for server, langs in pairs(server_langs) do
+        vim.api.nvim_create_autocmd("FileType", {
+            pattern = langs,
+            callback = function()
+                vim.lsp.enable(server)
+            end
+        })
+    end
+'''
+
+[[plugins]]
+repo = "neovim/nvim-lspconfig"
+
+[[plugins]]
+repo = "xiyaowong/transparent.nvim"

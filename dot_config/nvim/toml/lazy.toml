@@ -1,0 +1,34 @@
+[[plugins]]
+repo = "windwp/nvim-autopairs"
+on_event = "InsertEnter"
+lua_source = '''
+    require("nvim-autopairs").setup({
+        check_ts = true,
+    })
+'''
+
+[[plugins]]
+repo = "hiphish/rainbow-delimiters.nvim"
+on_event = ["BufNewFile", "BufReadPost"]
+
+[[plugins]]
+repo = "42paris/42header"
+on_cmd = "Stdheader"
+hook_add = '''
+    let g:user42 = 'sota'
+    let g:mail42 = 'sota@student.42tokyo.jp'
+'''
+
+[[plugins]]
+repo = "folke/lazydev.nvim"
+on_ft = "lua"
+lua_source = '''
+    require("lazydev").setup({})
+'''
+
+[[plugins]]
+repo = "j-hui/fidget.nvim"
+on_event = ["BufNewFile", "BufReadPost"]
+lua_source = '''
+    require("fidget").setup({})
+'''

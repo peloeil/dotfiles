@@ -10,19 +10,7 @@ vim.api.nvim_create_autocmd("FileType", {
 -- }}}
 
 -- lua_post_source {{{
-vim.fn["ddu#custom#patch_local"]("lsp", {
-    -- ddu-ui-ff
-    ui = "ff",
-    uiParams = {
-        ff = {
-            immediateAction = "open",
-        },
-    },
-    -- ddu-source-lsp_definition
-    sources = {
-        name = { "lsp_definition" },
-    },
-    -- ddu-kind-lsp, ddu-kind-lsp_codeAction
+vim.fn["ddu#custom#patch_global"]({
     kindOptions = {
         lsp = {
             defaultAction = "open",
@@ -31,14 +19,37 @@ vim.fn["ddu#custom#patch_local"]("lsp", {
             defaultAction = "apply"
         },
     },
+})
+vim.fn["ddu#custom#patch_local"]("lsp_definition", {
+    -- ddu-ui-ff
+    ui = "ff",
+    uiParams = {
+        ff = {
+            immediateAction = "open",
+        },
+    },
+    -- ddu-source-lsp_definition
+    sources = { "lsp_definition" },
     sync = true,
+})
+vim.fn["ddu#custom#patch_local"]("lsp_workspaceSymbol", {
+    -- ddu-ui-ff
+    ui = "ff",
+    uiParams = {
+        ff = {
+            ignoreEmpty = false,
+        },
+    },
+    -- ddu-source-lsp_definition
+    sources = { "lsp_workspaceSymbol" },
+    sourceOptions = {
+        lsp = {
+            volatile = true,
+        },
+    },
 })
 
 local opts = { noremap = true, silent = true }
-vim.keymap.set(
-    "n",
-    "<leader>l",
-    [[<cmd>call ddu#start(#{name:"lsp"})<cr>]],
-    opts
-)
+vim.keymap.set("n", "<leader>ld", [[<cmd>call ddu#start(#{name:"lsp_definition"})<cr>]], opts)
+vim.keymap.set("n", "<leader>ls", [[<cmd>call ddu#start(#{name:"lsp_workspaceSymbol"})<cr>]], opts)
 -- }}}

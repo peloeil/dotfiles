@@ -56,5 +56,5 @@ depends = [
     "ddu.vim",
     "ddu-ui-ff",
 ]
-on_map = { n = "<leader>l" }
+on_map = { n = ["<leader>ld", "<leader>ls"] }
 hooks_file = "~/.config/nvim/hooks/lsp.lua"

@@ -2,9 +2,9 @@
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "ddu-ff",
     group = vim.api.nvim_create_augroup("__ddu_lsp", { clear = true }),
-    callback = function()
-        local opts = { noremap = true, silent = true, buffer = true }
-        vim.keymap.set("n", "<cr>", [[<cmd>call ddu#ui#do_action("itemAction", #{name: "open"}, "lsp")<cr>]], opts)
+    callback = function(arg)
+        local opts = { noremap = true, silent = true, buffer = arg.buf }
+        vim.keymap.set("n", "<cr>", [[<cmd>call ddu#ui#do_action("itemAction", {}, "lsp")<cr>]], opts)
     end
 })
 -- }}}

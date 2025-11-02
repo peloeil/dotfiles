@@ -2,8 +2,8 @@
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "ddu-filer",
     group = vim.api.nvim_create_augroup("__ddu_filer", { clear = true }),
-    callback = function()
-        local opts = { noremap = true, silent = true, buffer = true }
+    callback = function(arg)
+        local opts = { noremap = true, silent = true, buffer = arg.buf }
         vim.keymap.set("n", "<leader>e", [[<cmd>call ddu#ui#do_action("quit", {}, "filer")<cr>]], opts)
         vim.keymap.set("n", "q", [[<cmd>call ddu#ui#do_action("quit", {}, "filer")<cr>]], opts)
         vim.keymap.set("n", "o", [[<cmd>call ddu#ui#do_action("expandItem", #{ mode: "toggle" }, "filer")<cr>]], opts)

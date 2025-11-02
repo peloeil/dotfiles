@@ -48,3 +48,13 @@ depends = [
 ]
 on_map = { n = "<leader>f" }
 hooks_file = "~/.config/nvim/hooks/ff.lua"
+
+# lsp
+[[plugins]]
+repo = "uga-rosa/ddu-source-lsp"
+depends = [
+    "ddu.vim",
+    "ddu-ui-ff",
+]
+on_map = { n = "<leader>l" }
+hooks_file = "~/.config/nvim/hooks/lsp.lua"

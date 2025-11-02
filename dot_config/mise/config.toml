@@ -1,6 +1,7 @@
 [settings]
 experimental = true
 jobs = 4
+lockfile = true
 
 [tools]
 bat = "latest"

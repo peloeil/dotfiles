@@ -72,6 +72,7 @@ local function dpp_load()
         group = dpp_autocmds,
         callback = function()
             dpp.check_files()
+            vim.notify("dpp check_files() is run")
         end
     })
 end

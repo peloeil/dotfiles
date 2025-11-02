@@ -3,37 +3,13 @@ repo = "Shougo/ddu.vim"
 depends = [
     "denops.vim",
 ]
-on_func = "ddu#start"
+hooks_file = "~/.config/nvim/hooks/ddu.lua"
 
-# fuzzy finder
+# ui
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
-depends = [
-    "ddu.vim",
-    "ddu-source-file_rec",
-    "ddu-filter-fzf",
-    "ddu-kind-file",
-]
-on_map = { n = "<leader>f" }
-hooks_file = "~/.config/nvim/hooks/ff.lua"
-
-# filer
 [[plugins]]
 repo = "Shougo/ddu-ui-filer"
-depends = [
-    "ddu.vim",
-    "ddu-source-file",
-    "ddu-kind-file",
-    "ddu-column-icon_filename",
-]
-on_map = { n = "<leader>e" }
-hooks_file = "~/.config/nvim/hooks/filer.lua"
-
-# source
-[[plugins]]
-repo = "Shougo/ddu-source-file"
-[[plugins]]
-repo = "Shougo/ddu-source-file_rec"
 
 # filter
 [[plugins]]
@@ -48,3 +24,27 @@ repo = "Shougo/ddu-kind-file"
 # column
 [[plugins]]
 repo = "ryota2357/ddu-column-icon_filename"
+
+# filer
+[[plugins]]
+repo = "Shougo/ddu-source-file"
+depends = [
+    "ddu.vim",
+    "ddu-ui-filer",
+    "ddu-kind-file",
+    "ddu-column-icon_filename"
+]
+on_map = { n = "<leader>e" }
+hooks_file = "~/.config/nvim/hooks/filer.lua"
+
+# fuzzy finder
+[[plugins]]
+repo = "Shougo/ddu-source-file_rec"
+depends = [
+    "ddu.vim",
+    "ddu-ui-ff",
+    "ddu-filter-fzf",
+    "ddu-kind-file",
+]
+on_map = { n = "<leader>f" }
+hooks_file = "~/.config/nvim/hooks/ff.lua"

@@ -25,13 +25,6 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.fn["ddu#custom#patch_local"]("filer", {
     -- ddu-ui-filer
     ui = "filer",
-    uiParams = {
-        filer = {
-            winWidth = vim.o.columns * 0.2,
-            split = "vertical",
-            splitDirection = "topleft",
-        },
-    },
     -- ddu-source-file
     sources = { "file" },
     sourceOptions = {

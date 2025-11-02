@@ -15,21 +15,6 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.fn["ddu#custom#patch_local"]("file_recursive", {
     -- ddu-ui-ff
     ui = "ff",
-    uiParams = {
-        ff = {
-            split = "floating",
-            floatingBorder = "rounded",
-            floatingTitle = "files",
-            previewFloating = true,
-            previewFloatingBorder = "rounded",
-            previewFloatingTitle = "preview",
-            previewSplit = "horizontal",
-            startAutoAction = true,
-            autoAction = {
-                name = "preview",
-            },
-        },
-    },
     -- ddu-source-file_rec
     sources = { "file_rec" },
     sourceOptions = {

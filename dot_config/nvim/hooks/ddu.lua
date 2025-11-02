@@ -9,10 +9,6 @@ vim.fn["ddu#custom#patch_global"]({
             previewFloatingBorder = "rounded",
             previewFloatingTitle = "preview",
             previewSplit = "horizontal",
-            startAutoAction = true,
-            autoAction = {
-                name = "preview",
-            },
         },
         filer = {
             winWidth = vim.o.columns * 0.2,

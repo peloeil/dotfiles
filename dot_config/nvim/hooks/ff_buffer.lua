@@ -5,7 +5,7 @@ vim.api.nvim_create_autocmd("FileType", {
     callback = function(arg)
         local opts = { noremap = true, silent = true, buffer = arg.buf }
         vim.keymap.set("n", "<cr>", [[<cmd>call ddu#ui#do_action("itemAction", {}, "ff_buffer")<cr>]], opts)
-        vim.keymap.set("n", "q", [[<cmd>call ddu#ui#do_action("quit", {}, "file_recursive")<cr>]], opts)
+        vim.keymap.set("n", "q", [[<cmd>call ddu#ui#do_action("quit", {}, "ff_buffer")<cr>]], opts)
         vim.keymap.set("n", "i", [[<cmd>call ddu#ui#do_action("openFilterWindow", {}, "ff_buffer")<cr>]], opts)
         vim.keymap.set("n", "a", [[<cmd>call ddu#ui#do_action("openFilterWindow", {}, "ff_buffer")<cr>]], opts)
     end

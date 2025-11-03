@@ -32,3 +32,18 @@ on_event = ["BufNewFile", "BufReadPost"]
 lua_source = '''
     require("fidget").setup({})
 '''
+[[plugins]]
+repo = "lewis6991/gitsigns.nvim"
+on_event = ["BufNewFile", "BufReadPost"]
+lua_source = '''
+    require("gitsigns").setup({
+        signs = {
+            add = { text = '┃+' },
+        },
+        signs_staged = {
+            add = { text = '┃+' },
+        },
+        word_diff = true,
+        current_line_blame = true,
+    })
+'''

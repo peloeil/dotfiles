@@ -43,11 +43,13 @@ vim.fn["ddu#custom#patch_local"]("lsp_workspaceSymbol", {
             ignoreEmpty = false,
         },
     },
-    -- ddu-source-lsp_definition
+    -- ddu-source-lsp_workspaceSymbol
     sources = { "lsp_workspaceSymbol" },
     sourceOptions = {
-        lsp = {
+        lsp_workspaceSymbol = {
             volatile = true,
+            matchers = { "matcher_fzf" },
+            sorters = { "sorter_fzf" },
         },
     },
 })

@@ -20,6 +20,8 @@ repo = "Shougo/ddu-source-file_rec"
 repo = "uga-rosa/ddu-source-lsp"
 [[plugins]]
 repo = "shun/ddu-source-buffer"
+[[plugins]]
+repo = "matsui54/ddu-source-help"
 
 # filter
 [[plugins]]
@@ -74,6 +76,17 @@ depends = [
 ]
 on_map = { n = "<leader>fb" }
 hooks_file = "~/.config/nvim/hooks/ff_buffer.lua"
+
+[[plugins]]
+repo = "Shougo/ddu-ui-ff"
+name = "ddu-tool-ff_help"
+depends = [
+    "ddu.vim",
+    "ddu-source-help",
+    "ddu-filter-fzf",
+]
+on_map = { n = "<leader>fh" }
+hooks_file = "~/.config/nvim/hooks/ff_help.lua"
 
 # lsp
 [[plugins]]

@@ -11,6 +11,16 @@ repo = "Shougo/ddu-ui-ff"
 [[plugins]]
 repo = "Shougo/ddu-ui-filer"
 
+# source
+[[plugins]]
+repo = "Shougo/ddu-source-file"
+[[plugins]]
+repo = "Shougo/ddu-source-file_rec"
+[[plugins]]
+repo = "uga-rosa/ddu-source-lsp"
+[[plugins]]
+repo = "shun/ddu-source-buffer"
+
 # filter
 [[plugins]]
 repo = "Shougo/ddu-filter-matcher_substring"
@@ -25,12 +35,15 @@ repo = "Shougo/ddu-kind-file"
 [[plugins]]
 repo = "ryota2357/ddu-column-icon_filename"
 
+# ------------------------------------------------
+
 # filer
 [[plugins]]
-repo = "Shougo/ddu-source-file"
+repo = "Shougo/ddu-ui-filer"
+name = "ddu-tool-filer"
 depends = [
     "ddu.vim",
-    "ddu-ui-filer",
+    "ddu-source-file",
     "ddu-kind-file",
     "ddu-column-icon_filename"
 ]
@@ -39,22 +52,47 @@ hooks_file = "~/.config/nvim/hooks/filer.lua"
 
 # fuzzy finder
 [[plugins]]
-repo = "Shougo/ddu-source-file_rec"
+repo = "Shougo/ddu-ui-ff"
+name = "ddu-tool-ff_file"
 depends = [
     "ddu.vim",
-    "ddu-ui-ff",
+    "ddu-source-file_rec",
     "ddu-filter-fzf",
     "ddu-kind-file",
 ]
-on_map = { n = "<leader>f" }
-hooks_file = "~/.config/nvim/hooks/ff.lua"
+on_map = { n = "<leader>ff" }
+hooks_file = "~/.config/nvim/hooks/ff_file.lua"
+
+[[plugins]]
+repo = "Shougo/ddu-ui-ff"
+name = "ddu-tool-ff_buffer"
+depends = [
+    "ddu.vim",
+    "ddu-source-buffer",
+    "ddu-filter-fzf",
+    "ddu-kind-file",
+]
+on_map = { n = "<leader>fb" }
+hooks_file = "~/.config/nvim/hooks/ff_buffer.lua"
 
 # lsp
 [[plugins]]
-repo = "uga-rosa/ddu-source-lsp"
+repo = "Shougo/ddu-ui-ff"
+name = "ddu-tool-lsp_definition"
 depends = [
     "ddu.vim",
-    "ddu-ui-ff",
+    "ddu-source-lsp",
 ]
-on_map = { n = ["<leader>ld", "<leader>ls"] }
+on_map = { n = "<leader>ld" }
+hooks_file = "~/.config/nvim/hooks/lsp.lua"
+
+[[plugins]]
+repo = "Shougo/ddu-ui-ff"
+name = "ddu-tool-lsp_workspaceSymbol"
+depends = [
+    "ddu.vim",
+    "ddu-source-lsp",
+    "ddu-filter-fzf",
+]
+on_map = { n = "<leader>ls" }
 hooks_file = "~/.config/nvim/hooks/lsp.lua"

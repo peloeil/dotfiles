@@ -32,6 +32,12 @@ on_event = ["BufNewFile", "BufReadPost"]
 lua_source = '''
     require("fidget").setup({})
 '''
+
+[[plugins]]
+repo = "rebelot/heirline.nvim"
+on_event = "UIEnter"
+hooks_file = "~/.config/nvim/hooks/heirline.lua"
+
 [[plugins]]
 repo = "lewis6991/gitsigns.nvim"
 on_event = ["BufNewFile", "BufReadPost"]

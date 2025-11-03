@@ -1,4 +1,7 @@
 [[plugins]]
+repo = "nvim-tree/nvim-web-devicons"
+
+[[plugins]]
 repo = "windwp/nvim-autopairs"
 on_event = "InsertEnter"
 lua_source = '''
@@ -35,6 +38,7 @@ lua_source = '''
 
 [[plugins]]
 repo = "rebelot/heirline.nvim"
+depends = ["nvim-web-devicons"]
 on_event = "UIEnter"
 hooks_file = "~/.config/nvim/hooks/heirline.lua"
 

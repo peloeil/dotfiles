@@ -1,19 +1,19 @@
 -- lua_add {{{
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "ddu-ff",
-    group = vim.api.nvim_create_augroup("__ddu_ff", { clear = true }),
+    group = vim.api.nvim_create_augroup("__ddu_ff_file", { clear = true }),
     callback = function(arg)
         local opts = { noremap = true, silent = true, buffer = arg.buf }
-        vim.keymap.set("n", "<cr>", [[<cmd>call ddu#ui#do_action("itemAction", {}, "file_recursive")<cr>]], opts)
-        vim.keymap.set("n", "q", [[<cmd>call ddu#ui#do_action("quit", {}, "file_recursive")<cr>]], opts)
-        vim.keymap.set("n", "i", [[<cmd>call ddu#ui#do_action("openFilterWindow", {}, "file_recursive")<cr>]], opts)
-        vim.keymap.set("n", "a", [[<cmd>call ddu#ui#do_action("openFilterWindow", {}, "file_recursive")<cr>]], opts)
+        vim.keymap.set("n", "<cr>", [[<cmd>call ddu#ui#do_action("itemAction", {}, "ff_file")<cr>]], opts)
+        vim.keymap.set("n", "q", [[<cmd>call ddu#ui#do_action("quit", {}, "ff_file")<cr>]], opts)
+        vim.keymap.set("n", "i", [[<cmd>call ddu#ui#do_action("openFilterWindow", {}, "ff_file")<cr>]], opts)
+        vim.keymap.set("n", "a", [[<cmd>call ddu#ui#do_action("openFilterWindow", {}, "ff_file")<cr>]], opts)
     end
 })
 -- }}}
 
 -- lua_post_source {{{
-vim.fn["ddu#custom#patch_local"]("file_recursive", {
+vim.fn["ddu#custom#patch_local"]("ff_file", {
     -- ddu-ui-ff
     ui = "ff",
     uiParams = {
@@ -55,8 +55,8 @@ vim.fn["ddu#custom#patch_local"]("file_recursive", {
 local opts = { noremap = true, silent = true }
 vim.keymap.set(
     "n",
-    "<leader>f",
-    [[<cmd>call ddu#start(#{name:"file_recursive"})<cr>]],
+    "<leader>ff",
+    [[<cmd>call ddu#start(#{name:"ff_file"})<cr>]],
     opts
 )
 -- }}}

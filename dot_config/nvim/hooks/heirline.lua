@@ -8,12 +8,14 @@ local align_block = { provider = "%=" }
 local scrollbar = require("hooks.heirline.scrollbar")
 local lsp_active = require("hooks.heirline.lsp")
 local diagnostics = require("hooks.heirline.diagnostics")
+local git_block = require("hooks.heirline.git")
 
 local default_statusline = {
     vimode_block,
     filename_block,
     lsp_active,
     diagnostics,
+    git_block,
     align_block,
     ruler,
     scrollbar,
@@ -41,7 +43,7 @@ local colors = {
     diag_error = utils.get_highlight("DiagnosticError").fg,
     diag_hint = utils.get_highlight("DiagnosticHint").fg,
     diag_info = utils.get_highlight("DiagnosticInfo").fg,
-    git_del = utils.get_highlight("diffDeleted").fg,
+    git_del = utils.get_highlight("diffRemoved").fg,
     git_add = utils.get_highlight("diffAdded").fg,
     git_change = utils.get_highlight("diffChanged").fg,
 }

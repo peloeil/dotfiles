@@ -37,14 +37,7 @@ lua_source = '''
 '''
 
 [[plugins]]
-repo = "rebelot/heirline.nvim"
-depends = ["nvim-web-devicons"]
-on_event = "UIEnter"
-hooks_file = "~/.config/nvim/hooks/heirline.lua"
-
-[[plugins]]
 repo = "lewis6991/gitsigns.nvim"
-on_event = ["BufNewFile", "BufReadPost"]
 lua_source = '''
     require("gitsigns").setup({
         signs = {
@@ -57,3 +50,12 @@ lua_source = '''
         current_line_blame = true,
     })
 '''
+
+[[plugins]]
+repo = "rebelot/heirline.nvim"
+depends = [
+    "nvim-web-devicons",
+    "gitsigns.nvim",
+]
+on_event = "UIEnter"
+hooks_file = "~/.config/nvim/hooks/heirline.lua"

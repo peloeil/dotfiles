@@ -4,10 +4,12 @@ local filename_block = require("hooks.heirline.filename")
 local ruler = { provider = "%7(%l/%3L%):%2c %P" }
 local align_block = { provider = "%=" }
 local scrollbar = require("hooks.heirline.scrollbar")
+local lsp_active = require("hooks.heirline.lsp")
 
 local statusline = {
     vimode_block,
     filename_block,
+    lsp_active,
     align_block,
     ruler,
     scrollbar,

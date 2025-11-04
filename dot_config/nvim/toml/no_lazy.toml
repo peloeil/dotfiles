@@ -31,3 +31,6 @@ repo = "neovim/nvim-lspconfig"
 
 [[plugins]]
 repo = "xiyaowong/transparent.nvim"
+
+[[plugins]]
+repo = "wakatime/vim-wakatime"

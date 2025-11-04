@@ -30,6 +30,7 @@ vim.fn["ddu#custom#patch_local"]("filer", {
     sources = { "file" },
     sourceOptions = {
         file = {
+            sorters = { "sorter_alpha" },
             columns = { "icon_filename" },
         },
     },

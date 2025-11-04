@@ -1,15 +1,12 @@
 local conditions = require("heirline.conditions")
 local utils = require("heirline.utils")
 
-local FileNameBlock = {
-    -- let's first set up some attributes needed by this component and its children
+local filename_block = {
     init = function(self)
         self.filename = vim.api.nvim_buf_get_name(0)
     end,
 }
--- We can now define some children separately and add them later
-
-local FileIcon = {
+local fileicon = {
     init = function(self)
         local filename = self.filename
         local extension = vim.fn.fnamemodify(filename, ":e")
@@ -23,15 +20,10 @@ local FileIcon = {
     end
 }
 
-local FileName = {
+local filename = {
     provider = function(self)
-        -- first, trim the pattern relative to the current directory. For other
-        -- options, see :h filename-modifers
         local filename = vim.fn.fnamemodify(self.filename, ":.")
         if filename == "" then return "[No Name]" end
-        -- now, if the filename would occupy more than 1/4th of the available
-        -- space, we trim the file path to its initials
-        -- See Flexible Components section below for dynamic truncation
         if not conditions.width_percent_below(#filename, 0.25) then
             filename = vim.fn.pathshorten(filename)
         end
@@ -40,7 +32,7 @@ local FileName = {
     hl = { fg = utils.get_highlight("Directory").fg },
 }
 
-local FileFlags = {
+local fileflags = {
     {
         condition = function()
             return vim.bo.modified
@@ -57,24 +49,18 @@ local FileFlags = {
     },
 }
 
--- Now, let's say that we want the filename color to change if the buffer is
--- modified. Of course, we could do that directly using the FileName.hl field,
--- but we'll see how easy it is to alter existing components using a "modifier"
--- component
-
-local FileNameModifer = {
+local filename_modifier = {
     hl = function()
         if vim.bo.modified then
-            -- use `force` because we need to override the child's hl foreground
-            return { fg = "cyan", bold = true, force=true }
+            return { fg = "cyan", bold = true, force = true }
         end
     end,
 }
 
 -- let's add the children to our FileNameBlock component
-return utils.insert(FileNameBlock,
-    FileIcon,
-    utils.insert(FileNameModifer, FileName), -- a new table where FileName is a child of FileNameModifier
-    FileFlags,
-    { provider = '%<'} -- this means that the statusline is cut here when there's not enough space
+return utils.insert(filename_block,
+    fileicon,
+    utils.insert(filename_modifier, filename),
+    fileflags,
+    { provider = '%<'}
 )

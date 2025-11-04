@@ -1,4 +1,6 @@
 -- lua_post_source {{{
+local conditions = require("heirline.conditions")
+
 local vimode_block = require("hooks.heirline.vimode")
 local filename_block = require("hooks.heirline.filename")
 local ruler = { provider = "%7(%l/%3L%):%2c %P" }
@@ -7,7 +9,7 @@ local scrollbar = require("hooks.heirline.scrollbar")
 local lsp_active = require("hooks.heirline.lsp")
 local diagnostics = require("hooks.heirline.diagnostics")
 
-local statusline = {
+local default_statusline = {
     vimode_block,
     filename_block,
     lsp_active,
@@ -15,6 +17,12 @@ local statusline = {
     align_block,
     ruler,
     scrollbar,
+}
+
+local inactive_statusline = {
+    condition = conditions.is_not_active,
+    filename_block,
+    align_block,
 }
 
 local utils = require("heirline.utils")
@@ -37,6 +45,20 @@ local colors = {
     git_add = utils.get_highlight("diffAdded").fg,
     git_change = utils.get_highlight("diffChanged").fg,
 }
+
+local statusline = {
+    hl = function()
+        if conditions.is_active() then
+            return "StatusLine"
+        else
+            return "StatusLineNC"
+        end
+    end,
+    fallthrough = false,
+    inactive_statusline,
+    default_statusline,
+}
+
 require("heirline").setup({
     statusline = statusline,
     opts = {

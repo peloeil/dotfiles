@@ -1,4 +1,14 @@
 -- lua_post_source {{{
+local vimode_block = require("hooks.heirline.vimode")
+local filename_block = require("hooks.heirline.filename")
+local align_block = { provider = "%=" }
+
+local statusline = {
+    vimode_block,
+    filename_block,
+    align_block,
+}
+
 local utils = require("heirline.utils")
 local colors = {
     bright_bg = utils.get_highlight("Folded").bg,
@@ -19,17 +29,5 @@ local colors = {
     git_add = utils.get_highlight("diffAdded").fg,
     git_change = utils.get_highlight("diffChanged").fg,
 }
-require("heirline").load_colors(colors)
-
-local vimode_block = require("hooks.heirline.vimode")
-local filename_block = require("hooks.heirline.filename")
-local align_block = { provider = "%=" }
-
-local statusline = {
-    vimode_block,
-    filename_block,
-    align_block,
-}
-
-require("heirline").setup({ statusline = statusline })
+require("heirline").setup({ statusline = statusline, colors = colors })
 -- }}}

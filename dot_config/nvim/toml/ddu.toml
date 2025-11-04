@@ -110,7 +110,7 @@ depends = [
     "ddu-source-lsp",
 ]
 on_map = { n = "<leader>ld" }
-hooks_file = "~/.config/nvim/hooks/lsp.lua"
+hooks_file = "~/.config/nvim/hooks/ff_lsp.lua"
 
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
@@ -121,4 +121,4 @@ depends = [
     "ddu-filter-fzf",
 ]
 on_map = { n = "<leader>ls" }
-hooks_file = "~/.config/nvim/hooks/lsp.lua"
+hooks_file = "~/.config/nvim/hooks/ff_lsp.lua"

@@ -33,5 +33,10 @@ local colors = {
     git_add = utils.get_highlight("diffAdded").fg,
     git_change = utils.get_highlight("diffChanged").fg,
 }
-require("heirline").setup({ statusline = statusline, colors = colors })
+require("heirline").setup({
+    statusline = statusline,
+    opts = {
+        colors = colors
+    }
+})
 -- }}}

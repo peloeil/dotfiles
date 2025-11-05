@@ -6,16 +6,15 @@ local align_block = { provider = "%=" }
 
 local vimode_block = require("hooks.heirline.vimode")
 local filename_block = require("hooks.heirline.filename")
-local ruler = { provider = "%7(%l/%3L%):%2c %P" }
-local scrollbar = require("hooks.heirline.scrollbar")
-local lsp_active = require("hooks.heirline.lsp")
-local diagnostics = require("hooks.heirline.diagnostics")
+local ruler_block = { provider = "%7(%l/%3L%):%2c %P" }
+local scrollbar_block = require("hooks.heirline.scrollbar")
+local active_lsp_block = require("hooks.heirline.lsp")
+local diagnostics_block = require("hooks.heirline.diagnostics")
 local git_block = require("hooks.heirline.git")
 
 local default_statusline = {
-    vimode_block, space_block, filename_block, align_block,
-    lsp_active, space_block, diagnostics, space_block, git_block, align_block,
-    ruler, space_block, scrollbar,
+    vimode_block, space_block, filename_block, space_block, git_block, space_block, diagnostics_block, align_block,
+    active_lsp_block, ruler_block, space_block, scrollbar_block,
 }
 
 local inactive_statusline = {

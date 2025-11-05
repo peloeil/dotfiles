@@ -125,3 +125,13 @@ depends = [
 ]
 on_map = { n = "<leader>ls" }
 hooks_file = "~/.config/nvim/hooks/ff_lsp.lua"
+
+[[plugins]]
+repo = "Shougo/ddu-ui-ff"
+name = "ddu-tool-lsp_diagnostic"
+depends = [
+    "ddu.vim",
+    "ddu-source-lsp",
+]
+on_map = { n = "<leader>xx" }
+hooks_file = "~/.config/nvim/hooks/ff_lsp.lua"

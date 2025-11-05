@@ -35,7 +35,7 @@ vim.fn["ddu#custom#patch_local"]("lsp_definition", {
     sources = { "lsp_definition" },
     sync = true,
 })
-vim.fn["ddu#custom#patch_local"]("lsp_workspaceSymbol", {
+vim.fn["ddu#custom#patch_local"]("lsp_documentSymbol", {
     -- ddu-ui-ff
     ui = "ff",
     uiParams = {
@@ -43,13 +43,14 @@ vim.fn["ddu#custom#patch_local"]("lsp_workspaceSymbol", {
             ignoreEmpty = false,
         },
     },
-    -- ddu-source-lsp_workspaceSymbol
-    sources = { "lsp_workspaceSymbol" },
+    -- ddu-source-lsp_documentSymbol
+    sources = { "lsp_documentSymbol" },
     sourceOptions = {
-        lsp_workspaceSymbol = {
+        lsp_documentSymbol = {
             volatile = true,
             matchers = { "matcher_fzf" },
             sorters = { "sorter_fzf" },
+            converters = { "converter_lsp_symbol" },
         },
     },
 })
@@ -63,10 +64,18 @@ vim.fn["ddu#custom#patch_local"]("lsp_diagnostic", {
     },
     -- ddu-source-lsp_diagnostic
     sources = { "lsp_diagnostic" },
+    sourceOptions = {
+        lsp_diagnostic = {
+            converters = { "converter_lsp_symbol" },
+        },
+    },
+    sourceParams = {
+        buffer = 0,
+    },
 })
 
 local opts = { noremap = true, silent = true }
 vim.keymap.set("n", "<leader>ld", [[<cmd>call ddu#start(#{name:"lsp_definition"})<cr>]], opts)
-vim.keymap.set("n", "<leader>ls", [[<cmd>call ddu#start(#{name:"lsp_workspaceSymbol"})<cr>]], opts)
+vim.keymap.set("n", "<leader>ls", [[<cmd>call ddu#start(#{name:"lsp_documentSymbol"})<cr>]], opts)
 vim.keymap.set("n", "<leader>xx", [[<cmd>call ddu#start(#{name:"lsp_diagnostic"})<cr>]], opts)
 -- }}}

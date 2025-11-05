@@ -117,7 +117,7 @@ hooks_file = "~/.config/nvim/hooks/ff_lsp.lua"
 
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
-name = "ddu-tool-lsp_workspaceSymbol"
+name = "ddu-tool-lsp_documentSymbol"
 depends = [
     "ddu.vim",
     "ddu-source-lsp",

@@ -34,3 +34,21 @@ repo = "xiyaowong/transparent.nvim"
 
 [[plugins]]
 repo = "wakatime/vim-wakatime"
+
+[[plugins]]
+repo = "lewis6991/gitsigns.nvim"
+lua_source = '''
+    require("gitsigns").setup({
+        signs = {
+            add = { text = "┃+" },
+            change = { text = "┃~" },
+        },
+        signs_staged = {
+            add = { text = '┃+' },
+            change = { text = "┃~" },
+        },
+        word_diff = true,
+        current_line_blame = true,
+    })
+'''
+

@@ -37,25 +37,9 @@ lua_source = '''
 '''
 
 [[plugins]]
-repo = "lewis6991/gitsigns.nvim"
-lua_source = '''
-    require("gitsigns").setup({
-        signs = {
-            add = { text = '┃+' },
-        },
-        signs_staged = {
-            add = { text = '┃+' },
-        },
-        word_diff = true,
-        current_line_blame = true,
-    })
-'''
-
-[[plugins]]
 repo = "rebelot/heirline.nvim"
 depends = [
     "nvim-web-devicons",
-    "gitsigns.nvim",
 ]
 on_event = "UIEnter"
 hooks_file = "~/.config/nvim/hooks/heirline.lua"

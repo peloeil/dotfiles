@@ -4,13 +4,13 @@ local conditions = require("heirline.conditions")
 local space_block = { provider = " " }
 local align_block = { provider = "%=" }
 
-local vimode_block = require("hooks.heirline.vimode")
-local filename_block = require("hooks.heirline.filename")
+local vimode_block = require("heirline.vimode")
+local filename_block = require("heirline.filename")
 local ruler_block = { provider = "%7(%l/%3L%):%2c %P" }
-local scrollbar_block = require("hooks.heirline.scrollbar")
-local active_lsp_block = require("hooks.heirline.lsp")
-local diagnostics_block = require("hooks.heirline.diagnostics")
-local git_block = require("hooks.heirline.git")
+local scrollbar_block = require("heirline.scrollbar")
+local active_lsp_block = require("heirline.lsp")
+local diagnostics_block = require("heirline.diagnostics")
+local git_block = require("heirline.git")
 
 local default_statusline = {
     vimode_block, space_block, filename_block, space_block, git_block, space_block, diagnostics_block, align_block,

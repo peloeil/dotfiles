@@ -43,3 +43,10 @@ depends = [
 ]
 on_event = "UIEnter"
 hooks_file = "~/.config/nvim/hooks/heirline.lua"
+
+[[plugins]]
+repo = "kylechui/nvim-surround"
+on_map = { n = ["ys", "cs", "ds"] }
+lua_source = '''
+    require("nvim-surround").setup({})
+'''

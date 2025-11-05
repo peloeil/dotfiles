@@ -66,7 +66,7 @@ vim.fn["ddu#custom#patch_local"]("lsp_diagnostic", {
     sources = { "lsp_diagnostic" },
     sourceOptions = {
         lsp_diagnostic = {
-            converters = { "converter_lsp_symbol" },
+            converters = { "converter_lsp_diagnostic" },
         },
     },
     sourceParams = {

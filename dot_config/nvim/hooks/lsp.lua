@@ -14,21 +14,16 @@ vim.lsp.config("*", {
     capabilities = require("ddc_source_lsp").make_client_capabilities(),
 })
 
-local server_langs = {
-    lua_ls = { "lua" },
-    stylua = { "lua" },
-    clangd = { "c", "cpp" },
+local servers = {
+    "clangd",
+    "lua_ls",
+    "pyright",
+    "stylua",
 }
-local gid = vim.api.nvim_create_augroup("__lsp_config", { clear = true })
-for server, langs in pairs(server_langs) do
-    vim.api.nvim_create_autocmd("FileType", {
-        group = gid,
-        pattern = langs,
-        callback = function(arg)
-            vim.lsp.enable(server)
-            local opts = { noremap = true, silent = true, buffer = arg.buf }
-            vim.keymap.set("n", "<leader>ln", vim.lsp.buf.rename, opts)
-        end
-    })
+
+local opts = { noremap = true, silent = true }
+vim.keymap.set("n", "<leader>ln", vim.lsp.buf.rename, opts)
+for _, server in ipairs(servers) do
+    vim.lsp.enable(server)
 end
 -- }}}

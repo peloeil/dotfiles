@@ -38,9 +38,9 @@ repo = "wakatime/vim-wakatime"
 [[plugins]]
 repo = "lewis6991/gitsigns.nvim"
 lua_source = '''
-    vim.api.nvim_set_hl(0, "GitSignsAddInline", { fg = nil, bg = "#003800", underline = true })
-    vim.api.nvim_set_hl(0, "GitSignsChangeInline", { fg = nil, bg = "#404000", underline = true })
-    vim.api.nvim_set_hl(0, "GitSignsDeleteInline", { fg = nil, bg = "#400000", underline = true })
+    vim.api.nvim_set_hl(0, "GitSignsAddInline", { fg = nil, bg = "#003800" })
+    vim.api.nvim_set_hl(0, "GitSignsChangeInline", { fg = nil, bg = "#404000" })
+    vim.api.nvim_set_hl(0, "GitSignsDeleteInline", { fg = nil, bg = "#400000" })
     require("gitsigns").setup({
         signs = {
             add = { text = "┃+" },

@@ -3,6 +3,13 @@ experimental = true
 jobs = 4
 lockfile = true
 
+# clang, clangd, clang-format, clang-tidy
+[tools."github:llvm/llvm-project"]
+version = "llvmorg-21.1.5"
+matching = "LLVM-21.1.5-Linux-X64.tar.xz"
+extract_all = true
+bin_path = "LLVM-21.1.5-Linux-X64/bin"
+
 [tools]
 bat = "latest"
 btop = "latest"
@@ -14,6 +21,8 @@ fzf = "latest"
 lsd = "latest"
 lua-language-server = "latest"
 neovim = "latest"
+node = "latest"
+"npm:pyright" = "latest"
 ripgrep = "latest"
 shellcheck = "latest"
 stylua = "latest"

@@ -1,13 +1,23 @@
 [user]
-	email = "{{.email }}"
-	name = "{{.name }}"
+    email = "{{.email }}"
+    name = "{{.name }}"
+
 [init]
-	defaultBranch = main
+    defaultBranch = main
+
 [core]
-	editor = nvim
+    editor = nvim
+    pager = delta
+
 [commit]
-	verbose = true
-{{ if lookPath "difft" }}
-[diff]
-	external = "difft"
-{{ end }}
+    verbose = true
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true
+    dark = true
+
+[merge]
+    conflictStyle = zdiff3

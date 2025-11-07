@@ -28,6 +28,7 @@ vim.fn["ddu#custom#patch_local"]("lsp_definition", {
     ui = "ff",
     uiParams = {
         ff = {
+            floatingTitle = "definition",
             immediateAction = "open",
         },
     },
@@ -40,6 +41,7 @@ vim.fn["ddu#custom#patch_local"]("lsp_documentSymbol", {
     ui = "ff",
     uiParams = {
         ff = {
+            floatingTitle = "symbols",
             ignoreEmpty = false,
         },
     },
@@ -59,6 +61,7 @@ vim.fn["ddu#custom#patch_local"]("lsp_diagnostic", {
     ui = "ff",
     uiParams = {
         ff = {
+            floatingTitle = "diagnostics",
             immediateAction = "open",
         },
     },

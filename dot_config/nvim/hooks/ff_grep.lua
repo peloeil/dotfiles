@@ -18,6 +18,7 @@ vim.fn["ddu#custom#patch_local"]("ff_grep", {
     ui = "ff",
     uiParams = {
         ff = {
+            floatingTitle = "grep",
             startAutoAction = true,
             autoAction = {
                 name = "preview",

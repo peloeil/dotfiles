@@ -4,7 +4,6 @@ vim.fn["ddu#custom#patch_global"]({
         ff = {
             split = "floating",
             floatingBorder = "rounded",
-            floatingTitle = "files",
             previewFloating = true,
             previewFloatingBorder = "rounded",
             previewFloatingTitle = "preview",

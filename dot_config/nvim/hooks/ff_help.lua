@@ -18,6 +18,7 @@ vim.fn["ddu#custom#patch_local"]("ff_help", {
     ui = "ff",
     uiParams = {
         ff = {
+            floatingTitle = "help",
             startAutoAction = true,
             autoAction = {
                 name = "preview",

@@ -31,6 +31,11 @@ repo = "neovim/nvim-lspconfig"
 
 [[plugins]]
 repo = "xiyaowong/transparent.nvim"
+lua_source = '''
+    vim.api.nvim_set_hl(0, "NormalFloat", { fg = vim.api.nvim_get_hl(0, { name = "NormalFloat" }).fg, bg = nil })
+    vim.api.nvim_set_hl(0, "FloatBorder", { fg = vim.api.nvim_get_hl(0, { name = "FloatBorder" }).fg, bg = nil })
+    vim.api.nvim_set_hl(0, "FloatTitle", { fg = vim.api.nvim_get_hl(0, { name = "FloatTitle" }).fg, bg = nil })
+'''
 
 [[plugins]]
 repo = "wakatime/vim-wakatime"

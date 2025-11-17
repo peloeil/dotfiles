@@ -25,6 +25,13 @@ exec --no-startup-id dex --autostart --environment i3
 exec --no-startup-id feh --bg-scale /home/sota/pictures/neko.jpg
 exec_always --no-startup-id /home/sota/.config/i3/polybar.sh &
 
+# Launch startup applications on dedicated workspaces
+exec --no-startup-id i3-msg 'workspace number $ws1; exec --no-startup-id alacritty'
+exec --no-startup-id i3-msg 'workspace number $ws2; exec --no-startup-id discord'
+exec --no-startup-id i3-msg 'workspace number $ws2; exec --no-startup-id slack'
+exec --no-startup-id i3-msg 'workspace number $ws3; exec --no-startup-id zen'
+exec --no-startup-id i3-msg 'workspace number $ws1'
+
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
 # they are included here as an example. Modify as you see fit.
 

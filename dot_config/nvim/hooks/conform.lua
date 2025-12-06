@@ -6,6 +6,7 @@ require("conform").setup({
         lua = { "stylua" },
         python = { "ruff_organize_import", "ruff_format", "ruff_fix" },
         sh = { "shellcheck", "shfmt" },
+        zig = { "zigfmt" },
     },
     formatters = {
         stylua = {

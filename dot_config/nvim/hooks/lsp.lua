@@ -19,6 +19,7 @@ local servers = {
     "lua_ls",
     "pyright",
     "stylua",
+    "zls",
 }
 
 local opts = { noremap = true, silent = true }

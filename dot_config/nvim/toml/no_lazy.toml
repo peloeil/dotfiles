@@ -38,9 +38,6 @@ lua_source = '''
 '''
 
 [[plugins]]
-repo = "wakatime/vim-wakatime"
-
-[[plugins]]
 repo = "lewis6991/gitsigns.nvim"
 lua_source = '''
     vim.api.nvim_set_hl(0, "GitSignsAddInline", { fg = nil, bg = "#003800" })

@@ -8,3 +8,4 @@ abbr --add st --command git status
 abbr --add sw --command git switch
 abbr --add swc --command git "switch -c"
 abbr --add ls lsd
+abbr --add objdump "objdump -d -S -M intel"

@@ -19,9 +19,6 @@ font pango:monospace 8
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
 #font pango:DejaVu Sans Mono 8
 
-# Start XDG autostart .desktop files using dex. See also
-# https://wiki.archlinux.org/index.php/XDG_Autostart
-exec --no-startup-id dex --autostart --environment i3
 exec --no-startup-id feh --bg-scale /home/sota/pictures/neko.jpg
 exec_always --no-startup-id /home/sota/.config/i3/polybar.sh &
 

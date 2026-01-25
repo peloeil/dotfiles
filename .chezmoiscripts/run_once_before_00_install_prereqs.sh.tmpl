@@ -13,4 +13,100 @@ if command -v apt-get >/dev/null; then
     echo "sudoが見つかりません。前提条件がインストール済みであることを確認してください。"
   fi
 fi
+
+# Arch Linux向け
+if command -v pacman >/dev/null; then
+  echo "Arch Linux向けの前提条件を確認します..."
+  if command -v sudo >/dev/null; then
+    missing_pkgs=""
+    for pkg in \
+      alacritty \
+      curl \
+      fcitx5 \
+      fcitx5-mozc \
+      feh \
+      fish \
+      fontconfig \
+      flameshot \
+      git \
+      i3-wm \
+      i3lock \
+      libarchive \
+      network-manager-applet \
+      picom \
+      polybar \
+      procps-ng \
+      psmisc \
+      pulseaudio \
+      rofi \
+      unzip \
+      xclip \
+      xorg-server \
+      xorg-xbacklight \
+      xorg-xinit \
+      xss-lock; do
+      if ! pacman -Qq "$pkg" >/dev/null 2>&1; then
+        missing_pkgs="$missing_pkgs $pkg"
+      fi
+    done
+
+    if [ -n "$missing_pkgs" ]; then
+      echo "不足パッケージ:${missing_pkgs# }"
+      sudo pacman -Syu --noconfirm --needed $missing_pkgs
+    else
+      echo "Arch Linuxの前提条件は既にインストール済みです。"
+    fi
+  else
+    echo "sudoが見つかりません。前提条件がインストール済みであることを確認してください。"
+  fi
+fi
+
+# Gentoo向け
+# fcitx-mozc は後回し
+# kernel config を変更することを忘れない
+if command -v emerge >/dev/null; then
+  echo "Gentoo向けの前提条件を確認します..."
+  if command -v sudo >/dev/null; then
+    missing_pkgs=""
+    for pkg in \
+      app-arch/libarchive \
+      app-arch/unzip \
+      app-i18n/fcitx \
+      app-shells/fish \
+      dev-vcs/git \
+      gnome-extra/nm-applet \
+      media-gfx/feh \
+      media-gfx/flameshot \
+      media-libs/fontconfig \
+      media-libs/libpulse \
+      media-sound/pulseaudio-daemon \
+      net-misc/curl \
+      sys-process/procps \
+      sys-process/psmisc \
+      x11-apps/xbacklight \
+      x11-apps/xinit \
+      x11-base/xorg-server \
+      x11-misc/i3lock \
+      x11-misc/picom \
+      x11-misc/polybar \
+      x11-misc/rofi \
+      x11-misc/xclip \
+      x11-misc/xss-lock \
+      x11-terms/alacritty \
+      x11-wm/i3; do
+      if ! portageq has_version / "$pkg" >/dev/null 2>&1; then
+        missing_pkgs="$missing_pkgs $pkg"
+      fi
+    done
+
+    if [ -n "$missing_pkgs" ]; then
+      echo "不足パッケージ:${missing_pkgs# }"
+      sudo emerge --noreplace $missing_pkgs
+    else
+      echo "Gentooの前提条件は既にインストール済みです。"
+    fi
+  else
+    echo "sudoが見つかりません。前提条件がインストール済みであることを確認してください。"
+  fi
+fi
 {{ end -}}

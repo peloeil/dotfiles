@@ -97,6 +97,47 @@ mise doctor
 
 これらはすべて chezmoi apply の一回で揃う。
 
+## 依存ツールと用途（どこで必要になるか）
+
+### 管理・導入まわり
+* chezmoi：このリポジトリの適用自体に必要。
+* mise：ツール管理。`dot_config/mise/config.toml` と `.chezmoiscripts/run_onchange_after_10_install_mise_tools.sh.tmpl`。
+* curl / sudo / apt-get / pacman / emerge：前提インストール。`.chezmoiscripts/run_once_before_00_install_prereqs.sh.tmpl`。
+* curl：mise インストールや fish/fisher の導入で使用。`.chezmoiscripts/run_once_before_01-install-mise.sh.tmpl` / `.chezmoiscripts/run_once_00-install-fish-tools.fish`。
+
+### エディタ・開発ツール（主に mise 管理）
+* neovim：Neovim 設定の本体。`dot_config/nvim/init.lua`。
+* deno：denops/dpp の設定実行に必要。`dot_config/nvim/config.ts`。
+* ripgrep / fd / fzf：ddu ソースで使用。`dot_config/nvim/toml/ddu.toml`。
+* lua-language-server / pyright / clangd / zls / stylua / ruff：LSP/formatter 周り。`dot_config/nvim/hooks/lsp.lua` / `dot_config/nvim/toml/no_lazy.toml` / `dot_config/nvim/hooks/conform.lua`。
+* uv：python を uv 経由で導入。`.chezmoiscripts/run_onchange_after_10_install_mise_tools.sh.tmpl`。
+
+### Git 周り
+* git：リポジトリ管理および Git 設定の適用に必須。
+* delta：git の pager/diff に使用。`dot_config/git/private_config.tmpl`。
+
+### シェル・ターミナル
+* fish：デフォルトシェル。`dot_config/tmux/tmux.conf` / `dot_config/private_fish/config.fish`。
+* fisher：fish プラグイン管理。`.chezmoiscripts/run_once_00-install-fish-tools.fish`。
+* tmux：ターミナルマルチプレクサ。`dot_config/tmux/tmux.conf`。
+
+### デスクトップ/WM
+* i3：WM 本体とキー設定。`dot_config/i3/config`。
+* alacritty：ターミナル。`dot_config/alacritty/alacritty.toml` / `dot_config/i3/config`。
+* polybar：バー表示。`dot_config/polybar/config.ini` / `dot_config/i3/executable_polybar.sh`。
+* picom：コンポジタ。`dot_config/picom/picom.conf` / `dot_xprofile.tmpl`。
+* rofi / feh / nm-applet / xss-lock / i3lock / pactl / xbacklight / flameshot：起動コマンド・キー割当。`dot_config/i3/config`。
+* killall / pgrep：polybar 起動スクリプトで使用。`dot_config/i3/executable_polybar.sh`。
+* Xorg（Xorg サーバ、xinit/startx）：i3 を動かすための基盤（display manager がない環境向け）。
+
+### 入力・クリップボード
+* fcitx5 / mozc：日本語入力。`dot_xprofile.tmpl` / `dot_config/private_fcitx5/private_profile`。
+* xclip：tmux のコピー。`dot_config/tmux/tmux.conf`。
+
+### フォント
+* Hack Nerd Font：Alacritty/Polybar のフォント。`dot_config/alacritty/alacritty.toml` / `dot_config/polybar/config.ini`。
+* curl / wget / unzip / bsdtar / python3 / fc-cache：フォント導入スクリプトで使用。`.chezmoiscripts/run_onchange_after_20_install_hack_nerd_font.sh`。
+
 ## 追加メモ
 
 * 機密情報は `.tmpl + 変数` で扱い、平文で保持しない。

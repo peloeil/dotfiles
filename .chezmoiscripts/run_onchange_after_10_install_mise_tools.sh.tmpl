@@ -3,3 +3,9 @@ set -eu
 
 echo "check if all the mise tools are installed..."
 ~/.local/bin/mise install --yes
+
+if uv_path="$(~/.local/bin/mise which uv 2>/dev/null)"; then
+  "$uv_path" python install --default
+else
+  echo "uv not installed; skipping python install." >&2
+fi

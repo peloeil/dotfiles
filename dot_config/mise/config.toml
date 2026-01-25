@@ -12,7 +12,7 @@ deno = "latest"
 fastfetch = "latest"
 fd = "latest"
 fzf = "latest"
-"github:io12/pwninit" = { version = "latest", asset_pattern = "pwninit" }
+"github:io12/pwninit" = { version = "3.3.1", asset_pattern = "pwninit" }
 "github:llvm/llvm-project" = { version = "latest", version_prefix = "llvmorg-", asset_pattern = "LLVM-*-Linux-X64.tar.xz", bin_path = "LLVM-{version}-Linux-X64/bin" }
 lsd = "latest"
 lua-language-server = "latest"

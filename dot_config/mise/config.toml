@@ -12,6 +12,7 @@ deno = "latest"
 fastfetch = "latest"
 fd = "latest"
 fzf = "latest"
+"github:containers/podman" = { version = "latest", asset_pattern = "podman-remote-static-linux_amd64.tar.gz", rename_exe = "podman" }
 "github:io12/pwninit" = { version = "3.3.1", asset_pattern = "pwninit" }
 "github:llvm/llvm-project" = { version = "latest", version_prefix = "llvmorg-", asset_pattern = "LLVM-*-Linux-X64.tar.xz", bin_path = "LLVM-{version}-Linux-X64/bin" }
 lsd = "latest"
@@ -19,7 +20,6 @@ lua-language-server = "latest"
 neovim = "latest"
 node = "latest"
 "npm:pyright" = "latest"
-podman = "latest"
 ripgrep = "latest"
 ruff = "latest"
 shellcheck = "latest"

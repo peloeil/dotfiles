@@ -7,11 +7,13 @@ lockfile = true
 bat = "latest"
 btop = "latest"
 chezmoi = "latest"
+"cargo:virtiofsd" = "latest"
 delta = "latest"
 deno = "latest"
 fastfetch = "latest"
 fd = "latest"
 fzf = "latest"
+"github:containers/gvisor-tap-vsock" = { version = "latest", asset_pattern = "gvproxy-linux-amd64", rename_exe = "gvproxy" }
 "github:containers/podman" = { version = "latest", asset_pattern = "podman-remote-static-linux_amd64.tar.gz", rename_exe = "podman" }
 "github:io12/pwninit" = { version = "3.3.1", asset_pattern = "pwninit" }
 "github:llvm/llvm-project" = { version = "latest", version_prefix = "llvmorg-", asset_pattern = "LLVM-*-Linux-X64.tar.xz", bin_path = "LLVM-{version}-Linux-X64/bin" }

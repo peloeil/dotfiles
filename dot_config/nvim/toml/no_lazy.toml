@@ -58,3 +58,12 @@ lua_source = '''
     })
 '''
 
+[[plugins]]
+repo = "folke/flash.nvim"
+lua_source = '''
+    require("flash").setup({})
+    vim.keymap.set({ "n", "x", "o" }, "s", function() require("flash").jump() end, { noremap = true, silent = true, desc = "Flash" })
+    vim.keymap.set({ "n", "x", "o" }, "S", function() require("flash").treesitter() end, { noremap = true, silent = true, desc = "Flash Treesitter" })
+    vim.keymap.set("o", "r", function() require("flash").remote() end, { noremap = true, silent = true, desc = "Remote Flash" })
+    vim.keymap.set({ "o", "x" }, "R", function() require("flash").treesitter_search() end, { noremap = true, silent = true, desc = "Flash Treesitter Search" })
+'''

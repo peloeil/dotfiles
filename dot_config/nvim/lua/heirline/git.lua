@@ -14,13 +14,13 @@ return {
         provider = function(self)
             return " " .. self.status_dict.head
         end,
-        hl = { bold = true }
+        hl = { bold = true },
     },
     {
         condition = function(self)
             return self.has_changes
         end,
-        provider = "("
+        provider = "(",
     },
     {
         provider = function(self)

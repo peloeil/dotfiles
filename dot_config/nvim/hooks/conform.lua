@@ -16,5 +16,7 @@ require("conform").setup({
 })
 
 local opts = { noremap = true, silent = true }
-vim.keymap.set("n", "<leader>lf", function() require("conform").format() end, opts)
+vim.keymap.set("n", "<leader>lf", function()
+    require("conform").format()
+end, opts)
 -- }}}

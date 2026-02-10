@@ -8,7 +8,7 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.keymap.set("n", "q", [[<cmd>call ddu#ui#do_action("quit", {})<cr>]], opts)
         vim.keymap.set("n", "i", [[<cmd>call ddu#ui#do_action("openFilterWindow", {})<cr>]], opts)
         vim.keymap.set("n", "a", [[<cmd>call ddu#ui#do_action("openFilterWindow", {})<cr>]], opts)
-    end
+    end,
 })
 -- }}}
 
@@ -19,7 +19,7 @@ vim.fn["ddu#custom#patch_global"]({
             defaultAction = "open",
         },
         lsp_codeAction = {
-            defaultAction = "apply"
+            defaultAction = "apply",
         },
     },
 })

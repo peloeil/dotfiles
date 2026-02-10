@@ -2,7 +2,7 @@ local conditions = require("heirline.conditions")
 
 return {
     condition = conditions.lsp_attached,
-    update = {'LspAttach', 'LspDetach'},
+    update = { "LspAttach", "LspDetach" },
 
     provider = function()
         local names = {}

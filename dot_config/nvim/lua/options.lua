@@ -20,7 +20,7 @@ vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
     callback = function(args)
         vim.bo[args.buf].expandtab = false
         vim.bo[args.buf].tabstop = 4
-    end
+    end,
 })
 
 -- エンコード

@@ -8,10 +8,10 @@ return {
         self.warnings = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
         self.info = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
         self.hints = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
-        self.error_icon = vim.diagnostic.config()['signs']['text'][vim.diagnostic.severity.ERROR]
-        self.warn_icon = vim.diagnostic.config()['signs']['text'][vim.diagnostic.severity.WARN]
-        self.info_icon = vim.diagnostic.config()['signs']['text'][vim.diagnostic.severity.INFO]
-        self.hint_icon = vim.diagnostic.config()['signs']['text'][vim.diagnostic.severity.HINT]
+        self.error_icon = vim.diagnostic.config()["signs"]["text"][vim.diagnostic.severity.ERROR]
+        self.warn_icon = vim.diagnostic.config()["signs"]["text"][vim.diagnostic.severity.WARN]
+        self.info_icon = vim.diagnostic.config()["signs"]["text"][vim.diagnostic.severity.INFO]
+        self.hint_icon = vim.diagnostic.config()["signs"]["text"][vim.diagnostic.severity.HINT]
     end,
 
     update = { "DiagnosticChanged", "BufEnter" },

@@ -52,7 +52,7 @@ local function dpp_load()
             once = true,
             callback = function()
                 dpp.load_state(dpp_base)
-            end
+            end,
         })
         vim.fn["denops#server#wait_async"](function()
             dpp.make_state(dpp_base, dpp_config)
@@ -64,7 +64,7 @@ local function dpp_load()
         callback = function()
             dpp.check_files()
             vim.notify("dpp check_files() is run")
-        end
+        end,
     })
 end
 

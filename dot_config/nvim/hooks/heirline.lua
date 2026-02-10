@@ -13,8 +13,18 @@ local diagnostics_block = require("heirline.diagnostics")
 local git_block = require("heirline.git")
 
 local default_statusline = {
-    vimode_block, space_block, filename_block, space_block, git_block, space_block, diagnostics_block, align_block,
-    active_lsp_block, ruler_block, space_block, scrollbar_block,
+    vimode_block,
+    space_block,
+    filename_block,
+    space_block,
+    git_block,
+    space_block,
+    diagnostics_block,
+    align_block,
+    active_lsp_block,
+    ruler_block,
+    space_block,
+    scrollbar_block,
 }
 
 local inactive_statusline = {
@@ -60,7 +70,7 @@ local statusline = {
 require("heirline").setup({
     statusline = statusline,
     opts = {
-        colors = colors
-    }
+        colors = colors,
+    },
 })
 -- }}}

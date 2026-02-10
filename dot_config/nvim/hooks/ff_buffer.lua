@@ -8,7 +8,7 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.keymap.set("n", "q", [[<cmd>call ddu#ui#do_action("quit", {}, "ff_buffer")<cr>]], opts)
         vim.keymap.set("n", "i", [[<cmd>call ddu#ui#do_action("openFilterWindow", {}, "ff_buffer")<cr>]], opts)
         vim.keymap.set("n", "a", [[<cmd>call ddu#ui#do_action("openFilterWindow", {}, "ff_buffer")<cr>]], opts)
-    end
+    end,
 })
 -- }}}
 
@@ -38,16 +38,10 @@ vim.fn["ddu#custom#patch_local"]("ff_buffer", {
     kindOptions = {
         file = {
             defaultAction = "open",
-        }
+        },
     },
 })
 
 local opts = { noremap = true, silent = true }
-vim.keymap.set(
-    "n",
-    "<leader>fb",
-    [[<cmd>call ddu#start(#{name:"ff_buffer"})<cr>]],
-    opts
-)
+vim.keymap.set("n", "<leader>fb", [[<cmd>call ddu#start(#{name:"ff_buffer"})<cr>]], opts)
 -- }}}
-

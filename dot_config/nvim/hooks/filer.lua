@@ -7,7 +7,12 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.keymap.set("n", "<leader>e", [[<cmd>call ddu#ui#do_action("quit", {}, "filer")<cr>]], opts)
         vim.keymap.set("n", "q", [[<cmd>call ddu#ui#do_action("quit", {}, "filer")<cr>]], opts)
         vim.keymap.set("n", "o", [[<cmd>call ddu#ui#do_action("expandItem", #{ mode: "toggle" }, "filer")<cr>]], opts)
-        vim.keymap.set("n", "..", [[<cmd>call ddu#ui#do_action("itemAction", #{name: "narrow", params: #{path: ".."}}, "filer")<cr>]], opts)
+        vim.keymap.set(
+            "n",
+            "..",
+            [[<cmd>call ddu#ui#do_action("itemAction", #{name: "narrow", params: #{path: ".."}}, "filer")<cr>]],
+            opts
+        )
         vim.keymap.set("n", "mv", [[<cmd>call ddu#ui#do_action("itemAction", #{name: "rename"}, "filer")<cr>]], opts)
         vim.keymap.set("n", "dd", [[<cmd>call ddu#ui#do_action("itemAction", #{name: "delete"}, "filer")<cr>]], opts)
         vim.keymap.set("n", "c", [[<cmd>call ddu#ui#do_action("itemAction", #{name: "newFile"}, "filer")<cr>]], opts)
@@ -18,7 +23,7 @@ vim.api.nvim_create_autocmd("FileType", {
                 vim.fn["ddu#ui#do_action"]("itemAction", { name = "open" }, "filer")
             end
         end, opts)
-    end
+    end,
 })
 -- }}}
 
@@ -43,10 +48,5 @@ vim.fn["ddu#custom#patch_local"]("filer", {
 })
 
 local opts = { noremap = true, silent = true }
-vim.keymap.set(
-    "n",
-    "<leader>e",
-    [[<cmd>call ddu#start(#{name: "filer", searchPath: expand("%:p")})<cr>]],
-    opts
-)
+vim.keymap.set("n", "<leader>e", [[<cmd>call ddu#start(#{name: "filer", searchPath: expand("%:p")})<cr>]], opts)
 -- }}}

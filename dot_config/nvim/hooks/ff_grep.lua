@@ -8,7 +8,7 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.keymap.set("n", "q", [[<cmd>call ddu#ui#do_action("quit", {}, "ff_grep")<cr>]], opts)
         vim.keymap.set("n", "i", [[<cmd>call ddu#ui#do_action("openFilterWindow", {}, "ff_grep")<cr>]], opts)
         vim.keymap.set("n", "a", [[<cmd>call ddu#ui#do_action("openFilterWindow", {}, "ff_grep")<cr>]], opts)
-    end
+    end,
 })
 -- }}}
 
@@ -44,12 +44,5 @@ vim.fn["ddu#custom#patch_local"]("ff_grep", {
 })
 
 local opts = { noremap = true, silent = true }
-vim.keymap.set(
-    "n",
-    "<leader>fg",
-    [[<cmd>call ddu#start(#{name:"ff_grep"})<cr>]],
-    opts
-)
+vim.keymap.set("n", "<leader>fg", [[<cmd>call ddu#start(#{name:"ff_grep"})<cr>]], opts)
 -- }}}
-
-

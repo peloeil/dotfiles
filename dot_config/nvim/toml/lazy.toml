@@ -62,3 +62,11 @@ on_event = ["BufNewFile", "BufReadPost"]
 lua_source = '''
     require("colorizer").setup()
 '''
+
+[[plugins]]
+repo = "numToStr/Comment.nvim"
+on_map = { n = ["gc", "gcc", "gco", "gcO", "gcA", "gb", "gbc"], x = ["gc", "gb"] }
+lua_source = '''
+    require("Comment").setup()
+'''
+

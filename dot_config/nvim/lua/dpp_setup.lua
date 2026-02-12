@@ -62,8 +62,13 @@ local function dpp_load()
         pattern = all_config_files(),
         group = dpp_autocmds,
         callback = function()
-            dpp.check_files()
             vim.notify("dpp check_files() is run")
+            if #dpp.check_files(dpp_base) == 0 then
+                return
+            end
+            vim.fn["denops#server#wait_async"](function()
+                dpp.make_state(dpp_base, dpp_config)
+            end)
         end,
     })
 end

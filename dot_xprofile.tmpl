@@ -2,6 +2,22 @@ export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 fcitx5 -d &
+
+disable_touchpad_tap() {
+  command -v xinput >/dev/null 2>&1 || return 0
+
+  # Disable tap-to-click on any libinput touchpad device.
+  xinput list --id-only | while IFS= read -r id; do
+    [ -n "$id" ] || continue
+
+    if xinput list-props "$id" 2>/dev/null | grep -q "libinput Tapping Enabled"; then
+      xinput set-prop "$id" "libinput Tapping Enabled" 0 >/dev/null 2>&1 || true
+    fi
+  done
+}
+
+disable_touchpad_tap
+(sleep 2; disable_touchpad_tap) &
 {{ if lookPath "picom" }}
 picom -b &
 {{ end }}

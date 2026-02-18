@@ -126,7 +126,7 @@ mise doctor
 * alacritty：ターミナル。`dot_config/alacritty/alacritty.toml` / `dot_config/i3/config`。
 * polybar：バー表示。`dot_config/polybar/config.ini` / `dot_config/i3/executable_polybar.sh`。
 * picom：コンポジタ。`dot_config/picom/picom.conf` / `dot_xprofile.tmpl`。
-* rofi / feh / nm-applet / xss-lock / i3lock / pactl / xbacklight / flameshot：起動コマンド・キー割当。`dot_config/i3/config`。
+* rofi / feh / nm-applet / blueman-applet / xss-lock / i3lock / pactl / xbacklight / flameshot：起動コマンド・キー割当。`dot_config/i3/config`。
 * killall / pgrep：polybar 起動スクリプトで使用。`dot_config/i3/executable_polybar.sh`。
 * Xorg（Xorg サーバ、xinit/startx）：i3 を動かすための基盤（display manager がない環境向け）。
 

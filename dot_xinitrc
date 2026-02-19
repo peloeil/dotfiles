@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+systemctl --user import-environment DISPLAY XAUTHORITY XDG_SESSION_TYPE XDG_VTNR
+systemctl --user restart sunshine
+exec i3

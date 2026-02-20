@@ -8,7 +8,7 @@ if command -v apt-get >/dev/null; then
   # sudo権限が必要な操作。sudo不要の環境では、これらのツールが事前にインストールされていることを前提とする。
   if command -v sudo >/dev/null; then
     sudo apt-get update
-    sudo apt-get install -y build-essential file bison libncurses-dev
+    sudo apt-get install -y build-essential file bison conky-all libncurses-dev
   else
     echo "sudoが見つかりません。前提条件がインストール済みであることを確認してください。"
   fi
@@ -22,6 +22,7 @@ if command -v pacman >/dev/null; then
     for pkg in \
       alacritty \
       curl \
+      conky \
       fcitx5 \
       fcitx5-configtool \
       fcitx5-gtk \
@@ -87,6 +88,7 @@ if command -v emerge >/dev/null; then
       media-gfx/flameshot \
       media-libs/fontconfig \
       net-misc/curl \
+      app-admin/conky \
       sys-process/procps \
       sys-process/psmisc \
       x11-apps/xbacklight \

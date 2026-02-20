@@ -125,6 +125,7 @@ mise doctor
 * i3：WM 本体とキー設定。`dot_config/i3/config.tmpl`。
 * alacritty：ターミナル。`dot_config/alacritty/alacritty.toml.tmpl` / `dot_config/i3/config.tmpl`。
 * polybar：バー表示。`dot_config/polybar/config.ini` / `dot_config/i3/executable_polybar.sh`。
+* conky：背景メトリクス表示。`dot_config/conky/conky.conf` / `dot_config/i3/executable_conky.sh` / `dot_config/i3/config.tmpl`。
 * picom：コンポジタ。`dot_config/picom/picom.conf` / `dot_xprofile.tmpl`。
 * rofi / feh / nm-applet / blueman-applet / xss-lock / i3lock / pactl / xbacklight / flameshot：起動コマンド・キー割当。`dot_config/i3/config.tmpl`。
 * killall / pgrep：polybar 起動スクリプトで使用。`dot_config/i3/executable_polybar.sh`。

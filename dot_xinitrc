@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
-systemctl --user import-environment DISPLAY XAUTHORITY XDG_SESSION_TYPE XDG_VTNR
+
+# startx only reads .xinitrc, so source .xprofile to initialize IME.
+if [ -f "$HOME/.xprofile" ]; then
+  . "$HOME/.xprofile"
+fi
+
+systemctl --user import-environment DISPLAY XAUTHORITY XDG_SESSION_TYPE XDG_VTNR GTK_IM_MODULE QT_IM_MODULE XMODIFIERS
 systemctl --user restart sunshine
 exec i3

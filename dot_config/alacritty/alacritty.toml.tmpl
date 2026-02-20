@@ -6,7 +6,11 @@ normal = { family = "Hack Nerd Font", style = "Regular" }
 bold = { family = "Hack Nerd Font", style = "Bold" }
 italic = { family = "Hack Nerd Font", style = "Italic" }
 bold_italic = { family = "Hack Nerd Font", style = "Bold Italic" }
+{{ if eq .chezmoi.hostname "helium" -}}
+size = 10
+{{ else -}}
 size = 6.5
+{{ end -}}
 
 [env]
 TERM = "alacritty"

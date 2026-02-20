@@ -80,7 +80,23 @@ set -U tide_node_color 44883E
 set -U tide_node_icon 
 set -U tide_os_bg_color 444444
 set -U tide_os_color EEEEEE
+{{ $linux_id := "" -}}
+{{ if eq .chezmoi.os "linux" -}}
+{{ $linux_id = trim (output "sh" "-c" ". /etc/os-release 2>/dev/null || true; printf '%s' \"${ID:-}\"") -}}
+{{ end -}}
+{{ if and (eq .chezmoi.os "linux") (eq $linux_id "arch") -}}
 set -U tide_os_icon 
+{{ else if and (eq .chezmoi.os "linux") (eq $linux_id "gentoo") -}}
+set -U tide_os_icon 
+{{ else if eq .chezmoi.os "linux" -}}
+set -U tide_os_icon 
+{{ else if eq .chezmoi.os "darwin" -}}
+set -U tide_os_icon 
+{{ else if eq .chezmoi.os "windows" -}}
+set -U tide_os_icon 󰍲
+{{ else -}}
+set -U tide_os_icon 
+{{ end -}}
 set -U tide_php_bg_color 444444
 set -U tide_php_color 617CBE
 set -U tide_php_icon 

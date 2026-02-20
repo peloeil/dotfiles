@@ -9,11 +9,7 @@
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
-{{ if eq .chezmoi.hostname "helium" }}
-set $mod Mod1
-{{ else }}
 set $mod Mod4
-{{ end }}
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.

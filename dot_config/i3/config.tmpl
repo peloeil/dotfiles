@@ -31,12 +31,8 @@ exec_always --no-startup-id /home/sota/.config/i3/polybar.sh &
 {{ if eq .chezmoi.hostname "helium" -}}
 # Disable time-based screen blanking/locking on helium.
 exec --no-startup-id xset s off -dpms
-{{ else -}}
-# timeout: seconds before the screen saver blanks the display.
-set $lock_timeout 600
-exec --no-startup-id xset s $lock_timeout
 {{ end -}}
-exec --no-startup-id xss-lock --transfer-sleep-lock -- "$HOME/.config/i3/lock-with-grace.sh"
+exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 
 # NetworkManager is the most popular way to manage wireless networks on Linux,
 # and nm-applet is a desktop environment-independent system tray GUI for it.

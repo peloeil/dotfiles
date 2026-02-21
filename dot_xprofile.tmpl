@@ -18,6 +18,6 @@ disable_touchpad_tap() {
 
 disable_touchpad_tap
 (sleep 2; disable_touchpad_tap) &
-{{ if lookPath "picom" }}
+{{ if lookPath "picom" -}}
 picom -b &
-{{ end }}
+{{ end -}}

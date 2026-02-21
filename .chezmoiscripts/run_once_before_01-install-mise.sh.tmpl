@@ -1,13 +1,13 @@
 #!/bin/sh
 set -euf
 
-{{ if lookPath "mise" }}
-  echo "mise is already installed."
-  exit 0
-{{ else if (or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin")) }}
+{{ if lookPath "mise" -}}
+echo "mise is already installed."
+exit 0
+{{ else if (or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin")) -}}
 echo "Installing mise..."
 curl -fsSL https://mise.run | sh
-{{ else }}
+{{ else -}}
 echo "Unsupported OS for mise installation: {{.chezmoi.os }}" >&2
 exit 1
-{{ end }}
+{{ end -}}

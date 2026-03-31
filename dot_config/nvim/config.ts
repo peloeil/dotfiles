@@ -23,6 +23,10 @@ function gatherCheckFiles(path: string, glob: string): string[] {
   return checkFiles;
 }
 
+function pluginsOf(toml: Toml): Plugin[] {
+  return toml.plugins ?? [];
+}
+
 export class Config extends BaseConfig {
   override async config(args: ConfigArguments): Promise<ConfigReturn> {
     // dpp-protocol-git, dpp-ext-installer の設定
@@ -42,7 +46,7 @@ export class Config extends BaseConfig {
     });
 
     const [context, options] = await args.contextBuilder.get(args.denops);
-    const configDir = await fn.expand(args.denops, "~/.config/nvim");
+    const configDir = String(await fn.expand(args.denops, "~/.config/nvim"));
     const tomlDir = configDir + "/toml/";
 
     const noLazyPlugins = await args.dpp.extAction(
@@ -117,19 +121,19 @@ export class Config extends BaseConfig {
 
     const record: Record<string, Plugin> = {};
 
-    for (const plugin of noLazyPlugins.plugins) {
+    for (const plugin of pluginsOf(noLazyPlugins)) {
       record[plugin.name] = plugin;
     }
-    for (const plugin of lazyPlugins.plugins) {
+    for (const plugin of pluginsOf(lazyPlugins)) {
       record[plugin.name] = plugin;
     }
-    for (const plugin of dppPlugins.plugins) {
+    for (const plugin of pluginsOf(dppPlugins)) {
       record[plugin.name] = plugin;
     }
-    for (const plugin of dduPlugins.plugins) {
+    for (const plugin of pluginsOf(dduPlugins)) {
       record[plugin.name] = plugin;
     }
-    for (const plugin of ddcPlugins.plugins) {
+    for (const plugin of pluginsOf(ddcPlugins)) {
       record[plugin.name] = plugin;
     }
 

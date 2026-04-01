@@ -18,7 +18,6 @@ local servers = {
     "clangd",
     "lua_ls",
     "pyright",
-    "stylua",
     "zls",
 }
 

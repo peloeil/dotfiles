@@ -46,7 +46,9 @@ export class Config extends BaseConfig {
     });
 
     const [context, options] = await args.contextBuilder.get(args.denops);
-    const configDir = String(await fn.expand(args.denops, "~/.config/nvim"));
+    const configHome = Deno.env.get("XDG_CONFIG_HOME") ??
+      String(await fn.expand(args.denops, "~/.config"));
+    const configDir = configHome + "/nvim";
     const tomlDir = configDir + "/toml/";
 
     const noLazyPlugins = await args.dpp.extAction(

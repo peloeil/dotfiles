@@ -1,8 +1,18 @@
-vim.env.XDG_CONFIG_HOME = vim.fs.joinpath(vim.env.HOME, ".config")
-vim.env.XDG_CACHE_HOME = vim.fs.joinpath(vim.env.HOME, ".cache")
+local function resolve_xdg_dir(env_name, fallback_dir)
+    local dir = vim.env[env_name]
+    if dir == nil or dir == "" then
+        dir = vim.fs.joinpath(vim.env.HOME, fallback_dir)
+        vim.env[env_name] = dir
+    end
+
+    return dir
+end
+
+local xdg_config_home = resolve_xdg_dir("XDG_CONFIG_HOME", ".config")
+local xdg_cache_home = resolve_xdg_dir("XDG_CACHE_HOME", ".cache")
 
 local function install_plugin(repo_name)
-    local dpp_repos = vim.fs.joinpath(vim.env.XDG_CACHE_HOME, "dpp", "repos")
+    local dpp_repos = vim.fs.joinpath(xdg_cache_home, "dpp", "repos")
     local url = "https://github.com/" .. repo_name
     local repo_dir = vim.fs.joinpath(dpp_repos, repo_name)
 
@@ -13,7 +23,7 @@ local function install_plugin(repo_name)
 end
 
 local function all_config_files()
-    local config_dir = vim.fs.joinpath(vim.env.XDG_CONFIG_HOME, "nvim")
+    local config_dir = vim.fs.joinpath(xdg_config_home, "nvim")
     local globs = {
         "**/*.lua",
         "**/*.ts",
@@ -36,8 +46,8 @@ local function dpp_init()
 end
 
 local function dpp_load()
-    local dpp_base = vim.fs.joinpath(vim.env.XDG_CACHE_HOME, "dpp")
-    local dpp_config = vim.fs.joinpath(vim.env.XDG_CONFIG_HOME, "nvim", "config.ts")
+    local dpp_base = vim.fs.joinpath(xdg_cache_home, "dpp")
+    local dpp_config = vim.fs.joinpath(xdg_config_home, "nvim", "config.ts")
     local dpp_autocmds = vim.api.nvim_create_augroup("__dpp_autocmds", { clear = true })
 
     if vim.fn.isdirectory(dpp_base) ~= 1 then

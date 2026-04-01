@@ -62,11 +62,11 @@ depends = [
     "nvim-web-devicons",
 ]
 on_event = "UIEnter"
-hooks_file = "~/.config/nvim/hooks/heirline.lua"
+hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/heirline.lua"
 
 [[plugins]]
 repo = "stevearc/conform.nvim"
-hooks_file = "~/.config/nvim/hooks/conform.lua"
+hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/conform.lua"
 on_map = { n = "<leader>lf" }
 
 [[plugins]]

@@ -3,7 +3,7 @@ repo = "Shougo/ddu.vim"
 depends = [
     "denops.vim",
 ]
-hooks_file = "~/.config/nvim/hooks/ddu.lua"
+hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ddu.lua"
 
 # ui
 [[plugins]]
@@ -55,7 +55,7 @@ depends = [
     "ddu-column-icon_filename"
 ]
 on_map = { n = "<leader>e" }
-hooks_file = "~/.config/nvim/hooks/filer.lua"
+hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/filer.lua"
 
 # fuzzy finder
 [[plugins]]
@@ -68,7 +68,7 @@ depends = [
     "ddu-kind-file",
 ]
 on_map = { n = "<leader>ff" }
-hooks_file = "~/.config/nvim/hooks/ff_file.lua"
+hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_file.lua"
 
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
@@ -79,7 +79,7 @@ depends = [
     "ddu-kind-file",
 ]
 on_map = { n = "<leader>fg" }
-hooks_file = "~/.config/nvim/hooks/ff_grep.lua"
+hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_grep.lua"
 
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
@@ -91,7 +91,7 @@ depends = [
     "ddu-kind-file",
 ]
 on_map = { n = "<leader>fb" }
-hooks_file = "~/.config/nvim/hooks/ff_buffer.lua"
+hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_buffer.lua"
 
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
@@ -102,7 +102,7 @@ depends = [
     "ddu-filter-fzf",
 ]
 on_map = { n = "<leader>fh" }
-hooks_file = "~/.config/nvim/hooks/ff_help.lua"
+hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_help.lua"
 
 # lsp
 [[plugins]]
@@ -113,7 +113,7 @@ depends = [
     "ddu-source-lsp",
 ]
 on_map = { n = "<leader>ld" }
-hooks_file = "~/.config/nvim/hooks/ff_lsp.lua"
+hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_lsp.lua"
 
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
@@ -124,7 +124,7 @@ depends = [
     "ddu-filter-fzf",
 ]
 on_map = { n = "<leader>ls" }
-hooks_file = "~/.config/nvim/hooks/ff_lsp.lua"
+hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_lsp.lua"
 
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
@@ -134,4 +134,4 @@ depends = [
     "ddu-source-lsp",
 ]
 on_map = { n = "<leader>xx" }
-hooks_file = "~/.config/nvim/hooks/ff_lsp.lua"
+hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_lsp.lua"

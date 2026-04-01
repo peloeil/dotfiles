@@ -12,16 +12,11 @@ vim.opt.autoindent = true
 vim.opt.list = true
 vim.opt.listchars = { tab = "|->", trail = "-" }
 
--- エンコード
-vim.opt.fileencoding = "utf-8"
-vim.opt.fileencodings = "utf-8"
-
 -- その他
 vim.opt.number = true
 vim.opt.scrolloff = 5
 vim.opt.sidescrolloff = 10
 vim.opt.cursorline = true
-vim.opt.showbreak = "> "
 vim.opt.fillchars:append({ eob = " " })
 vim.opt.termguicolors = true
 vim.opt.undofile = true

@@ -25,6 +25,5 @@ vim.opt.termguicolors = true
 vim.opt.undofile = true
 vim.opt.wrap = false
 vim.opt.wildignorecase = true
-vim.g.mapleader = " "
 vim.opt.winblend = 20
 vim.opt.pumblend = 20

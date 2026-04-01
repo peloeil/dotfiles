@@ -15,11 +15,31 @@ repo = "hiphish/rainbow-delimiters.nvim"
 on_event = ["BufNewFile", "BufReadPost"]
 
 [[plugins]]
-repo = "42paris/42header"
-on_cmd = "Stdheader"
-hook_add = '''
-    let g:user42 = 'sota'
-    let g:mail42 = 'sota@student.42tokyo.jp'
+repo = "nvimdev/indentmini.nvim"
+on_event = ["BufNewFile", "BufReadPost"]
+on_cmd = ["IndentToggle", "IndentEnable", "IndentDisable"]
+lua_source = '''
+    local indentmini_augroup = vim.api.nvim_create_augroup("__indentmini__", { clear = true })
+
+    local function set_indentmini_highlights()
+        local non_text = vim.api.nvim_get_hl(0, { name = "NonText" })
+        local line_nr = vim.api.nvim_get_hl(0, { name = "LineNr" })
+        vim.api.nvim_set_hl(0, "IndentLine", { fg = non_text.fg, nocombine = true })
+        vim.api.nvim_set_hl(0, "IndentLineCurrent", { fg = line_nr.fg or non_text.fg, nocombine = true })
+    end
+
+    set_indentmini_highlights()
+    vim.api.nvim_create_autocmd("ColorScheme", {
+        group = indentmini_augroup,
+        callback = set_indentmini_highlights,
+    })
+
+    require("indentmini").setup({
+        char = "▏",
+        minlevel = 1,
+        only_current = false,
+        exclude = { "help", "markdown", "text" },
+    })
 '''
 
 [[plugins]]

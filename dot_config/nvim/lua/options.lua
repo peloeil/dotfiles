@@ -5,8 +5,10 @@ vim.opt.smartcase = true
 -- インデント
 vim.opt.expandtab = true
 vim.opt.shiftround = true
+vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
-vim.opt.smartindent = true
+vim.opt.softtabstop = -1
+vim.opt.autoindent = true
 vim.opt.list = true
 vim.opt.listchars = { tab = "|->", trail = "-" }
 

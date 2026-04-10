@@ -2,9 +2,10 @@ if test -f "$HOME/.cargo/env.fish"
     source "$HOME/.cargo/env.fish"
 end
 
-if status is-interactive
-    # Commands to run in interactive sessions can go here
-end
+# Fish 4.3 moved fish_key_bindings from universal to global scope.
+# Tide renders prompts in a non-interactive `fish -c`, so this must not be
+# gated on `status is-interactive`.
+set -g fish_key_bindings fish_default_key_bindings
 
 # uv
 fish_add_path "$HOME/.local/bin"

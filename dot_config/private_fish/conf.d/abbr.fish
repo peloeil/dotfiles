@@ -7,5 +7,6 @@ abbr --add co --command git commit
 abbr --add st --command git status
 abbr --add sw --command git switch
 abbr --add swc --command git "switch -c"
+abbr --add lg --command git "log --graph --oneline --all"
 abbr --add ls lsd
 abbr --add objdump "objdump -S -M intel -d"

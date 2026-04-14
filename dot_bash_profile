@@ -2,6 +2,10 @@
 
 # This file is sourced by bash for login shells.  The following line
 # runs your .bashrc and is recommended by the bash info pages.
+if [[ -x "$HOME/.local/bin/mise" ]] ; then
+	eval "$("$HOME/.local/bin/mise" activate bash --shims)"
+fi
+
 if [[ -f ~/.bashrc ]] ; then
 	. ~/.bashrc
 fi

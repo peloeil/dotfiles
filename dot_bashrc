@@ -1,25 +1,12 @@
-# /etc/skel/.bashrc
-#
-# This file is sourced by all *interactive* bash shells on startup,
-# including some apparently interactive shells such as scp and rcp
-# that can't tolerate any output.  So make sure this doesn't display
-# anything or bad things will happen !
-
-
-# Test for an interactive shell.  There is no need to set anything
-# past this point for scp and rcp, and it's important to refrain from
-# outputting anything in those cases.
-if [[ $- != *i* ]] ; then
-	# Shell is non-interactive.  Be done now!
-	return
-fi
+# Environment needed in both interactive and non-interactive shells.
+# Keep this section quiet so login shells and bash -lc can reuse it safely.
 
 # rustup
 if [[ -f "$HOME/.cargo/env" ]] ; then
 	. "$HOME/.cargo/env"
 fi
 
-# uv
+# uv, mise
 case ":$PATH:" in
 	*:"$HOME/.local/bin":*)
 		;;
@@ -28,7 +15,11 @@ case ":$PATH:" in
 		;;
 esac
 
-# mise
+# Interactive-only configuration belongs below this point.
+if [[ $- != *i* ]] ; then
+	return
+fi
+
 if command -v mise >/dev/null 2>&1 ; then
 	eval "$(mise activate bash)"
 fi

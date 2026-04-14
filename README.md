@@ -103,7 +103,7 @@ mise doctor
 * chezmoi：このリポジトリの適用自体に必要。
 * mise：ツール管理。`dot_config/mise/config.toml` と `.chezmoiscripts/run_onchange_after_10_install_mise_tools.sh.tmpl`。
 * curl / sudo / apt-get / pacman / emerge：前提インストール。`.chezmoiscripts/run_once_before_00_install_prereqs.sh.tmpl`。
-* curl：mise インストールや fish/fisher の導入で使用。`.chezmoiscripts/run_once_before_01-install-mise.sh.tmpl` / `.chezmoiscripts/run_once_00-install-fish-tools.fish`。
+* curl：mise インストールや fish/fisher の導入で使用。`.chezmoiscripts/run_once_before_01-install-mise.sh.tmpl` / `.chezmoiscripts/run_onchange_after_00-install-fish-tools.fish.tmpl`。
 
 ### エディタ・開発ツール（主に mise 管理）
 * neovim：Neovim 設定の本体。`dot_config/nvim/init.lua`。
@@ -118,7 +118,7 @@ mise doctor
 
 ### シェル・ターミナル
 * fish：デフォルトシェル。`dot_config/tmux/tmux.conf` / `dot_config/private_fish/config.fish`。
-* fisher：fish プラグイン管理。`.chezmoiscripts/run_once_00-install-fish-tools.fish`。
+* fisher：fish プラグイン管理。`.chezmoiscripts/run_onchange_after_00-install-fish-tools.fish.tmpl`。
 * tmux：ターミナルマルチプレクサ。`dot_config/tmux/tmux.conf`。
 
 ### デスクトップ/WM

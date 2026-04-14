@@ -12,7 +12,11 @@ fish_add_path "$HOME/.local/bin"
 
 # miseの初期化
 if command -v mise >/dev/null
-    mise activate fish | source
+    if status is-interactive
+        mise activate fish | source
+    else
+        mise activate fish --shims | source
+    end
 end
 
 function sc -d "Assemble x86_64 to shellcode"

@@ -1,6 +1,6 @@
 {{- $email := promptStringOnce . "email" "Enter your Git email address" "peloeil20@gmail.com" -}}
 {{- $name := promptStringOnce . "name" "Enter your Git full name" "Shun Ota" -}}
-{{- $machine_type := promptStringOnce . "name" "Enter machine type (desktop or server)" "desktop" -}}
+{{- $machine_type := promptStringOnce . "machine_type" "Enter machine type (desktop or server)" "desktop" -}}
 [data]
   email = "{{ $email }}"
   name = "{{ $name }}"

@@ -8,7 +8,7 @@ if command -v apt-get >/dev/null; then
   # sudo権限が必要な操作。sudo不要の環境では、これらのツールが事前にインストールされていることを前提とする。
   if command -v sudo >/dev/null; then
     sudo apt-get update
-    sudo apt-get install -y build-essential file bison conky-all libncurses-dev
+    sudo apt-get install -y build-essential file bison conky-all libncurses-dev elfutils
   else
     echo "sudoが見つかりません。前提条件がインストール済みであることを確認してください。"
   fi
@@ -36,6 +36,7 @@ if command -v pacman >/dev/null; then
       i3-wm \
       i3lock \
       blueman \
+      elfutils \
       libarchive \
       network-manager-applet \
       picom \
@@ -82,6 +83,7 @@ if command -v emerge >/dev/null; then
       app-i18n/fcitx-qt \
       app-i18n/mozc \
       app-shells/fish \
+      dev-libs/elfutils \
       dev-vcs/git \
       gnome-extra/nm-applet \
       media-gfx/feh \

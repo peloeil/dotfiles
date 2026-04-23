@@ -7,6 +7,9 @@ end
 # gated on `status is-interactive`.
 set -g fish_key_bindings fish_default_key_bindings
 
+set -gx EDITOR nvim
+set -gx VISUAL nvim
+
 # uv
 fish_add_path "$HOME/.local/bin"
 

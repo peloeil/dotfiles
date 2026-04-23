@@ -15,6 +15,9 @@ case ":$PATH:" in
 		;;
 esac
 
+export EDITOR="nvim"
+export VISUAL="nvim"
+
 # Interactive-only configuration belongs below this point.
 if [[ $- != *i* ]] ; then
 	return

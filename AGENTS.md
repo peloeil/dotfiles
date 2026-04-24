@@ -56,6 +56,9 @@
 - `dot_config/git/private_config.tmpl`
   Git のユーザー情報と共通設定。
 
+- `dot_config/clangd/config.yaml`
+  `clangd` のグローバル設定。clang-tidy の既定チェック群と、`.h` を C ヘッダ、`.hpp` を C++ ヘッダとして解釈する fallback をここで定義する。
+
 - `dot_config/nvim/`
   Neovim 設定本体。
 

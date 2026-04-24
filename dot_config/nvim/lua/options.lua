@@ -1,3 +1,10 @@
+vim.filetype.add({
+    extension = {
+        h = "c",
+        hpp = "cpp",
+    },
+})
+
 -- 検索
 vim.opt.ignorecase = true
 vim.opt.smartcase = true

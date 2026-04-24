@@ -27,3 +27,17 @@ Diagnostics:
       - readability-math-missing-parentheses
     CheckOptions:
       readability-braces-around-statements.ShortStatementLines: "0"
+
+---
+If:
+  PathMatch: .*\.h$
+CompileFlags:
+  Remove: [-x]
+  Add: -xc-header
+
+---
+If:
+  PathMatch: .*\.hpp$
+CompileFlags:
+  Remove: [-x]
+  Add: -xc++-header

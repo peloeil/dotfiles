@@ -1,0 +1,29 @@
+# Global clangd settings.
+#
+# Keep the lint policy in clangd's XDG config, and make fallback parsing
+# match the local convention: C uses .h and C++ uses .hpp.
+---
+Diagnostics:
+  ClangTidy:
+    Add:
+      - cert-*
+      - clang-analyzer-*
+      - clang-diagnostic-*
+      - modernize-*
+      - performance-*
+      - portability-*
+      - bugprone-*
+      - cppcoreguidelines-*
+      - misc-*
+      - readability-*
+    Remove:
+      - bugprone-easily-swappable-parameters
+      - cppcoreguidelines-avoid-magic-numbers
+      - cppcoreguidelines-init-variables
+      - misc-no-recursion
+      - readability-avoid-const-params-in-decls
+      - readability-identifier-length
+      - readability-magic-numbers
+      - readability-math-missing-parentheses
+    CheckOptions:
+      readability-braces-around-statements.ShortStatementLines: "0"

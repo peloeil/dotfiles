@@ -6,18 +6,17 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo = "nvim-treesitter/nvim-treesitter"
-rev = "master"
-hook_post_update = '''
-    TSUpdateSync bash c cpp dockerfile git_config git_rebase gitignore json json5 lua make markdown markdown_inline python rust ssh_config tmux typescript vim vimdoc zig
-'''
+repo = "romus204/tree-sitter-manager.nvim"
 lua_source = '''
-    require("nvim-treesitter.configs").setup({
-        highlight = {
-            enable = true,
+    require("tree-sitter-manager").setup({
+        ensure_installed = {
+            "bash", "cpp", "dockerfile", "git_config", "git_rebase",
+            "gitignore", "json", "json5", "make", "python", "rust",
+            "ssh_config", "tmux", "typescript", "zig",
         },
-        indent = {
-            enable = true,
+        auto_install = true,
+        noauto_install = {
+            "c", "lua", "markdown", "markdown_inline", "query", "vim", "vimdoc",
         },
     })
 '''
@@ -63,9 +62,6 @@ repo = "folke/flash.nvim"
 lua_source = '''
     require("flash").setup({})
     vim.keymap.set({ "n", "x", "o" }, "s", function() require("flash").jump() end, { noremap = true, silent = true, desc = "Flash" })
-    vim.keymap.set({ "n", "x", "o" }, "S", function() require("flash").treesitter() end, { noremap = true, silent = true, desc = "Flash Treesitter" })
-    vim.keymap.set("o", "r", function() require("flash").remote() end, { noremap = true, silent = true, desc = "Remote Flash" })
-    vim.keymap.set({ "o", "x" }, "R", function() require("flash").treesitter_search() end, { noremap = true, silent = true, desc = "Flash Treesitter Search" })
 '''
 
 [[plugins]]

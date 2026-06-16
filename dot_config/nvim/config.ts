@@ -29,15 +29,8 @@ function pluginsOf(toml: Toml): Plugin[] {
 
 export class Config extends BaseConfig {
   override async config(args: ConfigArguments): Promise<ConfigReturn> {
-    // dpp-protocol-git, dpp-ext-installer の設定
     args.contextBuilder.setGlobal({
       protocols: ["git"],
-      extParams: {
-        // Avoid concurrent install/update for aliased plugins sharing a repo path.
-        installer: {
-          maxProcesses: 1,
-        },
-      },
       protocolParams: {
         git: {
           enablePartialClone: true,

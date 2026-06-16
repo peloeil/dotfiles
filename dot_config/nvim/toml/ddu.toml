@@ -56,6 +56,8 @@ depends = [
 ]
 on_map = { n = "<leader>e" }
 hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/filer.lua"
+[plugins.extAttrs]
+installerFrozen = true
 
 # fuzzy finder
 [[plugins]]
@@ -69,6 +71,8 @@ depends = [
 ]
 on_map = { n = "<leader>ff" }
 hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_file.lua"
+[plugins.extAttrs]
+installerFrozen = true
 
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
@@ -80,6 +84,8 @@ depends = [
 ]
 on_map = { n = "<leader>fg" }
 hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_grep.lua"
+[plugins.extAttrs]
+installerFrozen = true
 
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
@@ -92,6 +98,8 @@ depends = [
 ]
 on_map = { n = "<leader>fb" }
 hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_buffer.lua"
+[plugins.extAttrs]
+installerFrozen = true
 
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
@@ -103,6 +111,8 @@ depends = [
 ]
 on_map = { n = "<leader>fh" }
 hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_help.lua"
+[plugins.extAttrs]
+installerFrozen = true
 
 # lsp
 [[plugins]]
@@ -114,6 +124,8 @@ depends = [
 ]
 on_map = { n = "<leader>ld" }
 hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_lsp.lua"
+[plugins.extAttrs]
+installerFrozen = true
 
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
@@ -125,6 +137,8 @@ depends = [
 ]
 on_map = { n = "<leader>ls" }
 hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_lsp.lua"
+[plugins.extAttrs]
+installerFrozen = true
 
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
@@ -135,3 +149,5 @@ depends = [
 ]
 on_map = { n = "<leader>xx" }
 hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_lsp.lua"
+[plugins.extAttrs]
+installerFrozen = true

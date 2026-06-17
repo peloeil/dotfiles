@@ -12,11 +12,13 @@ lua_source = '''
 
 [[plugins]]
 repo = "hiphish/rainbow-delimiters.nvim"
-on_event = ["BufNewFile", "BufReadPost"]
+on_event = ["BufNewFile", "BufReadPost", "VimEnter"]
+on_if = "expand('%') !=# ''"
 
 [[plugins]]
 repo = "nvimdev/indentmini.nvim"
-on_event = ["BufNewFile", "BufReadPost"]
+on_event = ["BufNewFile", "BufReadPost", "VimEnter"]
+on_if = "expand('%') !=# ''"
 on_cmd = ["IndentToggle", "IndentEnable", "IndentDisable"]
 lua_source = '''
     local indentmini_augroup = vim.api.nvim_create_augroup("__indentmini__", { clear = true })
@@ -51,7 +53,7 @@ lua_source = '''
 
 [[plugins]]
 repo = "j-hui/fidget.nvim"
-on_event = ["BufNewFile", "BufReadPost"]
+on_event = "VimEnter"
 lua_source = '''
     require("fidget").setup({})
 '''
@@ -78,7 +80,8 @@ lua_source = '''
 
 [[plugins]]
 repo = "norcalli/nvim-colorizer.lua"
-on_event = ["BufNewFile", "BufReadPost"]
+on_event = ["BufNewFile", "BufReadPost", "VimEnter"]
+on_if = "expand('%') !=# ''"
 lua_source = '''
     require("colorizer").setup()
 '''

@@ -63,9 +63,3 @@ lua_source = '''
     require("flash").setup({})
     vim.keymap.set({ "n", "x", "o" }, "s", function() require("flash").jump() end, { noremap = true, silent = true, desc = "Flash" })
 '''
-
-[[plugins]]
-repo = "numToStr/Comment.nvim"
-lua_source = '''
-    require("Comment").setup()
-'''

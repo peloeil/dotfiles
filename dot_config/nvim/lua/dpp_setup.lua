@@ -17,7 +17,7 @@ local function install_plugin(repo_name)
     local repo_dir = vim.fs.joinpath(dpp_repos, repo_name)
 
     if vim.fn.isdirectory(repo_dir) ~= 1 then
-        os.execute("git clone " .. url .. " " .. repo_dir)
+        vim.system({ "git", "clone", url, repo_dir }):wait()
     end
     vim.opt.runtimepath:prepend(repo_dir)
 end
@@ -51,7 +51,7 @@ local function dpp_load()
     local dpp_autocmds = vim.api.nvim_create_augroup("__dpp_autocmds", { clear = true })
 
     if vim.fn.isdirectory(dpp_base) ~= 1 then
-        os.execute("mkdir -p " .. dpp_base)
+        vim.fn.mkdir(dpp_base, "p")
     end
 
     local dpp = require("dpp")

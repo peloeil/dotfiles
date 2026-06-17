@@ -10,13 +10,20 @@ import { type LazyMakeStateResult } from "jsr:@shougo/dpp-ext-lazy";
 import * as fn from "jsr:@denops/std@7.6.0/function";
 import { expandGlobSync } from "jsr:@std/fs@1.0.19";
 
-
-function gatherCheckFiles(path: string, glob: string): string[] {
-  const checkFiles: string[] = [];
-  for (const file of expandGlobSync(glob, { root: path, globstar: true })) {
-    checkFiles.push(file.path);
+function gatherCheckFiles(path: string): string[] {
+  const checkFiles = new Set<string>();
+  for (
+    const file of expandGlobSync("**/*.@(ts|toml|lua)", {
+      root: path,
+      globstar: true,
+    })
+  ) {
+    checkFiles.add(file.path);
   }
-  return checkFiles;
+  for (const file of expandGlobSync("**/", { root: path, globstar: true })) {
+    checkFiles.add(file.path);
+  }
+  return [...checkFiles];
 }
 
 function pluginsOf(toml: Toml): Plugin[] {
@@ -140,7 +147,7 @@ export class Config extends BaseConfig {
     ) as LazyMakeStateResult;
 
     return {
-      checkFiles: gatherCheckFiles(configDir, "**/*.@(ts|toml|lua)"),
+      checkFiles: gatherCheckFiles(configDir),
       plugins: Object.values(record),
       stateLines: lazyResult.stateLines,
     };

@@ -25,7 +25,6 @@ vim.opt.scrolloff = 5
 vim.opt.sidescrolloff = 10
 vim.opt.cursorline = true
 vim.opt.fillchars:append({ eob = " " })
-vim.opt.termguicolors = true
 vim.opt.undofile = true
 vim.opt.wrap = false
 vim.opt.wildignorecase = true

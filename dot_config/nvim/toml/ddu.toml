@@ -139,15 +139,3 @@ on_map = { n = "<leader>ls" }
 hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_lsp.lua"
 [plugins.extAttrs]
 installerFrozen = true
-
-[[plugins]]
-repo = "Shougo/ddu-ui-ff"
-name = "ddu-tool-lsp_diagnostic"
-depends = [
-    "ddu.vim",
-    "ddu-source-lsp",
-]
-on_map = { n = "<leader>xx" }
-hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_lsp.lua"
-[plugins.extAttrs]
-installerFrozen = true

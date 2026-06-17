@@ -59,6 +59,15 @@ lua_source = '''
 '''
 
 [[plugins]]
+repo = "folke/trouble.nvim"
+depends = [
+    "nvim-web-devicons",
+]
+on_cmd = "Trouble"
+on_map = { n = ["<leader>xx", "<leader>xX"] }
+hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/trouble.lua"
+
+[[plugins]]
 repo = "rebelot/heirline.nvim"
 depends = [
     "nvim-web-devicons",

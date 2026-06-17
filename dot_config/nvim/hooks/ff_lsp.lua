@@ -84,5 +84,4 @@ vim.fn["ddu#custom#patch_local"]("lsp_diagnostic", {
 local opts = { noremap = true, silent = true }
 vim.keymap.set("n", "<leader>ld", [[<cmd>call ddu#start(#{name:"lsp_definition"})<cr>]], opts)
 vim.keymap.set("n", "<leader>ls", [[<cmd>call ddu#start(#{name:"lsp_documentSymbol"})<cr>]], opts)
-vim.keymap.set("n", "<leader>xx", [[<cmd>call ddu#start(#{name:"lsp_diagnostic"})<cr>]], opts)
 -- }}}

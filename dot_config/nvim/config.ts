@@ -1,8 +1,5 @@
 import { type Dpp } from "jsr:@shougo/dpp-vim@4.5.0/dpp";
-import {
-  type ContextBuilder,
-  type Plugin,
-} from "jsr:@shougo/dpp-vim@4.5.0/types";
+import { type Plugin } from "jsr:@shougo/dpp-vim@4.5.0/types";
 import {
   BaseConfig,
   type ConfigArguments,
@@ -10,7 +7,6 @@ import {
 } from "jsr:@shougo/dpp-vim@4.5.0/config";
 import { type Toml } from "jsr:@shougo/dpp-ext-toml";
 import { type LazyMakeStateResult } from "jsr:@shougo/dpp-ext-lazy";
-import { type Denops } from "jsr:@denops/core@7.0.1";
 import * as fn from "jsr:@denops/std@7.6.0/function";
 import { expandGlobSync } from "jsr:@std/fs@1.0.19";
 

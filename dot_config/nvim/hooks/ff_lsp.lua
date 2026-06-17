@@ -3,6 +3,10 @@ vim.api.nvim_create_autocmd("FileType", {
     pattern = "ddu-ff",
     group = vim.api.nvim_create_augroup("__ddu_lsp", { clear = true }),
     callback = function(arg)
+        local lsp_names = { lsp_definition = true, lsp_documentSymbol = true, lsp_diagnostic = true }
+        if not lsp_names[vim.b[arg.buf].ddu_ui_name] then
+            return
+        end
         local opts = { noremap = true, silent = true, buf = arg.buf }
         vim.keymap.set("n", "<cr>", [[<cmd>call ddu#ui#do_action("itemAction", {})<cr>]], opts)
         vim.keymap.set("n", "q", [[<cmd>call ddu#ui#do_action("quit", {})<cr>]], opts)

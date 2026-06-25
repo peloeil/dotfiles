@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+IMAGE="claude-sandbox"
+DOCKERFILE_DIR="${HOME}/.local/share/claude-sandbox"
+
+if [[ "${1:-}" == "--rebuild" ]]; then
+    docker build --no-cache -t "$IMAGE" "$DOCKERFILE_DIR"
+    shift
+    [[ $# -eq 0 ]] && exit 0
+fi
+
+if ! docker image inspect "$IMAGE" &>/dev/null; then
+    echo "Building $IMAGE image (first run only)..."
+    docker build -t "$IMAGE" "$DOCKERFILE_DIR"
+fi
+
+args=(
+    -it --rm
+    --user "$(id -u):$(id -g)"
+    -v "$(pwd)":/workspace
+    -v "${HOME}/.claude":/claude-home/.claude
+    -e HOME=/claude-home
+)
+
+if [[ -d "${HOME}/.config/git" ]]; then
+    args+=(-v "${HOME}/.config/git":/claude-home/.config/git:ro)
+fi
+
+exec docker run "${args[@]}" "$IMAGE" "$@"

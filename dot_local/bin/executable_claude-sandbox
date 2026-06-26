@@ -20,6 +20,8 @@ args=(
     --user "$(id -u):$(id -g)"
     -v "$(pwd)":/workspace
     -v "${HOME}/.claude":/claude-home/.claude
+    -v "${HOME}/.claude.json":/claude-home/.claude.json
+    --tmpfs /claude-home/.claude/projects:uid="$(id -u)",gid="$(id -g)"
     -e HOME=/claude-home
 )
 

@@ -19,7 +19,6 @@ Diagnostics:
     Remove:
       - bugprone-easily-swappable-parameters
       - cppcoreguidelines-avoid-magic-numbers
-      - cppcoreguidelines-init-variables
       - misc-no-recursion
       - readability-avoid-const-params-in-decls
       - readability-identifier-length

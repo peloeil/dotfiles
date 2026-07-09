@@ -13,7 +13,6 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply peloeil
 
 - Git の `email`
 - Git の `name`
-- `machine_type` (`desktop` か `server`)
 
 これで次が適用される。
 

@@ -20,7 +20,7 @@
 
 `chezmoi init --apply peloeil` で次が走る。
 
-1. `.chezmoi.toml.tmpl` で `email` `name` `machine_type` を prompt。
+1. `.chezmoi.toml.tmpl` で `email` `name` を prompt。
 2. `run_once_before_00_install_prereqs.sh.tmpl` で Linux の前提パッケージを導入。
 3. `run_once_before_01-install-mise.sh.tmpl` で `mise` を導入。
 4. dotfiles を展開。
@@ -30,7 +30,7 @@
 ## 重要ファイル
 
 - `.chezmoi.toml.tmpl`
-  `email` `name` `machine_type` の prompt と `chezmoi edit` の既定エディタ。
+  `email` `name` の prompt と `chezmoi edit` の既定エディタ。
 
 - `.chezmoiscripts/run_once_before_00_install_prereqs.sh.tmpl`
   Linux の前提パッケージ導入。`apt-get` `pacman` `emerge` を検出して分岐する。
@@ -70,7 +70,6 @@
 
 ## 実装上の注意
 
-- `machine_type` は現在 prompt されるが、実際の分岐ではほぼ未使用。必要になったら参照先を増やす。
 - README は `.chezmoiignore` で配布対象から外れている。
 - repo 直下のパスは `chezmoi` ソース名であり、実ファイル名とは一致しないことがある。必要なら target path と source path を対応づけて説明する。
 - セットアップ説明では、実装されていない自動化を README に書かない。

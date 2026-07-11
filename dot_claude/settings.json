@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(wc *)"
+    ]
+  },
+  "model": "claude-fable-5[1m]",
+  "enabledPlugins": {
+    "pyright-lsp@claude-plugins-official": true,
+    "clangd-lsp@claude-plugins-official": true
+  },
+  "effortLevel": "max",
+  "autoMemoryEnabled": false,
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
+  "agentPushNotifEnabled": true
+}

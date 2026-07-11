@@ -5,7 +5,13 @@
 
 ## セットアップ
 
+暗号化ファイル（`encrypted_` prefix）がある場合は、最初に age の秘密鍵を `~/.config/chezmoi/key.txt` に配置する（これがないと復号できない）。
+
 ```bash
+mkdir -p ~/.config/chezmoi
+# USB やパスワードマネージャなどから key.txt を持ってくる
+chmod 600 ~/.config/chezmoi/key.txt
+
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply peloeil
 ```
 

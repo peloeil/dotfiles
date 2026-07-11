@@ -4,6 +4,7 @@ jobs = 4
 lockfile = true
 
 [tools]
+age = "latest"
 bat = "latest"
 btop = "latest"
 chezmoi = "latest"

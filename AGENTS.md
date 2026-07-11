@@ -30,7 +30,7 @@
 ## 重要ファイル
 
 - `.chezmoi.toml.tmpl`
-  `email` `name` の prompt と `chezmoi edit` の既定エディタ。
+  `email` `name` の prompt、age 暗号化の設定、`chezmoi edit` の既定エディタ。
 
 - `.chezmoiscripts/run_once_before_00_install_prereqs.sh.tmpl`
   Linux の前提パッケージ導入。`apt-get` `pacman` `emerge` を検出して分岐する。
@@ -67,6 +67,13 @@
 
 - `dot_xprofile.tmpl`
   fcitx / picom / touchpad 設定。
+
+## シークレットの扱い
+
+- シークレット（SSH 秘密鍵など）は age で暗号化して管理する。ソース上は `encrypted_` prefix + `.age` 拡張子。
+- age の秘密鍵は `~/.config/chezmoi/key.txt`。**リポジトリには絶対に入れない。** 新規マシンでは `chezmoi init --apply` の前に手動で配置する必要がある。
+- 公開鍵（recipient）は `.chezmoi.toml.tmpl` にハードコードしてよい。
+- シークレットの追加は `chezmoi add --encrypt <path>` で行う。
 
 ## 実装上の注意
 

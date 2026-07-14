@@ -2,8 +2,9 @@
 vim.fn["ddu#custom#patch_global"]({
     uiParams = {
         ff = {
-            split = "floating",
-            floatingBorder = "rounded",
+            winWidth = vim.o.columns * 0.2,
+            split = "vertical",
+            splitDirection = "botright",
             previewFloating = true,
             previewFloatingBorder = "rounded",
             previewFloatingTitle = "preview",

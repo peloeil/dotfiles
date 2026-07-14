@@ -22,6 +22,17 @@ local function has_pep723_metadata(lines)
 end
 
 return {
+    on_init = function(client)
+        if not client.root_dir then
+            return
+        end
+        local venv_python = client.root_dir .. "/.venv/bin/python"
+        if vim.uv.fs_stat(venv_python) then
+            client.settings = vim.tbl_deep_extend("force", client.settings, {
+                python = { pythonPath = venv_python },
+            })
+        end
+    end,
     cmd = function(dispatchers)
         local bufnr = vim.api.nvim_get_current_buf()
         local filename = vim.api.nvim_buf_get_name(bufnr)

@@ -20,7 +20,7 @@
 
 `chezmoi init --apply peloeil` で次が走る。
 
-1. `.chezmoi.toml.tmpl` で `email` `name` を prompt。
+1. `.chezmoi.toml.tmpl` で `email` `researchEmail` `name` を prompt。
 2. `run_once_before_00_install_prereqs.sh.tmpl` で Linux の前提パッケージを導入。
 3. `run_once_before_01-install-mise.sh.tmpl` で `mise` を導入。
 4. dotfiles を展開。
@@ -30,7 +30,7 @@
 ## 重要ファイル
 
 - `.chezmoi.toml.tmpl`
-  `email` `name` の prompt、age 暗号化の設定、`chezmoi edit` の既定エディタ。
+  `email` `researchEmail` `name` の prompt、age 暗号化の設定、`chezmoi edit` の既定エディタ。
 
 - `.chezmoiscripts/run_once_before_00_install_prereqs.sh.tmpl`
   Linux の前提パッケージ導入。`apt-get` `pacman` `emerge` を検出して分岐する。

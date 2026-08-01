@@ -1,9 +1,11 @@
 {{- $email := promptStringOnce . "email" "Enter your Git email address" "peloeil20@gmail.com" -}}
+{{- $researchEmail := promptStringOnce . "researchEmail" "Enter your research Git email address" -}}
 {{- $name := promptStringOnce . "name" "Enter your Git full name" "Shun Ota" -}}
 encryption = "age"
 
 [data]
   email = "{{ $email }}"
+  researchEmail = "{{ $researchEmail }}"
   name = "{{ $name }}"
 
 [age]

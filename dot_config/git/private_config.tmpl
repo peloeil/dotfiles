@@ -21,3 +21,6 @@
 
 [merge]
     conflictStyle = zdiff3
+
+[includeIf "gitdir:{{ .chezmoi.homeDir }}/workspace/univ/lab/research/**"]
+    path = ~/.config/git/research.config

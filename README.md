@@ -18,6 +18,7 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply peloeil
 初回 `apply` では次を聞かれる。
 
 - Git の `email`
+- 研究用 Git の `email`
 - Git の `name`
 
 これで次が適用される。

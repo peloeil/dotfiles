@@ -33,7 +33,7 @@
   `email` `researchEmail` `name` の prompt、age 暗号化の設定、`chezmoi edit` の既定エディタ。
 
 - `.chezmoiscripts/run_once_before_00_install_prereqs.sh.tmpl`
-  Linux の前提パッケージ導入。`apt-get` `pacman` `emerge` を検出して分岐する。
+  Linux の前提パッケージ導入。`apt-get` `pacman` `emerge` を検出して分岐する。sudo 権限がなければ導入だけをスキップし、セットアップを続行する。
 
 - `.chezmoiscripts/run_once_before_01-install-mise.sh.tmpl`
   `mise` 未導入時にインストールする。

@@ -29,6 +29,8 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply peloeil
 - `~/.config/mise/config.toml` に書いたツール
 - Linux では前提パッケージ導入スクリプト
 
+sudo 権限がない場合、Linux の前提パッケージ導入はスキップされ、残りのセットアップは続行される。不足するパッケージは管理者に依頼するなどして別途導入する。
+
 デスクトップ周りの設定は Linux 前提。内部実装のメモは `AGENTS.md` に置いてある。
 
 ## 普段やること

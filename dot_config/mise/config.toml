@@ -5,6 +5,7 @@ lockfile = true
 
 [tools]
 age = "latest"
+"aqua:fish-shell/fish-shell" = "latest"
 bat = "latest"
 btop = "latest"
 chezmoi = "latest"

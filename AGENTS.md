@@ -25,7 +25,7 @@
 3. `run_once_before_01-install-mise.sh.tmpl` で `mise` を導入。
 4. dotfiles を展開。
 5. `run_onchange_after_10_install_mise_tools.sh.tmpl` で `mise install --yes` を実行。
-6. fish とフォントの onchange スクリプトを必要に応じて実行。
+6. フォントと fish tools の onchange スクリプトを必要に応じて実行。
 
 ## 重要ファイル
 
@@ -41,14 +41,14 @@
 - `.chezmoiscripts/run_onchange_after_10_install_mise_tools.sh.tmpl`
   `mise install --yes` と `uv python install --default` を実行する。README に「シェル再起動で入る」とは書かない。
 
-- `.chezmoiscripts/run_onchange_after_00-install-fish-tools.fish.tmpl`
-  `fisher` の導入と `fisher update`。
+- `.chezmoiscripts/run_onchange_after_20_install_fish_tools.sh.tmpl`
+  mise で fish を導入した後、`fisher` の導入と `fisher update` を実行する。
 
 - `.chezmoiscripts/run_onchange_after_20_install_hack_nerd_font.sh`
   Hack Nerd Font をユーザー領域に導入して `fc-cache` を更新する。
 
 - `dot_config/mise/config.toml`
-  開発ツールとランタイムの宣言的な一覧。ツール追加時はまずここを見る。
+  fish を含む開発ツールとランタイムの宣言的な一覧。ツール追加時はまずここを見る。
 
 - `dot_config/private_fish/config.fish`
   シェル初期化。`mise activate fish` もここ。

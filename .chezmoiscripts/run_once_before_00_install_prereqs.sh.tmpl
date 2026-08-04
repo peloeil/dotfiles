@@ -6,7 +6,7 @@ set -eu
 if command -v apt-get >/dev/null; then
   echo "Debian/Ubuntu向けの前提条件をインストールします..."
   # sudo権限が必要な操作。sudo不要の環境では、これらのツールが事前にインストールされていることを前提とする。
-  if command -v sudo >/dev/null; then
+  if command -v sudo >/dev/null 2>&1 && sudo -v; then
     sudo apt-get update
     sudo apt-get install -y \
       alacritty \
@@ -50,14 +50,14 @@ if command -v apt-get >/dev/null; then
       xserver-xorg \
       xss-lock
   else
-    echo "sudoが見つかりません。前提条件がインストール済みであることを確認してください。"
+    echo "sudo権限がないため、前提パッケージ導入をスキップします。残りのセットアップは続行します。"
   fi
 fi
 
 # Arch Linux向け
 if command -v pacman >/dev/null; then
   echo "Arch Linux向けの前提条件を確認します..."
-  if command -v sudo >/dev/null; then
+  if command -v sudo >/dev/null 2>&1 && sudo -v; then
     missing_pkgs=""
     for pkg in \
       alacritty \
@@ -107,7 +107,7 @@ if command -v pacman >/dev/null; then
       echo "Arch Linuxの前提条件は既にインストール済みです。"
     fi
   else
-    echo "sudoが見つかりません。前提条件がインストール済みであることを確認してください。"
+    echo "sudo権限がないため、前提パッケージ導入をスキップします。残りのセットアップは続行します。"
   fi
 fi
 
@@ -116,7 +116,7 @@ fi
 # kernel config を変更することを忘れない
 if command -v emerge >/dev/null; then
   echo "Gentoo向けの前提条件を確認します..."
-  if command -v sudo >/dev/null; then
+  if command -v sudo >/dev/null 2>&1 && sudo -v; then
     missing_pkgs=""
     for pkg in \
       app-arch/libarchive \
@@ -166,7 +166,7 @@ if command -v emerge >/dev/null; then
       echo "Gentooの前提条件は既にインストール済みです。"
     fi
   else
-    echo "sudoが見つかりません。前提条件がインストール済みであることを確認してください。"
+    echo "sudo権限がないため、前提パッケージ導入をスキップします。残りのセットアップは続行します。"
   fi
 fi
 {{ end -}}

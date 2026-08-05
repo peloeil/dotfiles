@@ -47,6 +47,7 @@ repo = "ryota2357/ddu-column-icon_filename"
 [[plugins]]
 repo = "Shougo/ddu-ui-filer"
 name = "ddu-tool-filer"
+local = true
 depends = [
     "ddu.vim",
     "ddu-source-file",
@@ -63,6 +64,7 @@ installerFrozen = true
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
 name = "ddu-tool-ff_file"
+local = true
 depends = [
     "ddu.vim",
     "ddu-source-file_rec",
@@ -77,6 +79,7 @@ installerFrozen = true
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
 name = "ddu-tool-ff_grep"
+local = true
 depends = [
     "ddu.vim",
     "ddu-source-rg",
@@ -90,6 +93,7 @@ installerFrozen = true
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
 name = "ddu-tool-ff_buffer"
+local = true
 depends = [
     "ddu.vim",
     "ddu-source-buffer",
@@ -104,6 +108,7 @@ installerFrozen = true
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
 name = "ddu-tool-ff_help"
+local = true
 depends = [
     "ddu.vim",
     "ddu-source-help",
@@ -118,6 +123,7 @@ installerFrozen = true
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
 name = "ddu-tool-lsp_definition"
+local = true
 depends = [
     "ddu.vim",
     "ddu-source-lsp",
@@ -130,6 +136,7 @@ installerFrozen = true
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
 name = "ddu-tool-lsp_documentSymbol"
+local = true
 depends = [
     "ddu.vim",
     "ddu-source-lsp",

@@ -55,8 +55,21 @@ local function dpp_load()
     end
 
     local dpp = require("dpp")
+    local making_state = false
+
+    vim.api.nvim_create_autocmd("User", {
+        pattern = "Dpp:makeStatePost",
+        group = dpp_autocmds,
+        callback = function()
+            making_state = false
+        end,
+    })
 
     local function make_state(message)
+        if making_state then
+            return
+        end
+        making_state = true
         if message ~= nil then
             vim.notify(message)
         end
@@ -66,6 +79,18 @@ local function dpp_load()
     end
 
     vim.api.nvim_create_user_command("DppMakeState", function()
+        vim.api.nvim_create_autocmd("User", {
+            pattern = "Dpp:makeStatePost",
+            group = dpp_autocmds,
+            once = true,
+            callback = function()
+                if #vim.api.nvim_list_uis() == 0 then
+                    vim.cmd("qall!")
+                else
+                    vim.cmd("confirm qall")
+                end
+            end,
+        })
         make_state("dpp make_state() is run")
     end, { desc = "Regenerate dpp state" })
 

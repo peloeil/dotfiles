@@ -88,7 +88,7 @@ lua_source = '''
 '''
 
 [[plugins]]
-repo = "norcalli/nvim-colorizer.lua"
+repo = "catgoose/nvim-colorizer.lua"
 on_event = ["BufNewFile", "BufReadPost", "VimEnter"]
 on_if = "expand('%') !=# ''"
 lua_source = '''

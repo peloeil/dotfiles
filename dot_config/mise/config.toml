@@ -25,7 +25,7 @@ lsd = "latest"
 lua-language-server = "latest"
 neovim = "latest"
 node = "latest"
-"npm:@anthropic-ai/claude-code" = { version = "latest", npm_args = "--ignore-scripts=false --allow-scripts=@anthropic-ai/claude-code" }
+"npm:@anthropic-ai/claude-code" = { version = "latest", allow_builds = ["@anthropic-ai/claude-code"] }
 "npm:pyright" = "latest"
 "npm:@openai/codex" = "latest"
 "pipx:podman-compose" = "latest"

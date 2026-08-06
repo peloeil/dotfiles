@@ -10,10 +10,6 @@
     ]
   },
   "model": "claude-opus-5",
-  "enabledPlugins": {
-    "pyright-lsp@claude-plugins-official": true,
-    "clangd-lsp@claude-plugins-official": true
-  },
   "effortLevel": "high",
   "autoMemoryEnabled": false,
   "skipDangerousModePermissionPrompt": true,

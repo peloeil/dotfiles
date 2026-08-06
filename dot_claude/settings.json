@@ -5,7 +5,6 @@
       "Bash(git log*)",
       "Bash(git diff*)",
       "Bash(ls *)",
-      "Bash(find *)",
       "Bash(wc *)"
     ]
   },

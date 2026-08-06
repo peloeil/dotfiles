@@ -41,6 +41,9 @@
 - `.chezmoiscripts/run_onchange_after_10_install_mise_tools.sh.tmpl`
   `mise install --yes` と `uv python install --default` を実行する。README に「シェル再起動で入る」とは書かない。
 
+- `.chezmoiscripts/run_onchange_after_15_init_rtk.sh`
+  mise で rtk を導入した後、Codex と Claude Code のグローバル instructions を生成する。Claude Code の hook は chezmoi 管理下の `dot_claude/settings.json` で宣言するため、rtk 側は `--no-patch` で初期化する。
+
 - `.chezmoiscripts/run_onchange_after_20_install_fish_tools.sh.tmpl`
   mise で fish を導入した後、`fisher` の導入と `fisher update` を実行する。
 

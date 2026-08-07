@@ -1,55 +1,44 @@
 # dotfiles
 
-新しいマシンで普段の環境を復元するための `chezmoi` 管理リポジトリ。
-ツール管理は `mise`、主な対象は Linux デスクトップ。
+新しいマシンに普段の開発環境を復元するための dotfiles。
+主な対象は Linux デスクトップで、ツールとランタイムは `mise` で管理する。
 
-## セットアップ
+## 新しいマシンをセットアップする
 
-暗号化ファイル（`encrypted_` prefix）がある場合は、最初に age の秘密鍵を `~/.config/chezmoi/key.txt` に配置する（これがないと復号できない）。
+暗号化ファイルを復号するため、先に age の秘密鍵を配置する。
 
-```bash
+```sh
 mkdir -p ~/.config/chezmoi
-# USB やパスワードマネージャなどから key.txt を持ってくる
+# USB やパスワードマネージャーから秘密鍵をコピーする
+cp /path/to/key.txt ~/.config/chezmoi/key.txt
 chmod 600 ~/.config/chezmoi/key.txt
+```
 
+chezmoi をインストールし、このリポジトリを適用する。
+
+```sh
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply peloeil
 ```
 
-初回 `apply` では次を聞かれる。
+途中で Git の名前、メールアドレス、研究用メールアドレスを入力する。
+dotfiles、Linux の前提パッケージ、`mise` と開発ツール、フォント、fish tools、AI ツールの plugin が順にセットアップされる。
 
-- Git の `email`
-- 研究用 Git の `email`
-- Git の `name`
+sudo 権限がない場合は前提パッケージの導入だけがスキップされる。不足分は別途インストールする。
 
-これで次が適用される。
+## 普段使うコマンド
 
-- dotfiles
-- Git / shell などの設定
-- `mise` 本体
-- `~/.config/mise/config.toml` に書いたツール
-- Codex / Claude Code 用の Ponytail plugin
-- Linux では前提パッケージ導入スクリプト
+```sh
+# 管理対象を編集する（target path を指定）
+chezmoi edit ~/.config/fish/config.fish
 
-sudo 権限がない場合、Linux の前提パッケージ導入はスキップされ、残りのセットアップは続行される。不足するパッケージは管理者に依頼するなどして別途導入する。
-
-デスクトップ周りの設定は Linux 前提。内部実装のメモは `AGENTS.md` に置いてある。
-
-## 普段やること
-
-```bash
-# dotfiles を編集
-chezmoi edit <path>
-
-# 反映前に差分を見る
+# 差分を確認して反映する
 chezmoi diff
-
-# 反映する
 chezmoi apply
 
-# repo を更新して反映
+# リポジトリの更新を取得して反映する
 chezmoi update
 
-# 状態確認
+# 状態を確認する
 chezmoi doctor
 mise doctor
 ```

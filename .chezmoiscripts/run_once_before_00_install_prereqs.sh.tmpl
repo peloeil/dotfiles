@@ -55,10 +55,9 @@ fi
 
 # Arch Linux向け
 if command -v pacman >/dev/null; then
-  echo "Arch Linux向けの前提条件を確認します..."
+  echo "Arch Linux向けの前提条件をインストールします..."
   if command -v sudo >/dev/null 2>&1 && sudo -v; then
-    missing_pkgs=""
-    for pkg in \
+    sudo pacman -Syu --noconfirm --needed \
       alacritty \
       binutils \
       curl \
@@ -92,18 +91,7 @@ if command -v pacman >/dev/null; then
       xorg-xbacklight \
       xorg-xinit \
       xorg-xset \
-      xss-lock; do
-      if ! pacman -Qq "$pkg" >/dev/null 2>&1; then
-        missing_pkgs="$missing_pkgs $pkg"
-      fi
-    done
-
-    if [ -n "$missing_pkgs" ]; then
-      echo "不足パッケージ:${missing_pkgs# }"
-      sudo pacman -Syu --noconfirm --needed $missing_pkgs
-    else
-      echo "Arch Linuxの前提条件は既にインストール済みです。"
-    fi
+      xss-lock
   else
     echo "sudo権限がないため、前提パッケージ導入をスキップします。残りのセットアップは続行します。"
   fi
@@ -113,10 +101,9 @@ fi
 # fcitx-mozc は後回し
 # kernel config を変更することを忘れない
 if command -v emerge >/dev/null; then
-  echo "Gentoo向けの前提条件を確認します..."
+  echo "Gentoo向けの前提条件をインストールします..."
   if command -v sudo >/dev/null 2>&1 && sudo -v; then
-    missing_pkgs=""
-    for pkg in \
+    sudo emerge --noreplace \
       app-arch/libarchive \
       app-arch/unzip \
       app-i18n/fcitx \
@@ -150,18 +137,7 @@ if command -v emerge >/dev/null; then
       x11-misc/xclip \
       x11-misc/xss-lock \
       x11-terms/alacritty \
-      x11-wm/i3; do
-      if ! portageq has_version / "$pkg" >/dev/null 2>&1; then
-        missing_pkgs="$missing_pkgs $pkg"
-      fi
-    done
-
-    if [ -n "$missing_pkgs" ]; then
-      echo "不足パッケージ:${missing_pkgs# }"
-      sudo emerge --noreplace $missing_pkgs
-    else
-      echo "Gentooの前提条件は既にインストール済みです。"
-    fi
+      x11-wm/i3
   else
     echo "sudo権限がないため、前提パッケージ導入をスキップします。残りのセットアップは続行します。"
   fi

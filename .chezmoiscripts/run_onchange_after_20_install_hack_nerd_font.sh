@@ -29,16 +29,12 @@ else
   exit 1
 fi
 
-extract_zip() {
-  archive="$1"
-  destination="$2"
-
-  if command -v unzip >/dev/null 2>&1; then
-    unzip -q "$archive" -d "$destination"
-  elif command -v bsdtar >/dev/null 2>&1; then
-    bsdtar -xf "$archive" -C "$destination"
-  elif command -v python3 >/dev/null 2>&1; then
-    python3 - <<'PY'
+if command -v unzip >/dev/null 2>&1; then
+  unzip -q "$zip_path" -d "$tmp_dir"
+elif command -v bsdtar >/dev/null 2>&1; then
+  bsdtar -xf "$zip_path" -C "$tmp_dir"
+elif command -v python3 >/dev/null 2>&1; then
+  python3 - "$zip_path" "$tmp_dir" <<'PY'
 import sys
 import zipfile
 from pathlib import Path
@@ -48,13 +44,10 @@ dest.mkdir(parents=True, exist_ok=True)
 with zipfile.ZipFile(a) as zf:
     zf.extractall(dest)
 PY
-  else
-    echo "No tool available to extract $font_name archive." >&2
-    exit 1
-  fi
-}
-
-extract_zip "$zip_path" "$tmp_dir"
+else
+  echo "No tool available to extract $font_name archive." >&2
+  exit 1
+fi
 
 font_files_found=false
 for font_file in "$tmp_dir"/HackNerdFont*.ttf; do

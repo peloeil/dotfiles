@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eu
+
+mise_path="{{ .chezmoi.homeDir }}/.local/bin/mise"
+
+if "$mise_path" which codex >/dev/null 2>&1; then
+	"$mise_path" exec -- codex plugin marketplace add DietrichGebert/ponytail
+	"$mise_path" exec -- codex plugin add ponytail@ponytail
+else
+	echo "codex not installed; skipping Ponytail plugin install." >&2
+fi
+
+if "$mise_path" which claude >/dev/null 2>&1; then
+	"$mise_path" exec -- claude plugin marketplace add \
+		DietrichGebert/ponytail --scope user
+	"$mise_path" exec -- claude plugin install ponytail@ponytail --scope user
+else
+	echo "claude not installed; skipping Ponytail plugin install." >&2
+fi

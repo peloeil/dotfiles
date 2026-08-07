@@ -26,6 +26,7 @@
 4. dotfiles を展開。
 5. `run_onchange_after_10_install_mise_tools.sh.tmpl` で `mise install --yes` を実行。
 6. フォントと fish tools の onchange スクリプトを必要に応じて実行。
+7. Codex と Claude Code に Ponytail plugin を導入。
 
 ## 重要ファイル
 
@@ -49,6 +50,9 @@
 
 - `.chezmoiscripts/run_onchange_after_20_install_hack_nerd_font.sh`
   Hack Nerd Font をユーザー領域に導入して `fc-cache` を更新する。
+
+- `.chezmoiscripts/run_onchange_after_30_install_ai_plugins.sh.tmpl`
+  Codex と Claude Code に Ponytail marketplace を登録し、plugin をユーザースコープで導入する。plugin 本体と取得キャッシュは chezmoi で管理しない。
 
 - `dot_config/mise/config.toml`
   fish を含む開発ツールとランタイムの宣言的な一覧。ツール追加時はまずここを見る。

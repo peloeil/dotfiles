@@ -1,98 +1,69 @@
 # AGENTS
 
-このファイルは、このリポジトリを触る Codex / エージェント向けの内部メモ。
-人間向けの復元手順は `README.md` にだけ書く。README は短く保つ。
+このリポジトリを変更する Codex / エージェント向けの内部メモ。
+人間向けの復元手順は `README.md` に置き、ここには実装の地図と変更時の制約だけを書く。
 
-## 基本方針
+## 目的と対象
 
-- この repo の主目的は、新しいマシンで開発環境を復元すること。
-- ユーザー向け README には、セットアップ手順と普段使うコマンドだけ残す。
-- 依存関係の説明、実装の地図、内部挙動の説明は `AGENTS.md` に置く。
-- dotfiles の編集は、原則 `chezmoi edit <target-path>` で行う前提。
+- 目的は、新しいマシンに開発環境を再現すること。
+- 主対象は Linux デスクトップ。i3、polybar、picom、fcitx5、Xorg は Linux 専用。
+- `mise` の導入スクリプトだけは Linux / macOS に対応する。
+- dotfiles は原則として `chezmoi edit <target-path>` で編集する。
 
-## 想定環境
+## 初回セットアップ
 
-- 主対象は Linux デスクトップ。
-- `mise` の導入自体は Linux / macOS に対応している。
-- i3、polybar、picom、fcitx5、Xorg まわりは Linux 前提。
+`chezmoi init --apply peloeil` では、次の順に処理される。
 
-## 初回セットアップの流れ
+| 順 | ソース | 処理 |
+| --- | --- | --- |
+| 1 | `.chezmoi.toml.tmpl` | Git の `email`、`researchEmail`、`name` を取得し、age とエディタを設定する |
+| 2 | `.chezmoiscripts/run_once_before_00_install_prereqs.sh.tmpl` | Linux で `apt-get`、`pacman`、`emerge` のいずれかを使って前提パッケージを入れる |
+| 3 | `.chezmoiscripts/run_once_before_01-install-mise.sh.tmpl` | 未導入なら `mise` を入れる |
+| 4 | dotfiles | target path へ展開する |
+| 5 | `.chezmoiscripts/run_onchange_after_10_install_mise_tools.sh.tmpl` | `mise install --yes` と `uv python install --default` を実行する |
+| 6 | `.chezmoiscripts/run_onchange_after_15_init_rtk.sh` | Codex / Claude Code 用のグローバル instructions を生成する |
+| 7 | `.chezmoiscripts/run_onchange_after_20_*` | fisher と fish plugins、Hack Nerd Font を入れる |
+| 8 | `.chezmoiscripts/run_onchange_after_30_install_ai_plugins.sh.tmpl` | Codex / Claude Code に Ponytail plugin を入れる |
 
-`chezmoi init --apply peloeil` で次が走る。
+前提パッケージの処理は sudo が使えなくてもセットアップを止めない。ただし `run_once` なので、後から sudo が使えるようになっても通常の `chezmoi apply` では再実行されない。
 
-1. `.chezmoi.toml.tmpl` で `email` `researchEmail` `name` を prompt。
-2. `run_once_before_00_install_prereqs.sh.tmpl` で Linux の前提パッケージを導入。
-3. `run_once_before_01-install-mise.sh.tmpl` で `mise` を導入。
-4. dotfiles を展開。
-5. `run_onchange_after_10_install_mise_tools.sh.tmpl` で `mise install --yes` を実行。
-6. フォントと fish tools の onchange スクリプトを必要に応じて実行。
-7. Codex と Claude Code に Ponytail plugin を導入。
+rtk の Claude Code hook は `dot_claude/settings.json` で管理する。したがって rtk の初期化では `--no-patch` を使う。Ponytail の plugin 本体と取得キャッシュは管理対象にしない。
 
-## 重要ファイル
+## 設定の所在
 
-- `.chezmoi.toml.tmpl`
-  `email` `researchEmail` `name` の prompt、age 暗号化の設定、`chezmoi edit` の既定エディタ。
+| ソース | 内容 |
+| --- | --- |
+| `dot_config/mise/config.toml` | 開発ツールとランタイム。ツールの追加・削除はまずここで行う |
+| `dot_config/private_fish/config.fish` | shell 初期化、環境変数、`mise activate fish` |
+| `dot_config/private_fish/fish_plugins` | fisher が同期する plugin 一覧 |
+| `dot_config/git/private_config.tmpl` | Git のユーザー情報と共通設定 |
+| `dot_config/clangd/config.yaml` | clang-tidy と C / C++ header fallback |
+| `dot_config/nvim/` | Neovim 設定 |
+| `dot_config/i3/config.tmpl` | i3 の起動処理、キー割り当て、常駐アプリ |
+| `dot_xprofile.tmpl` | fcitx、picom、touchpad の設定 |
+| `dot_claude/settings.json` | Claude Code の権限、plugin、rtk hook |
 
-- `.chezmoiscripts/run_once_before_00_install_prereqs.sh.tmpl`
-  Linux の前提パッケージ導入。`apt-get` `pacman` `emerge` を検出して分岐する。sudo 権限がなければ導入だけをスキップし、セットアップを続行する。
+## シークレット
 
-- `.chezmoiscripts/run_once_before_01-install-mise.sh.tmpl`
-  `mise` 未導入時にインストールする。
+- シークレットは `chezmoi add --encrypt <path>` で追加する。
+- ソース名は `encrypted_` prefix、拡張子は `.age`。
+- age identity は `~/.config/chezmoi/key.txt`。秘密鍵は絶対にリポジトリへ入れない。
+- age recipient は `.chezmoi.toml.tmpl` に置いてよい。
 
-- `.chezmoiscripts/run_onchange_after_10_install_mise_tools.sh.tmpl`
-  `mise install --yes` と `uv python install --default` を実行する。README に「シェル再起動で入る」とは書かない。
+## 変更時のルール
 
-- `.chezmoiscripts/run_onchange_after_15_init_rtk.sh`
-  mise で rtk を導入した後、Codex と Claude Code のグローバル instructions を生成する。Claude Code の hook は chezmoi 管理下の `dot_claude/settings.json` で宣言するため、rtk 側は `--no-patch` で初期化する。
+- リポジトリ内の名前は chezmoi の source path。実際の target path と一致しない場合がある。
+- `README.md` は `.chezmoiignore` で配布対象外。セットアップ手順と普段使うコマンドだけを載せる。
+- README に未実装の自動化や「シェル再起動でツールが入る」といった説明を書かない。
+- スクリプトは再実行時にも安全になるよう保つ。`run_once` と `run_onchange` の変更は実行タイミングも確認する。
 
-- `.chezmoiscripts/run_onchange_after_20_install_fish_tools.sh.tmpl`
-  mise で fish を導入した後、`fisher` の導入と `fisher update` を実行する。
+## 確認
 
-- `.chezmoiscripts/run_onchange_after_20_install_hack_nerd_font.sh`
-  Hack Nerd Font をユーザー領域に導入して `fc-cache` を更新する。
+```sh
+chezmoi diff
+chezmoi apply --dry-run
+chezmoi doctor
+mise doctor  # mise を変更した場合
+```
 
-- `.chezmoiscripts/run_onchange_after_30_install_ai_plugins.sh.tmpl`
-  Codex と Claude Code に Ponytail marketplace を登録し、plugin をユーザースコープで導入する。plugin 本体と取得キャッシュは chezmoi で管理しない。
-
-- `dot_config/mise/config.toml`
-  fish を含む開発ツールとランタイムの宣言的な一覧。ツール追加時はまずここを見る。
-
-- `dot_config/private_fish/config.fish`
-  シェル初期化。`mise activate fish` もここ。
-
-- `dot_config/git/private_config.tmpl`
-  Git のユーザー情報と共通設定。
-
-- `dot_config/clangd/config.yaml`
-  `clangd` のグローバル設定。clang-tidy の既定チェック群と、`.h` を C ヘッダ、`.hpp` を C++ ヘッダとして解釈する fallback をここで定義する。
-
-- `dot_config/nvim/`
-  Neovim 設定本体。
-
-- `dot_config/i3/config.tmpl`
-  i3 の起動コマンド、キー割り当て、常駐アプリ。
-
-- `dot_xprofile.tmpl`
-  fcitx / picom / touchpad 設定。
-
-## シークレットの扱い
-
-- シークレット（SSH 秘密鍵など）は age で暗号化して管理する。ソース上は `encrypted_` prefix + `.age` 拡張子。
-- age の秘密鍵は `~/.config/chezmoi/key.txt`。**リポジトリには絶対に入れない。** 新規マシンでは `chezmoi init --apply` の前に手動で配置する必要がある。
-- 公開鍵（recipient）は `.chezmoi.toml.tmpl` にハードコードしてよい。
-- シークレットの追加は `chezmoi add --encrypt <path>` で行う。
-
-## 実装上の注意
-
-- README は `.chezmoiignore` で配布対象から外れている。
-- repo 直下のパスは `chezmoi` ソース名であり、実ファイル名とは一致しないことがある。必要なら target path と source path を対応づけて説明する。
-- セットアップ説明では、実装されていない自動化を README に書かない。
-
-## 変更時の確認
-
-- `chezmoi diff`
-- `chezmoi apply --dry-run`
-- `chezmoi doctor`
-- 必要なら `mise doctor`
-
-README を更新するときは、「久しぶりの新規マシンセットアップ時に README だけで困らないか」を基準にする。
+README を変更するときは、久しぶりの新規マシンでも README だけで復元できるかを基準にする。

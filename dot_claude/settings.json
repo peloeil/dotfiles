@@ -9,6 +9,11 @@
     ]
   },
   "model": "claude-opus-5",
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
   "hooks": {
     "PreToolUse": [
       {

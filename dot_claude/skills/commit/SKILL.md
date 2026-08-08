@@ -1,84 +1,93 @@
 ---
 name: commit
-description: Split working-tree changes into Conventional Commits — each one simple and small, each message body stating the problem and why this change. Also covers which changes to leave out, how to match a repository's existing style, and how to fix a commit that came out wrong. Use when asked to commit changes, split changes into commits, write or fix commit messages, or match a repository's commit style.
+description: Inspect working-tree changes, split them into small reversible Conventional Commits, and write messages whose bodies explain the problem and reason for the change. Use when asked to commit changes, split changes into commits, write or fix commit messages, or follow a repository's explicit commit policy.
 ---
 
 # commit
 
-**コミットする前に `git log -40` を読む。** type と scope の語彙、subject の語形を、そこに合わせる。
+依頼された変更だけを、安全に戻せる単位でコミットする。コミットを頼まれていないなら実行しない。
 
-## 分ける
+## 1. 全差分と明文化された規約を確認する
 
-- **1 コミット = 戻しやすい 1 単位。**
-- **割りすぎない。** 目的がひとつなら、実装・テスト・仕様の調整は 1 コミット。
-  ひとつの文書更新を複数に割らない。実装と恒久文書のように、**目的が違うものだけ**分ける。
-- **同じ論理変更に属する差分は、自分が書いたものでなくても含める。**
-- **範囲の外に出ない。** 作業用のタスク文書 (`docs/tasks/**` の類) と秘密情報は入れない。
-  生成物は毎回判断する。生成スクリプトを消して lockfile を履歴に残す、のように
-  **生成結果そのものを残したい場合がある。**
+最初に次を確認する。
 
-## 書く
+```sh
+git status --short -uall
+git diff
+git diff --cached
+```
 
-- **subject は変更内容の要約。本文には「何が問題で、なぜこの変更か」を書く。**
-  **本文はすべてのコミットに書く。`feat` も `docs` も。**
-  履歴のコミットに本文が無くても書く。履歴に合わせるのは type と scope の語彙、subject の語形まで。
-- **本文が diff の言い換えなら、それは本文ではない。**
-  判定は、**その本文だけを読んで「なぜ要ったか」が分かるか**。
-  変更前に何が起きていたか (壊れ方、再現条件、危険、読みにくさ) を具体的に書く。
-- **Why の根拠が無いなら書かない。** 根拠は、今の作業で知っていること、コード、`git log`、
-  設計文書や issue。どこにも無ければ、diff から読める「何が問題だったか」で止める。**推測で埋めない。**
-- **規約適合より、後から見返したときの分かりやすさ。** scope は「これを見て対象が分かるか」で選ぶ。
-  複数箇所に跨るなら `fix(bash,fish)` でよい。履歴の語彙に、その変更を正しく表す type が
-  無いなら標準の type を使う。**変更の性質を偽ってまで履歴に寄せない。**
+- 規約は、依頼者の指示、`AGENTS.md`、`CONTRIBUTING.md`、commitlint などの設定を優先する。
+- 明文化された規約がなければ、この skill の規則をそのまま使う。履歴から規約を推測しない。
+- 履歴は、明文化された規約と矛盾しない既存の scope 名を探すときだけ必要な範囲で見る。
+  過去の誤った type、本文の欠落、曖昧な subject、ばらついた書式を引き継がない。
+- 未追跡ファイルは `git diff` に出ない。必要なら
+  `git diff --no-index -- /dev/null <path>` で中身まで読む。
+- 作業用のタスク文書 (`docs/tasks/**` の類)、秘密情報、依頼範囲外の変更は除外する。
+- 生成物は一律に除外しない。リポジトリに残すべき成果物かを差分ごとに判断する。
+- 既に stage された変更もユーザーの作業として扱い、勝手に外さない。今回のコミットに含めない
+  stage 済み変更があるなら、対象がファイル単位で分かれている場合だけ `git commit --only -- <paths>` を使う。
+  同じファイル内で混在しているなら、勝手に index を組み替えず依頼者に確認する。
 
-## やらない
+## 2. コミットを分ける
 
-- **規約を発明しない。** ブランチを切る・PR にする・push する・squash する —
-  **指示があるか、そのリポジトリの履歴と設定に根拠があるときだけ。**
-  「一般にそうすべき」で足さない。**main へ直接コミットしてよい。**
-- **コミットしろと言われたときだけコミットする。**
-- 行長、末尾ピリオド、scope の必須性、メッセージの言語、trailer、署名、merge 方針 —
-  **決まりは無い。** 履歴に合わせ、履歴にも無ければ聞く。
+- **1 コミット = 戻しやすい 1 目的。**
+- 目的が同じなら、実装・テスト・仕様書の更新をまとめる。ひとつの文書更新も分割しない。
+- 別々に戻す可能性がある目的だけを分ける。
+- 同じ目的の差分は、誰が書いたかではなく内容でまとめる。
+- hunk を安全に分けられない変更は、無理に別コミットへ切り離さない。
 
-## 黙って壊れるところ
+## 3. メッセージを書く
 
-- **`git status --short` は未追跡ディレクトリを `?? docs/` と畳む。** `git diff HEAD` にも
-  未追跡ファイルの中身は出ない。**`-uall` を付ける。** 付けないと、上で「入れるな」と書いた
-  タスク文書と `.env` が見えないまま通る。中身は `git diff --no-index -- /dev/null <path>`。
-- **`git add -A` と `git add .` を使わない。** 範囲外を巻き込む。stage は明示的に。
-- **`git add -p` は stdin が `/dev/null` だと、終了コード 0 のまま何も stage しない。**
-  応答を流せば非対話でも動く (`printf 'n\ny\n' | ...`)。
-  1 つの hunk に別々の関心事が入っているなら `s` で割る。割れないなら `e`。
-  それも無理なら**その 2 つは 1 コミットにする**。
-- **`-m` は本文の改行を保てない。** 本文があるなら:
+Conventional Commits の subject に変更内容、本文に「変更前の問題」と「この変更が必要な理由」を書く。
+本文は `feat` や `docs` を含むすべてのコミットに付ける。
 
-  ```sh
-  git commit -F - <<'MSG'
-  <subject>
+- 明文化された規約がなければ、subject と本文は英語、scope は対象が明確なときだけ、subject は
+  命令形・小文字始まり・末尾ピリオドなしを既定とする。
+- 本文だけを読んで、なぜ変更が必要だったか分かるようにする。
+- diff の言い換えは書かない。壊れ方、再現条件、危険、読みにくさなど、変更前の状態を具体的に書く。
+- 根拠は作業中に確認した事実、コード、設計文書、issue、過去の変更理由に限る。履歴は Why の
+  根拠には使ってよいが、メッセージの書式や品質は真似しない。推測で Why を補わない。
+- scope は対象を特定できるときだけ付ける。複数箇所なら `fix(bash,fish)` のように併記してよい。
+- 履歴に適切な type がなくても、変更の性質を偽らない。
 
-  <本文>
-  MSG
-  ```
-- **`git commit --amend` はその時点で stage されている全部を取り込む。**
-  無関係な変更が直前のコミットに吸い込まれ、作業ツリーの変更一覧から消える。
-  **amend の前に `git diff --cached` を見る。**
-- **`git stash` / `git reset --hard` / `git checkout -- <path>` / `git restore <path>` を使わない。**
-  変更が消える。
+## 4. stage してコミットする
 
-## 直す
+- `git add -A` と `git add .` は使わず、対象パスを明示する。
+- ファイル内の一部だけなら `git add -p` を使う。hunk は `s`、必要なら `e` で分ける。
+  非対話環境では応答を stdin に渡す。stdin が `/dev/null` だと何も stage せず成功することがある。
+- コミット前に `git diff --cached` で、内容・秘密情報・分割単位を再確認する。
+- 実行可能な既存のチェックを走らせる。
+- 本文の改行と shell の展開を避けるため、メッセージは `-F` で渡す。
 
-`git log --oneline @{u}..HEAD` に出るものが未 push。upstream が無ければ (`fatal: no upstream`)
-どこにも出していない。**push 済みなら履歴を書き換えず、追加のコミットで直す。**
+```sh
+git commit -F - <<'MSG'
+<type>(<scope>): <subject>
 
-| 直すもの | 未 push なら |
+<変更前の問題と、この変更が必要な理由>
+MSG
+```
+
+各コミット後に `git show --stat --oneline HEAD` と `git status --short -uall` を確認する。
+
+## 5. 間違えたコミットを直す
+
+共有済みのコミットは書き換えず、追加コミットで直す。`git log --oneline @{u}..HEAD` は upstream に
+含まれないコミットを確認する手掛かりにすぎない。upstream がなくても未 push とは限らないため、
+共有されていないと確認できない履歴は書き換えない。
+
+未共有と確認できた場合だけ、次を使う。
+
+| 直すもの | 操作 |
 | --- | --- |
 | 直前のメッセージ | `git commit --amend` |
-| 直前の入れ忘れ | `git add -- <path>` → `git commit --amend --no-edit` |
-| 直前への混入 | `git restore --source=HEAD^ --staged -- <path>` → `git commit --amend --no-edit` |
-| 過去のメッセージ、分割のやり直し | `git rebase -i` (対話的なので自分でやる) |
+| 直前の入れ忘れ | `git add -- <path>` → `git diff --cached` → `git commit --amend --no-edit` |
+| 直前への混入 | `git restore --source=HEAD^ --staged -- <path>` → `git diff --cached` → `git commit --amend --no-edit` |
+| 過去のメッセージや分割 | `git rebase -i` |
 
-**コミット後の `git restore --staged` は何もしない** (index は既に HEAD と同じ)。`--source=HEAD^` が要る。
+`git commit --amend` は stage 済みの変更をすべて取り込む。必ず直前に `git diff --cached` を見る。
+複数コミットを分け直すなら、未共有を確認してから `git reset <分岐点>` で作業ツリーへ戻す。
+`--soft` は使わない。
 
-やり直しが 2 コミット以上に及ぶなら `git reset <分岐点>` で戻してやり直す。
-**`--soft` を付けると全変更が stage 済みで戻る**ので、分け直すなら付けない。
-**`--hard` は使わない。**
+`git stash`、`git reset --hard`、`git checkout -- <path>`、`git restore <path>` は使わない。
+ユーザーの変更を失う可能性がある。

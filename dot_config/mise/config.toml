@@ -9,6 +9,7 @@ age = "latest"
 bat = "latest"
 btop = "latest"
 chezmoi = "latest"
+rust = { version = "stable", profile = "default" }
 # The prebuilt static binary avoids a Rust toolchain and host dev packages.
 "http:virtiofsd" = { version = "main", url = "https://gitlab.com/virtio-fs/virtiofsd/-/jobs/artifacts/main/download?job=publish", format = "zip", bin_path = "target/x86_64-unknown-linux-musl/release" }
 delta = "latest"

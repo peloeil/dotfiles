@@ -32,6 +32,7 @@
   },
   "extraKnownMarketplaces": {
     "ponytail": {
+      "autoUpdate": true,
       "source": {
         "source": "github",
         "repo": "DietrichGebert/ponytail"

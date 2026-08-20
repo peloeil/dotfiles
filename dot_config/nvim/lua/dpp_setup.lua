@@ -121,4 +121,5 @@ local function dpp_load()
 end
 
 dpp_init()
+vim.fn["denops#server#connect_or_start"]()
 dpp_load()

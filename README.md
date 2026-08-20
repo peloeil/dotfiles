@@ -21,7 +21,7 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply peloeil
 ```
 
 途中で Git の名前、メールアドレス、研究用メールアドレスを入力する。
-dotfiles、Linux の前提パッケージ、`mise` と開発ツール、フォント、fish tools、AI ツールの plugin が順にセットアップされる。
+dotfiles、Linux の前提パッケージ、`mise` と開発ツール、fish tools、フォント、Neovim の plugin、AI ツールの plugin が順にセットアップされる。
 
 sudo 権限がない場合は前提パッケージの導入だけがスキップされる。不足分は別途インストールする。
 

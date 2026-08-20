@@ -23,7 +23,8 @@
 | 5 | `.chezmoiscripts/run_onchange_after_10_install_mise_tools.sh.tmpl` | `mise install --yes` と `uv python install --default` を実行する |
 | 6 | `.chezmoiscripts/run_onchange_after_15_init_rtk.sh` | Codex / Claude Code 用のグローバル instructions を生成する |
 | 7 | `.chezmoiscripts/run_onchange_after_20_*` | fisher と fish plugins、Hack Nerd Font を入れる |
-| 8 | `.chezmoiscripts/run_onchange_after_30_install_ai_plugins.sh.tmpl` | Codex / Claude Code に Ponytail plugin を入れる |
+| 8 | `.chezmoiscripts/run_onchange_after_25_install_nvim_plugins.sh.tmpl` | headless Neovim で dpp の plugin installer を実行する |
+| 9 | `.chezmoiscripts/run_onchange_after_30_install_ai_plugins.sh.tmpl` | Codex / Claude Code に Ponytail plugin を入れる |
 
 前提パッケージの処理は sudo が使えなくてもセットアップを止めない。ただし `run_once` なので、後から sudo が使えるようになっても通常の `chezmoi apply` では再実行されない。
 

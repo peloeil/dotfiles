@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+
+# Re-run this script whenever a managed Neovim plugin list changes.
+# ddc_toml_sha256={{ include "dot_config/nvim/toml/ddc.toml" | sha256sum }}
+# ddu_toml_sha256={{ include "dot_config/nvim/toml/ddu.toml" | sha256sum }}
+# dpp_toml_sha256={{ include "dot_config/nvim/toml/dpp.toml" | sha256sum }}
+# lazy_toml_sha256={{ include "dot_config/nvim/toml/lazy.toml" | sha256sum }}
+# no_lazy_toml_sha256={{ include "dot_config/nvim/toml/no_lazy.toml" | sha256sum }}
+
+mise_path="{{ .chezmoi.homeDir }}/.local/bin/mise"
+
+"$mise_path" exec -- nvim --headless \
+    --cmd 'autocmd User Dpp:makeStatePost ++once call timer_start(0, {-> dpp#async_ext_action("installer", "install")})' \
+    --cmd 'autocmd User DenopsReady ++once execute "if !empty(dpp#get(\"denops.vim\")) && empty(dpp#check_files()) | call dpp#async_ext_action(\"installer\", \"install\") | endif"' \
+    --cmd 'autocmd User Dpp:ext:installer:updateDone ++once qall!'

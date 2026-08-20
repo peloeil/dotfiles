@@ -37,7 +37,15 @@ git diff --cached
 - 同じ目的の差分は、誰が書いたかではなく内容でまとめる。
 - hunk を安全に分けられない変更は、無理に別コミットへ切り離さない。
 
-## 3. メッセージを書く
+## 3. 作業過程から切り離してメッセージを作る
+
+コミットメッセージの初稿は、可能なら新しい Codex agent に委譲する。親セッションの会話を渡さず、`rtk codex exec --ephemeral -C <repo> --sandbox read-only` で起動する。
+
+agent には現在の `git status --short -uall`、`git diff`、`git diff --cached`、未追跡ファイルの内容、適用される規約だけを読ませ、差分に基づく Conventional Commit message を 1 案出させる。編集、stage、commit はさせない。ユーザーの依頼文、作業中の説明、親 agent の推測、候補メッセージは渡さない。親 agent は候補を実差分に照合してから採用する。
+
+`codex exec` が使えない場合は、同じ制約で raw diff だけを再読して自分で初稿を作る。
+
+## 4. メッセージを書く
 
 Conventional Commits の subject に変更内容、本文に「変更前の問題」と「この変更が必要な理由」を書く。
 本文は `feat` や `docs` を含むすべてのコミットに付ける。
@@ -51,7 +59,7 @@ Conventional Commits の subject に変更内容、本文に「変更前の問�
 - scope は対象を特定できるときだけ付ける。複数箇所なら `fix(bash,fish)` のように併記してよい。
 - 履歴に適切な type がなくても、変更の性質を偽らない。
 
-## 4. stage してコミットする
+## 5. stage してコミットする
 
 - `git add -A` と `git add .` は使わず、対象パスを明示する。
 - ファイル内の一部だけなら `git add -p` を使う。hunk は `s`、必要なら `e` で分ける。
@@ -70,7 +78,7 @@ MSG
 
 各コミット後に `git show --stat --oneline HEAD` と `git status --short -uall` を確認する。
 
-## 5. 間違えたコミットを直す
+## 6. 間違えたコミットを直す
 
 共有済みのコミットは書き換えず、追加コミットで直す。`git log --oneline @{u}..HEAD` は upstream に
 含まれないコミットを確認する手掛かりにすぎない。upstream がなくても未 push とは限らないため、

@@ -17,85 +17,41 @@ git diff
 git diff --cached
 ```
 
-- 規約は、依頼者の指示、`AGENTS.md`、`CONTRIBUTING.md`、commitlint などの設定を優先する。
-- 明文化された規約がなければ、この skill の規則をそのまま使う。履歴から規約を推測しない。
-- 履歴は、明文化された規約と矛盾しない既存の scope 名を探すときだけ必要な範囲で見る。
-  過去の誤った type、本文の欠落、曖昧な subject、ばらついた書式を引き継がない。
-- 未追跡ファイルは `git diff` に出ない。必要なら
-  `git diff --no-index -- /dev/null <path>` で中身まで読む。
-- 作業用のタスク文書 (`docs/tasks/**` の類)、秘密情報、依頼範囲外の変更は除外する。
-- 生成物は一律に除外しない。リポジトリに残すべき成果物かを差分ごとに判断する。
-- 既に stage された変更もユーザーの作業として扱い、勝手に外さない。今回のコミットに含めない
-  stage 済み変更があるなら、対象がファイル単位で分かれている場合だけ `git commit --only -- <paths>` を使う。
-  同じファイル内で混在しているなら、勝手に index を組み替えず依頼者に確認する。
+- 依頼者・`AGENTS.md`・`CONTRIBUTING.md`・commitlint などの規約を優先する。規約がなければこの skill を使い、履歴は scope 名の確認だけに使う。
+- `git diff` に出ない未追跡ファイルも確認する。タスク文書・秘密情報・依頼範囲外は除外し、生成物は成果物か判断する。
+- staged 変更を外さない。同じファイル内で今回の対象と混在していれば確認し、分離できるファイルだけ `git commit --only -- <paths>` を使う。
 
 ## 2. コミットを分ける
 
-- **1 コミット = 戻しやすい 1 目的。**
-- 目的が同じなら、実装・テスト・仕様書の更新をまとめる。ひとつの文書更新も分割しない。
-- 別々に戻す可能性がある目的だけを分ける。
-- 同じ目的の差分は、誰が書いたかではなく内容でまとめる。
-- hunk を安全に分けられない変更は、無理に別コミットへ切り離さない。
+- 1 コミット = 1つの独立して戻せる目的。同じ目的の実装・テスト・文書はまとめる。
+- 独立して戻せる変更だけを分け、安全に分割できない hunk は無理に切り離さない。
 
 ## 3. 作業過程から切り離してメッセージを作る
 
-コミットメッセージの初稿は、可能なら新しい Codex agent に委譲する。親セッションの会話を渡さず、`rtk codex exec --ephemeral -C <repo> --sandbox read-only` で起動する。
+コミットメッセージの初稿は、可能なら新しい Codex agent に委譲する。親セッションの会話を渡さず、`rtk codex exec --model gpt-5.6-luna --config 'model_reasoning_effort="max"' --ephemeral -C <repo> --sandbox read-only` で起動する。
 
-agent には現在の `git status --short -uall`、`git diff`、`git diff --cached`、未追跡ファイルの内容、適用される規約だけを読ませ、差分に基づく Conventional Commit message を 1 案出させる。編集、stage、commit はさせない。ユーザーの依頼文、作業中の説明、親 agent の推測、候補メッセージは渡さない。親 agent は候補を実差分に照合してから採用する。
+agent には現在の `git status --short -uall`、`git diff`、`git diff --cached`、未追跡ファイルの内容、適用される規約だけを読ませ、差分に基づく Conventional Commit message を 1 案出させる。編集、stage、commit、commit skill の再起動、さらなる agent の起動はさせない。ユーザーの依頼文、作業中の説明、親 agent の推測、候補メッセージは渡さない。親 agent は候補を実差分に照合してから採用する。
 
-`codex exec` が使えない場合は、同じ制約で raw diff だけを再読して自分で初稿を作る。
+read-only sandbox の起動失敗（`bwrap` や loopback など）の場合に限り、同じ ephemeral agent を `rtk codex --ask-for-approval never exec --model gpt-5.6-luna --config 'model_reasoning_effort="max"' --ephemeral -C <repo> --dangerously-bypass-approvals-and-sandbox` で再試行できる。この経路はローカル差分の確認だけに使い、agent の prompt に編集・stage・commit・外部アクセスを禁止すると明記する。sandbox 以外の失敗、またはこの再試行が失敗した場合は raw diff だけを再読して自分で初稿を作る。
 
 ## 4. メッセージを書く
 
-Conventional Commits の subject に変更内容、本文に「変更前の問題」と「この変更が必要な理由」を書く。
-本文は `feat` や `docs` を含むすべてのコミットに付ける。
+Conventional Commits の subject に変更内容、body に変更前の問題と必要性を書く。全 type に body を付ける。
 
-- 明文化された規約がなければ、subject と本文は英語、scope は対象が明確なときだけ、subject は
-  命令形・小文字始まり・末尾ピリオドなしを既定とする。
-- 本文だけを読んで、なぜ変更が必要だったか分かるようにする。
-- diff の言い換えは書かない。壊れ方、再現条件、危険、読みにくさなど、変更前の状態を具体的に書く。
-- 根拠は作業中に確認した事実、コード、設計文書、issue、過去の変更理由に限る。履歴は Why の
-  根拠には使ってよいが、メッセージの書式や品質は真似しない。推測で Why を補わない。
-- scope は対象を特定できるときだけ付ける。複数箇所なら `fix(bash,fish)` のように併記してよい。
-- 履歴に適切な type がなくても、変更の性質を偽らない。
+- 規約がなければ英語・命令形・小文字始まり・末尾ピリオドなし。scope は対象が明確な場合だけ付ける。
+- 根拠は差分・確認した規約・事実に限り、diff の言い換えと推測を避ける。
 
 ## 5. stage してコミットする
 
-- `git add -A` と `git add .` は使わず、対象パスを明示する。
-- ファイル内の一部だけなら `git add -p` を使う。hunk は `s`、必要なら `e` で分ける。
-  非対話環境では応答を stdin に渡す。stdin が `/dev/null` だと何も stage せず成功することがある。
-- コミット前に `git diff --cached` で、内容・秘密情報・分割単位を再確認する。
-- 実行可能な既存のチェックを走らせる。
-- 本文の改行と shell の展開を避けるため、メッセージは `-F` で渡す。
-
-```sh
-git commit -F - <<'MSG'
-<type>(<scope>): <subject>
-
-<変更前の問題と、この変更が必要な理由>
-MSG
-```
+- `git add -A`/`.` は使わず対象パスを明示する。部分変更は `git add -p` で分ける。
+- stage 後に `git diff --cached` で内容・秘密情報・分割単位を確認し、関連する既存チェックを走らせる。
+- メッセージは `git commit -F -` に渡す。
 
 各コミット後に `git show --stat --oneline HEAD` と `git status --short -uall` を確認する。
 
 ## 6. 間違えたコミットを直す
 
-共有済みのコミットは書き換えず、追加コミットで直す。`git log --oneline @{u}..HEAD` は upstream に
-含まれないコミットを確認する手掛かりにすぎない。upstream がなくても未 push とは限らないため、
-共有されていないと確認できない履歴は書き換えない。
+共有済みのコミットは書き換えず追加コミットで直す。未共有と確認できた場合だけ amend/rebase を使う。
 
-未共有と確認できた場合だけ、次を使う。
-
-| 直すもの | 操作 |
-| --- | --- |
-| 直前のメッセージ | `git commit --amend` |
-| 直前の入れ忘れ | `git add -- <path>` → `git diff --cached` → `git commit --amend --no-edit` |
-| 直前への混入 | `git restore --source=HEAD^ --staged -- <path>` → `git diff --cached` → `git commit --amend --no-edit` |
-| 過去のメッセージや分割 | `git rebase -i` |
-
-`git commit --amend` は stage 済みの変更をすべて取り込む。必ず直前に `git diff --cached` を見る。
-複数コミットを分け直すなら、未共有を確認してから `git reset <分岐点>` で作業ツリーへ戻す。
-`--soft` は使わない。
-
-`git stash`、`git reset --hard`、`git checkout -- <path>`、`git restore <path>` は使わない。
-ユーザーの変更を失う可能性がある。
+- 直前のメッセージは `git commit --amend`、入れ忘れは対象を stage して cached diff を確認後に amend する。
+- amend 前は必ず `git diff --cached` を確認する。`git stash`、`git reset --hard`、`git checkout --`、`git restore` は使わない。

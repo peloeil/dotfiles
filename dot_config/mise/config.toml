@@ -1,4 +1,5 @@
 [settings]
+auto_update = true
 experimental = true
 jobs = 4
 lockfile = true

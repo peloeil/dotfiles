@@ -98,7 +98,6 @@ if command -v pacman >/dev/null; then
 fi
 
 # Gentoo向け
-# fcitx-mozc は後回し
 # kernel config を変更することを忘れない
 if command -v emerge >/dev/null; then
   echo "Gentoo向けの前提条件をインストールします..."
@@ -110,7 +109,7 @@ if command -v emerge >/dev/null; then
       app-i18n/fcitx-configtool \
       app-i18n/fcitx-gtk \
       app-i18n/fcitx-qt \
-      app-i18n/mozc \
+      'app-i18n/mozc[fcitx5]' \
       dev-libs/elfutils \
       sys-devel/binutils \
       dev-vcs/git \

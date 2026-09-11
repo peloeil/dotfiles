@@ -6,6 +6,8 @@ Codex CLI は remote control に必要な standalone installer で管理する�
 
 ## 新しいマシンをセットアップする
 
+Gentoo では、事前に `app-i18n/mozc` の `fcitx5` USE フラグを有効にする。
+
 暗号化ファイルを復号するため、先に age の秘密鍵を配置する。
 
 ```sh

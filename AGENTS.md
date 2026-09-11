@@ -16,7 +16,7 @@
 
 | 順 | ソース | 処理 |
 | --- | --- | --- |
-| 1 | `.chezmoi.toml.tmpl` | Git の `email`、`researchEmail`、`name` を取得し、age とエディタを設定する |
+| 1 | `.chezmoi.toml.tmpl` | Git の `email`、`researchEmail`、`name` と `researchDir` を取得し、age とエディタを設定する |
 | 2 | `.chezmoiscripts/run_once_before_00_install_prereqs.sh.tmpl` | Linux で `apt-get`、`pacman`、`emerge` のいずれかを使って前提パッケージを入れる |
 | 3 | `.chezmoiscripts/run_once_before_01-install-mise.sh.tmpl` | 未導入なら `mise` を入れる |
 | 4 | dotfiles | target path へ展開する |

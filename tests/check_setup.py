@@ -73,6 +73,36 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         i3_config.write_text(i3)
         run(i3_binary, "-C", "-c", str(i3_config))
 
+    global_git = work / "git.config"
+    global_git.write_text(render("dot_config/git/private_config.tmpl"))
+    research_git = test_home / ".config/git/research.config"
+    research_git.parent.mkdir(parents=True)
+    research_git.write_text(render("dot_config/git/private_research.config.tmpl"))
+    git_env = {
+        **os.environ,
+        "GIT_CONFIG_GLOBAL": str(global_git),
+        "GIT_CONFIG_NOSYSTEM": "1",
+    }
+    repo = test_home / "workspace/univ/lab/research/project"
+    repo.mkdir(parents=True)
+    run("git", "init", "--quiet", str(repo), env=git_env)
+    assert (
+        run("git", "-C", str(repo), "config", "user.email", env=git_env).strip()
+        == "research@example.invalid"
+    )
+    moved_repo = test_home / "elsewhere"
+    repo.rename(moved_repo)
+    assert (
+        run("git", "-C", str(moved_repo), "config", "user.email", env=git_env).strip()
+        == "personal@example.invalid"
+    )
+    data["researchDir"] = str(moved_repo) + "/"
+    global_git.write_text(render("dot_config/git/private_config.tmpl"))
+    assert (
+        run("git", "-C", str(moved_repo), "config", "user.email", env=git_env).strip()
+        == "research@example.invalid"
+    )
+
     commands = work / "commands"
     commands.mkdir()
     (commands / "sh").symlink_to("/bin/sh")
@@ -122,4 +152,4 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     run("/bin/sh", input=xprofile, env=env)
     assert log.read_text().strip() == "-b"
 
-print("OK: home paths, mise configuration, Codex detection, picom startup")
+print("OK: home paths, repository email, CLI detection, mise changes, picom startup")

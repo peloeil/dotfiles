@@ -23,10 +23,20 @@ chezmoi をインストールし、このリポジトリを適用する。
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply peloeil
 ```
 
-途中で Git の名前、メールアドレス、研究用メールアドレスを入力する。
+途中で Git の名前、メールアドレス、研究用メールアドレス、研究用ディレクトリを入力する。
 dotfiles、Linux の前提パッケージ、`mise` と開発ツール、fish tools、フォント、Neovim の plugin、AI ツールの plugin が順にセットアップされる。
 
 sudo 権限がない場合は前提パッケージの導入だけがスキップされる。不足分は別途インストールする。
+
+## 研究用メールの自動切り替え
+
+研究用メールは [Git の条件付き include](https://git-scm.com/docs/git-config#_conditional_includes) で自動選択する。対象の既定値は `~/workspace/univ/lab/research/`。場所を変える場合は `chezmoi edit-config` で `[data]` の `researchDir` を絶対パスまたは `~/...` に設定し、`chezmoi apply` する。`researchDir` が未設定の既存環境でも既定の場所を使う。
+
+リポジトリで実際に使われるメールは次で確認できる。個別の `git config --local user.email` があれば、そちらが優先される。
+
+```sh
+git config --show-origin --get user.email
+```
 
 ## 普段使うコマンド
 

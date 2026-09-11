@@ -7,22 +7,21 @@ lockfile = true
 [tools]
 age = "latest"
 "aqua:fish-shell/fish-shell" = "latest"
+"aqua:tmux/tmux-builds" = "latest"
 bat = "latest"
 btop = "latest"
 chezmoi = "latest"
-rust = { version = "stable", profile = "default" }
-# The prebuilt static binary avoids a Rust toolchain and host dev packages.
-"http:virtiofsd" = { version = "main", url = "https://gitlab.com/virtio-fs/virtiofsd/-/jobs/artifacts/main/download?job=publish", format = "zip", bin_path = "target/x86_64-unknown-linux-musl/release" }
 delta = "latest"
 deno = "latest"
 fastfetch = "latest"
 fd = "latest"
 fzf = "latest"
 "github:containers/gvisor-tap-vsock" = { version = "latest", asset_pattern = "gvproxy-linux-amd64", rename_exe = "gvproxy" }
-podman = { version = "latest", asset_pattern = "podman-remote-static-linux_amd64.tar.gz", rename_exe = "podman" }
 "github:io12/pwninit" = { version = "3.3.1", asset_pattern = "pwninit" }
 "github:llvm/llvm-project" = { version = "latest", version_prefix = "llvmorg-", asset_pattern = "LLVM-*-Linux-X64.tar.xz", bin_path = "LLVM-{{ version }}-Linux-X64/bin" }
 "github:NixOS/patchelf" = "0.18.0"
+# The prebuilt static binary avoids a Rust toolchain and host dev packages.
+"http:virtiofsd" = { version = "main", url = "https://gitlab.com/virtio-fs/virtiofsd/-/jobs/artifacts/main/download?job=publish", format = "zip", bin_path = "target/x86_64-unknown-linux-musl/release" }
 lsd = "latest"
 lua-language-server = "latest"
 neovim = "latest"
@@ -30,14 +29,15 @@ node = "latest"
 "npm:@anthropic-ai/claude-code" = { version = "latest", allow_builds = ["@anthropic-ai/claude-code"] }
 "npm:pyright" = "latest"
 "pipx:podman-compose" = "latest"
+podman = { version = "latest", asset_pattern = "podman-remote-static-linux_amd64.tar.gz", rename_exe = "podman" }
 ripgrep = "latest"
 rtk = "latest"
 ruff = "latest"
+rust = { version = "stable", profile = "default" }
 shellcheck = "latest"
 shfmt = "latest"
 stylua = "latest"
-tmux = "latest"
 tree-sitter = "latest"
 uv = "latest"
-zls = "latest"
 zig = "latest"
+zls = "latest"

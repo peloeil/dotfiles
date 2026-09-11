@@ -1,71 +1,96 @@
-# AGENTS
+# AGENTS.md
 
-このリポジトリを変更する Codex / エージェント向けの内部メモ。
-人間向けの復元手順は `README.md` に置き、ここには実装の地図と変更時の制約だけを書く。
+自分の Linux x86_64 環境を管理する chezmoi の source repository。
+復元・運用手順は [README.md](README.md) に置く。このファイルは、変更箇所と検証方法を判断するための案内とする。
 
-## 目的と対象
+## 編集する場所
 
-- 目的は、新しいマシンに開発環境を再現すること。
-- 主対象は Linux デスクトップ。i3、polybar、picom、fcitx5、Xorg は Linux 専用。
-- `mise` の導入スクリプトだけは Linux / macOS に対応する。
-- dotfiles は原則として `chezmoi edit <target-path>` で編集する。
+このリポジトリ内のソースを編集する。target path から対応を調べる場合は `chezmoi source-path <target-path>` を使う。
+`chezmoi edit <target-path>` でも同じソースを編集できる。
 
-## 初回セットアップ
+ファイル名には [chezmoi の属性](https://www.chezmoi.io/reference/source-state-attributes/)が含まれる。
 
-`chezmoi init --apply peloeil` では、次の順に処理される。
-
-| 順 | ソース | 処理 |
-| --- | --- | --- |
-| 1 | `.chezmoi.toml.tmpl` | Git の `email`、`researchEmail`、`name` と `researchDir` を取得し、age とエディタを設定する |
-| 2 | `.chezmoiscripts/run_once_before_00_install_prereqs.sh.tmpl` | Linux で `apt-get`、`pacman`、`emerge` のいずれかを使って前提パッケージを入れる |
-| 3 | `.chezmoiscripts/run_once_before_01-install-mise.sh.tmpl` | 未導入なら `mise` を入れる |
-| 4 | dotfiles | target path へ展開する |
-| 5 | `.chezmoiscripts/run_onchange_after_10_install_mise_tools.sh.tmpl` | `mise install --yes` と `uv python install --default` を実行する |
-| 6 | `.chezmoiscripts/run_once_after_12_install_codex_standalone.sh.tmpl` | standalone installer で Codex CLI を入れる |
-| 7 | `.chezmoiscripts/run_onchange_after_15_init_rtk.sh` | Codex / Claude Code 用のグローバル instructions を生成する |
-| 8 | `.chezmoiscripts/run_onchange_after_20_*` | fisher と fish plugins、Hack Nerd Font を入れる |
-| 9 | `.chezmoiscripts/run_onchange_after_25_install_nvim_plugins.sh.tmpl` | headless Neovim で dpp の plugin installer を実行する |
-| 10 | `.chezmoiscripts/run_onchange_after_30_install_ai_plugins.sh.tmpl` | Codex / Claude Code に Ponytail plugin を入れる |
-
-前提パッケージの処理は sudo が使えなくてもセットアップを止めない。ただし `run_once` なので、後から sudo が使えるようになっても通常の `chezmoi apply` では再実行されない。
-
-rtk の Claude Code hook は `dot_claude/settings.json` で管理する。したがって rtk の初期化では `--no-patch` を使う。Ponytail の plugin 本体と取得キャッシュは管理対象にしない。
-
-## 設定の所在
-
-| ソース | 内容 |
+| 属性 | 配置時の意味 |
 | --- | --- |
-| `dot_config/mise/config.toml` | 開発ツールとランタイム。ツールの追加・削除はまずここで行う |
-| `dot_config/private_fish/config.fish` | shell 初期化、環境変数、`mise activate fish` |
-| `dot_config/private_fish/fish_plugins` | fisher が同期する plugin 一覧 |
-| `dot_config/git/private_config.tmpl` | Git のユーザー情報と共通設定 |
-| `dot_config/clangd/config.yaml` | clang-tidy と C / C++ header fallback |
-| `dot_config/nvim/` | Neovim 設定 |
-| `dot_config/i3/config.tmpl` | i3 の起動処理、キー割り当て、常駐アプリ |
-| `dot_xprofile` | fcitx、picom、touchpad の設定 |
-| `dot_claude/settings.json` | Claude Code の権限、plugin、rtk hook |
+| `dot_` | 先頭の `.` に変換する |
+| `private_` | 所有者以外の権限を外す。内容は暗号化されない |
+| `executable_` | 実行権限を付ける |
+| `symlink_` | ファイル内容をリンク先とするシンボリックリンクを作る |
+| `.tmpl` | テンプレートを展開し、拡張子を外す |
+| `encrypted_*.age` | age で暗号化したソースを復号して配置する |
 
-## シークレット
+| 変更対象 | 主なソース |
+| --- | --- |
+| 初期入力・age・chezmoi のエディタ | `.chezmoi.toml.tmpl` |
+| OS パッケージ・導入処理 | `.chezmoiscripts/` |
+| 開発ツール・ランタイム | `dot_config/mise/config.toml` |
+| シェル・PATH・fish plugins | `dot_bashrc`、`dot_bash_profile`、`dot_config/private_fish/` |
+| Git・研究用メールの切り替え | `dot_config/git/` |
+| Neovim・dpp・LSP | `dot_config/nvim/`、`dot_config/clangd/config.yaml` |
+| Xorg・i3・表示・入力 | `dot_xinitrc`、`dot_xprofile`、`dot_config/{i3,polybar,picom,alacritty,private_fcitx5}/` |
+| Codex のグローバル指示 | `dot_codex/AGENTS.md.tmpl` |
+| Claude Code・共通スキル・Ponytail | `dot_claude/`、`dot_agents/skills/`、`dot_config/ponytail/config.json` |
+| Podman・Claude のコンテナ実行 | `dot_config/containers/`、`dot_local/bin/executable_claude-sandbox`、`dot_local/share/claude-sandbox/Dockerfile` |
+| Sunshine | `dot_config/sunshine/sunshine.conf` |
 
-- シークレットは `chezmoi add --encrypt <path>` で追加する。
-- ソース名は `encrypted_` prefix、拡張子は `.age`。
-- age identity は `~/.config/chezmoi/key.txt`。秘密鍵は絶対にリポジトリへ入れない。
-- age recipient は `.chezmoi.toml.tmpl` に置いてよい。
+ルートの `AGENTS.md`、`README.md`、`tests/` は `.chezmoiignore` で配布対象外。
+`dot_codex/AGENTS.md.tmpl` はホームの `~/.codex/AGENTS.md` に配布される別のファイル。
 
-## 変更時のルール
+## セットアップの依存関係
 
-- リポジトリ内の名前は chezmoi の source path。実際の target path と一致しない場合がある。
-- `README.md` は `.chezmoiignore` で配布対象外。セットアップ手順と普段使うコマンドだけを載せる。
-- README に未実装の自動化や「シェル再起動でツールが入る」といった説明を書かない。
-- スクリプトは再実行時にも安全になるよう保つ。`run_once` と `run_onchange` の変更は実行タイミングも確認する。
+`init` は `.chezmoi.toml.tmpl` から設定を生成する。
+`apply` はテンプレートを評価した後、before scripts、dotfiles の配置、after scripts の順に進む。詳細は [chezmoi の適用順序](https://www.chezmoi.io/reference/application-order/)を参照する。
 
-## 確認
+以下のスクリプトはすべて `.chezmoiscripts/` にある。
+
+| 段階 | ソース | 処理 |
+| --- | --- | --- |
+| before | `run_once_before_00_install_prereqs.sh.tmpl` | Linux の OS パッケージ |
+| before | `run_once_before_01-install-mise.sh.tmpl` | `~/.local/bin/mise` がなければ導入する |
+| after | `run_onchange_after_10_install_mise_tools.sh.tmpl` | `mise install --yes` と `uv python install --default` |
+| after | `run_once_after_12_install_codex_standalone.sh.tmpl` | `~/.local/bin` に Codex CLI を導入する |
+| after | `run_onchange_after_15_init_rtk.sh` | Codex / Claude Code 向けの rtk 初期化 |
+| after | `run_onchange_after_20_install_fish_tools.sh.tmpl` | fisher を導入し、`fisher update` |
+| after | `run_onchange_after_20_install_hack_nerd_font.sh` | 未導入なら Hack Nerd Font を入れる |
+| after | `run_onchange_after_25_install_nvim_plugins.sh.tmpl` | headless Neovim で dpp plugins を導入する |
+| after | `run_onchange_after_30_install_ai_plugins.sh.tmpl` | CLI の検出後、Ponytail を導入する |
+
+スクリプトを変えるときは、処理内容と再実行条件を一緒に確認する。
+
+- `run_once` は展開後の内容ごとに成功を記録する。同じ内容は再実行されず、未実行の内容に変われば実行される。
+- `run_onchange` は前回成功時から展開後の内容が変わると実行される。別ファイルへの依存は自動では追跡しない。
+- mise・fish・Neovim のスクリプトは、対応する設定・plugin 一覧のハッシュを含む。依存ファイルを増やすときはハッシュの対象も更新する。
+- OS パッケージの `sudo` 不可や AI ツールの未検出によるスキップも正常終了となる。後から依存を揃えるだけでは再実行されない。
+- 再実行時にも既存環境を壊さない処理にする。導入済みかどうかはスクリプトの実行時に判定する。テンプレート内の `lookPath` では before scripts の導入結果を参照できない。
+
+再実行条件の詳細は [chezmoi のスクリプト仕様](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/)を参照する。
+
+## 変更時に確認する前提
+
+- 対象は自分の Linux x86_64。mise のインストーラに macOS 分岐があっても、設定全体の macOS 対応を意味しない。
+- ホームのパスはテンプレートでは `.chezmoi.homeDir`、シェルでは `$HOME` を使う。i3 と Alacritty にはホスト名 `helium` の分岐がある。
+- 研究用メールの設定は `dot_config/git/private_research.config.tmpl`。Git の条件付き include で `researchDir` 配下に適用する。未設定時は `~/workspace/univ/lab/research/` を使う。
+- 壁紙、`monitor-hotplug.sh`、Sunshine 本体・user service、Podman の接続先は管理外。起動処理を変更するときは呼び出し先も確認する。
+- ツールの追加先は原則 mise の設定。Codex CLI は standalone installer、Python 本体は uv という導入経路を踏まえて変更する。Codex の検出・実行には `~/.local/bin/codex` を使う。
+- rtk の Claude Code hook は `dot_claude/settings.json` が管理する。初期化は `--no-patch` を使っている。
+- plugin 本体・キャッシュ・認証情報は管理対象に加えない。スキルや plugin 設定は管理できる。
+- 秘密情報は `chezmoi add --encrypt <target-path>` で追加する。age identity は `~/.config/chezmoi/key.txt`。秘密鍵や復号結果をソース・ログに残さない。
+
+## 検証
+
+まず Git の差分でソースの変更を確認する。設定・スクリプトを変更した場合は、さらに chezmoi が実際に配置・実行する内容を確認する。
 
 ```sh
+git diff --check
+git diff
 chezmoi diff
 chezmoi apply --dry-run
 chezmoi doctor
-mise doctor  # mise を変更した場合
 ```
 
-README を変更するときは、久しぶりの新規マシンでも README だけで復元できるかを基準にする。
+文書のみの変更は、記載したパス・コマンド・挙動を実装と照合する。mise を変更した場合は `mise doctor`、スクリプトを変更した場合はテンプレート展開後の構文と再実行条件も確認する。
+`python3 tests/check_setup.py` は、一時環境でホームパスの展開と導入処理の回帰を確認する。実際のインストールやデスクトップの起動は行わない。
+`--dry-run` はスクリプトを実行しないため、新規環境での導入成功を保証する検証ではない。
+
+実環境への適用やインストールは依頼の範囲に含まれる場合に行う。検証結果を報告するときは、今回の変更による問題と既存環境の差分・診断結果を区別する。
+復元手順や自動導入の範囲を変えたら、README も更新する。

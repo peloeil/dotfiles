@@ -29,7 +29,6 @@ neovim = "latest"
 node = "latest"
 "npm:@anthropic-ai/claude-code" = { version = "latest", allow_builds = ["@anthropic-ai/claude-code"] }
 "npm:pyright" = "latest"
-"npm:@openai/codex" = "latest"
 "pipx:podman-compose" = "latest"
 ripgrep = "latest"
 rtk = "latest"

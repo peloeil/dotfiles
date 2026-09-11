@@ -1,7 +1,8 @@
 # dotfiles
 
 新しいマシンに普段の開発環境を復元するための dotfiles。
-主な対象は Linux デスクトップで、ツールとランタイムは `mise` で管理する。
+主な対象は Linux デスクトップで、Codex CLI 以外のツールとランタイムは `mise` で管理する。
+Codex CLI は remote control に必要な standalone installer で管理する。
 
 ## 新しいマシンをセットアップする
 
@@ -41,4 +42,7 @@ chezmoi update
 # 状態を確認する
 chezmoi doctor
 mise doctor
+
+# Codex CLI を更新する
+curl -fsSL https://chatgpt.com/codex/install.sh | sh
 ```

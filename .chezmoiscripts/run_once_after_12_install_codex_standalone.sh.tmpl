@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+
+install_bin_dir="$HOME/.local/bin"
+
+echo "Installing Codex CLI..."
+curl -fsSL https://chatgpt.com/codex/install.sh |
+	env CODEX_INSTALL_DIR="$install_bin_dir" \
+		CODEX_NON_INTERACTIVE=1 \
+		PATH="$install_bin_dir:/usr/bin:/bin" \
+		sh

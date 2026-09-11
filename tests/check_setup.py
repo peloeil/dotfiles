@@ -57,6 +57,18 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     log = work / "calls"
     env = {**os.environ, "PATH": str(commands), "CHECK_LOG": str(log)}
     mock(local_bin / "mise", "exit 1")  # No mise-managed Codex or Claude.
+    mock(local_bin / "codex", 'printf "%s\\n" "$*" >> "$CHECK_LOG"')
+    plugins = render(".chezmoiscripts/run_onchange_after_30_install_ai_plugins.sh.tmpl")
+    run("/bin/sh", input=plugins, env=env)
+    assert log.read_text().splitlines() == [
+        "plugin marketplace add DietrichGebert/ponytail",
+        "plugin add ponytail@ponytail",
+    ]
+    log.unlink()
+    (local_bin / "codex").unlink()
+    run("/bin/sh", input=plugins, env=env)
+    assert not log.exists()
+
     install_mise = render(".chezmoiscripts/run_once_before_01-install-mise.sh.tmpl")
     run("/bin/sh", input=install_mise, env=env)
     (local_bin / "mise").unlink()
@@ -80,4 +92,4 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     assert render(installer, changed_source) != original
 
 
-print("OK: mise installation and configuration changes")
+print("OK: mise configuration and standalone Codex detection")

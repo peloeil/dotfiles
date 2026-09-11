@@ -2,10 +2,11 @@
 set -eu
 
 mise_path="{{ .chezmoi.homeDir }}/.local/bin/mise"
+codex_path="{{ .chezmoi.homeDir }}/.local/bin/codex"
 
-if "$mise_path" which codex >/dev/null 2>&1; then
-	"$mise_path" exec -- codex plugin marketplace add DietrichGebert/ponytail
-	"$mise_path" exec -- codex plugin add ponytail@ponytail
+if [ -x "$codex_path" ]; then
+	"$codex_path" plugin marketplace add DietrichGebert/ponytail
+	"$codex_path" plugin add ponytail@ponytail
 else
 	echo "codex not installed; skipping Ponytail plugin install." >&2
 fi

@@ -42,7 +42,7 @@ rtk の Claude Code hook は `dot_claude/settings.json` で管理する。した
 | `dot_config/clangd/config.yaml` | clang-tidy と C / C++ header fallback |
 | `dot_config/nvim/` | Neovim 設定 |
 | `dot_config/i3/config.tmpl` | i3 の起動処理、キー割り当て、常駐アプリ |
-| `dot_xprofile.tmpl` | fcitx、picom、touchpad の設定 |
+| `dot_xprofile` | fcitx、picom、touchpad の設定 |
 | `dot_claude/settings.json` | Claude Code の権限、plugin、rtk hook |
 
 ## シークレット

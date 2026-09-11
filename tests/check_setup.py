@@ -113,5 +113,13 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         stream.write("\n# Changed configuration\n")
     assert render(installer, changed_source) != original
 
+    # Use the same .xprofile before and after picom appears; no template re-render.
+    xprofile = "fcitx5() { :; }\nxinput() { return 1; }\nsleep() { :; }\n"
+    xprofile += (SOURCE / "dot_xprofile").read_text() + "\nwait\n"
+    run("/bin/sh", input=xprofile, env=env)
+    assert not log.exists()
+    mock(commands / "picom", 'printf "%s\\n" "$*" >> "$CHECK_LOG"')
+    run("/bin/sh", input=xprofile, env=env)
+    assert log.read_text().strip() == "-b"
 
-print("OK: home paths, mise configuration, standalone Codex detection")
+print("OK: home paths, mise configuration, Codex detection, picom startup")

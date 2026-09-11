@@ -19,9 +19,9 @@ font pango:monospace 8
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
 #font pango:DejaVu Sans Mono 8
 
-exec --no-startup-id feh --bg-scale /home/sota/pictures/neko.jpg
-exec_always --no-startup-id /home/sota/.config/i3/polybar.sh &
-exec_always --no-startup-id /home/sota/.config/i3/monitor-hotplug.sh --daemon
+exec --no-startup-id feh --bg-scale "{{ .chezmoi.homeDir }}/pictures/neko.jpg"
+exec_always --no-startup-id exec "{{ .chezmoi.homeDir }}/.config/i3/polybar.sh"
+exec_always --no-startup-id exec "{{ .chezmoi.homeDir }}/.config/i3/monitor-hotplug.sh" --daemon
 
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
 # they are included here as an example. Modify as you see fit.
@@ -51,7 +51,7 @@ bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 5
 
 bindsym Print exec flameshot screen
 bindsym $mod+Print exec flameshot gui
-bindsym $mod+Ctrl+p exec --no-startup-id /home/sota/.config/i3/monitor-hotplug.sh --once
+bindsym $mod+Ctrl+p exec --no-startup-id exec "{{ .chezmoi.homeDir }}/.config/i3/monitor-hotplug.sh" --once
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod

@@ -5,6 +5,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import tomllib
 from pathlib import Path
 
 SOURCE = Path(__file__).resolve().parents[1]
@@ -51,6 +52,27 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
             str(source / relative),
         )
 
+    containers = tomllib.loads(render("dot_config/containers/containers.conf.tmpl"))
+    assert containers["engine"]["compose_providers"] == [
+        str(test_home / ".local/share/mise/shims/podman-compose")
+    ]
+    assert all(
+        path.startswith(str(test_home))
+        for path in containers["engine"]["helper_binaries_dir"][:2]
+    )
+    i3 = render("dot_config/i3/config.tmpl")
+    assert "/home/sota" not in i3
+    for target in (
+        "pictures/neko.jpg",
+        ".config/i3/polybar.sh",
+        ".config/i3/monitor-hotplug.sh",
+    ):
+        assert f'"{test_home / target}"' in i3
+    if i3_binary := shutil.which("i3"):
+        i3_config = work / "i3.config"
+        i3_config.write_text(i3)
+        run(i3_binary, "-C", "-c", str(i3_config))
+
     commands = work / "commands"
     commands.mkdir()
     (commands / "sh").symlink_to("/bin/sh")
@@ -92,4 +114,4 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     assert render(installer, changed_source) != original
 
 
-print("OK: mise configuration and standalone Codex detection")
+print("OK: home paths, mise configuration, standalone Codex detection")

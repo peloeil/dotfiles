@@ -1,0 +1,12 @@
+[engine]
+compose_providers = [
+  "{{ .chezmoi.homeDir }}/.local/share/mise/shims/podman-compose",
+]
+helper_binaries_dir = [
+  "{{ .chezmoi.homeDir }}/.local/share/mise/shims",
+  "{{ .chezmoi.homeDir }}/.local/share/mise/installs/github-containers-gvisor-tap-vsock/latest",
+  "/usr/local/libexec/podman",
+  "/usr/local/lib/podman",
+  "/usr/libexec/podman",
+  "/usr/lib/podman",
+]

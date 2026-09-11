@@ -22,9 +22,10 @@
 | 変更対象 | 主なソース |
 | --- | --- |
 | 初期入力・age・chezmoi のエディタ | `.chezmoi.toml.tmpl` |
+| full / minimal の配布範囲 | `.chezmoiignore` |
 | OS パッケージ・導入処理 | `.chezmoiscripts/` |
 | 開発ツール・ランタイム | `dot_config/mise/config.toml` |
-| シェル・PATH・fish plugins | `dot_bashrc`、`dot_bash_profile`、`dot_config/private_fish/` |
+| シェル・PATH・fish plugins | `dot_bashrc`、`dot_bash_profile.tmpl`、`dot_config/private_fish/` |
 | Git・研究用メールの切り替え | `dot_config/git/` |
 | Neovim・dpp・LSP | `dot_config/nvim/`、`dot_config/clangd/config.yaml` |
 | Xorg・i3・表示・入力 | `dot_xinitrc`、`dot_xprofile`、`dot_config/{i3,polybar,picom,alacritty,private_fcitx5}/` |
@@ -68,6 +69,7 @@
 ## 変更時に確認する前提
 
 - 対象は自分の Linux x86_64。mise のインストーラに macOS 分岐があっても、設定全体の macOS 対応を意味しない。
+- `[data].profile` は `full`（未設定時も既定）か `minimal`。minimal は GUI の設定・OS パッケージ・フォント導入を省き、開発環境は残す。配布除外は `.chezmoiignore`、パッケージ分岐は前提パッケージのスクリプト、`startx` と `xclip` の分岐は Bash / tmux のテンプレートにある。
 - ホームのパスはテンプレートでは `.chezmoi.homeDir`、シェルでは `$HOME` を使う。i3 と Alacritty にはホスト名 `helium` の分岐がある。
 - 研究用メールの設定は `dot_config/git/private_research.config.tmpl`。Git の条件付き include で `researchDir` 配下に適用する。未設定時は `~/workspace/univ/lab/research/` を使う。
 - 壁紙、`monitor-hotplug.sh`、Sunshine 本体・user service、Podman の接続先は管理外。起動処理を変更するときは呼び出し先も確認する。

@@ -151,5 +151,130 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     mock(commands / "picom", 'printf "%s\\n" "$*" >> "$CHECK_LOG"')
     run("/bin/sh", input=xprofile, env=env)
     assert log.read_text().strip() == "-b"
+    log.unlink()
 
-print("OK: home paths, repository email, CLI detection, mise changes, picom startup")
+    # Missing profile data must keep the existing full configuration.
+    prereqs = ".chezmoiscripts/run_once_before_00_install_prereqs.sh.tmpl"
+    profile_sources = (
+        ".chezmoiignore",
+        "dot_bash_profile.tmpl",
+        "dot_config/tmux/tmux.conf.tmpl",
+        prereqs,
+    )
+    legacy = {relative: render(relative) for relative in profile_sources}
+    managed = {}
+    mock(commands / "sudo", 'if [ "$1" != -v ]; then "$@"; fi')
+    for profile in ("full", "minimal"):
+        data["profile"] = profile
+        rendered = {relative: render(relative) for relative in profile_sources}
+        if profile == "full":
+            assert rendered == legacy
+        assert ("exec startx" in rendered["dot_bash_profile.tmpl"]) == (
+            profile == "full"
+        )
+        assert ("xclip" in rendered["dot_config/tmux/tmux.conf.tmpl"]) == (
+            profile == "full"
+        )
+        run("bash", "-n", input=rendered["dot_bash_profile.tmpl"])
+        for script in (SOURCE / ".chezmoiscripts").iterdir():
+            content = (
+                render(script.relative_to(SOURCE))
+                if script.suffix == ".tmpl"
+                else script.read_text()
+            )
+            run("/bin/sh", "-n", input=content)
+
+        # Exercise each distro branch without sudo, package installs, or network.
+        for manager, desktop_package in (
+            ("apt-get", "xserver-xorg"),
+            ("pacman", "xorg-server"),
+            ("emerge", "x11-base/xorg-server"),
+        ):
+            mock(commands / manager, 'printf "%s\\n" "$*" >> "$CHECK_LOG"')
+            run("/bin/sh", input=rendered[prereqs], env=env)
+            calls = log.read_text()
+            assert "curl" in calls and "git" in calls and "binutils" in calls
+            assert (desktop_package in calls) == (profile == "full")
+            assert ("xclip" in calls) == (profile == "full")
+            assert ("fcitx" in calls) == (profile == "full")
+            log.unlink()
+            (commands / manager).unlink()
+
+        # Test the documented init flag, persistence, and real target selection.
+        profile_work = work / profile
+        profile_work.mkdir()
+        config_path = profile_work / "chezmoi.toml"
+        cli = (
+            CHEZMOI,
+            "--source",
+            str(SOURCE),
+            "--destination",
+            str(test_home),
+            "--config",
+            str(config_path),
+            "--cache",
+            str(profile_work / "cache"),
+            "--persistent-state",
+            str(profile_work / "state.boltdb"),
+            "--no-tty",
+        )
+        run(
+            *cli,
+            "init",
+            "--promptDefaults",
+            *(
+                ["--promptChoice", "Install profile=minimal"]
+                if profile == "minimal"
+                else []
+            ),
+            "--promptString",
+            "Enter your research Git email address=research@example.invalid",
+        )
+        assert tomllib.loads(config_path.read_text())["data"]["profile"] == profile
+        run(*cli, "init", "--promptDefaults")
+        assert tomllib.loads(config_path.read_text())["data"]["profile"] == profile
+        managed[profile] = set(run(*cli, "managed").splitlines())
+        run(*cli, "diff")
+        run(*cli, "apply", "--dry-run")
+
+    invalid = subprocess.run(
+        (*cli, "--override-data", '{"profile":"typo"}', "managed"),
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert (
+        invalid.returncode != 0 and "profile must be full or minimal" in invalid.stderr
+    )
+
+    gui_targets = (
+        ".xinitrc",
+        ".xprofile",
+        ".config/alacritty",
+        ".config/fcitx5",
+        ".config/i3",
+        ".config/picom",
+        ".config/polybar",
+        ".config/sunshine",
+        ".chezmoiscripts/20_install_hack_nerd_font.sh",
+    )
+    assert managed["minimal"] == {
+        path
+        for path in managed["full"]
+        if not any(path == gui or path.startswith(gui + "/") for gui in gui_targets)
+    }
+    assert all(gui in managed["full"] for gui in gui_targets)
+    assert {
+        ".config/mise/config.toml",
+        ".config/nvim/init.lua",
+        ".config/containers/containers.conf",
+        ".codex/AGENTS.md",
+        ".claude/settings.json",
+        ".local/bin/claude-sandbox",
+        ".chezmoiscripts/25_install_nvim_plugins.sh",
+        ".chezmoiscripts/30_install_ai_plugins.sh",
+    } <= managed["minimal"]
+
+print(
+    "OK: home paths, repository email, CLI detection, mise changes, picom startup, full/minimal setup"
+)

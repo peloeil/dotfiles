@@ -3,7 +3,8 @@
 自分の Linux x86_64 環境を復元・更新するためのリポジトリ。
 chezmoi で設定ファイルを配布し、mise で開発ツールとランタイムを入れる。Codex CLI は standalone installer、Python 本体は uv で導入する。
 
-デスクトップは Xorg / i3、シェルは Bash / fish、エディタは Neovim。
+`full` は Xorg / i3 デスクトップを含む全構成、`minimal` は GUI を省いた開発環境。
+どちらも Bash / fish、tmux、Neovim、言語環境、AI ツール、コンテナ用ツールを導入する。
 多くのツールに `latest` を指定しているため、復元時のバージョンは導入時点で変わる。
 
 ## 新しいマシンに復元する
@@ -14,7 +15,7 @@ chezmoi で設定ファイルを配布し、mise で開発ツールとランタ�
 
 - ネットワーク接続と `curl`、`git`、`tar` を用意する。
 - OS パッケージの自動導入には `sudo` が必要。`apt-get`、`pacman`、`emerge` に分岐があり、Arch ではシステム更新も実行する。
-- Gentoo では `app-i18n/mozc` の `fcitx5` USE フラグを有効にする。
+- Gentoo の `full` では `app-i18n/mozc` の `fcitx5` USE フラグを有効にする。
 
 暗号化ファイルは現在追跡していない。今後追加した暗号化ファイルも復元する場合は、先に下記の「秘密情報を管理する」に従って鍵を配置する。
 
@@ -27,8 +28,25 @@ sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b "$HOME/.local/bin" init peloe
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-Git の通常用メールアドレス、研究用メールアドレス、研究用ディレクトリ、名前を入力する。
+`Install profile` で `full`（既定）か `minimal` を選び、Git の通常用メールアドレス、研究用メールアドレス、研究用ディレクトリ、名前を入力する。
 入力値は `~/.config/chezmoi/chezmoi.toml` に保存される。研究用ディレクトリ配下のリポジトリでは、研究用メールアドレスへ自動で切り替わる。
+
+最初から minimal を指定して取得する場合は、上のインストーラのコマンドを次に置き換える。
+
+```sh
+sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b "$HOME/.local/bin" \
+  init peloeil --promptChoice 'Install profile=minimal'
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+| 導入対象 | full | minimal |
+| --- | --- | --- |
+| シェル・Git・tmux・mise・Neovim・言語環境 | あり | あり |
+| Codex・Claude Code・rtk・Ponytail・コンテナ用ツール | あり | あり |
+| Xorg・i3・Alacritty・fcitx5・デスクトップ用 OS パッケージと設定 | あり | なし |
+| Sunshine の設定・Hack Nerd Font の導入・ログイン時の `startx` | あり | なし |
+
+minimal の tmux は内部バッファへコピーし、`xclip` を使わない。SSH 先で使う場合、Tide などのアイコン表示に必要な Nerd Font は接続元の端末で設定する。
 
 ### 3. 確認して適用する
 
@@ -42,7 +60,7 @@ chezmoi apply
 
 - mise の開発ツールと uv のデフォルト Python
 - Codex CLI、rtk のグローバル指示
-- fisher / fish plugins、Hack Nerd Font
+- fisher / fish plugins、Hack Nerd Font（full のみ）
 - Neovim の dpp plugins
 - Codex / Claude Code の Ponytail（CLI を検出できた場合）
 
@@ -55,6 +73,7 @@ Ponytail の既定モードは `~/.config/ponytail/config.json` で `off` にし
 ### 4. マシン固有の設定を整える
 
 以下はこのリポジトリだけでは揃わない。使うものを別途用意する。
+minimal ではデスクトップ関連（壁紙・モニター設定・Sunshine）の準備は不要。
 
 | 対象 | 必要な作業 |
 | --- | --- |
@@ -64,9 +83,23 @@ Ponytail の既定モードは `~/.config/ponytail/config.json` で `off` にし
 | Podman | 導入される CLI は remote 版。利用先のサービスまたは VM と接続設定を用意する |
 | AI ツール | Codex / Claude Code の認証を済ませる |
 
-Bash のログイン設定は、SSH 接続ではなく、`DISPLAY` がない `tty1` で `startx` を実行する。`.xinitrc` は fcitx5 などを初期化し、Sunshine の再起動と i3 の起動を行う。
+full の Bash のログイン設定は、SSH 接続ではなく、`DISPLAY` がない `tty1` で `startx` を実行する。`.xinitrc` は fcitx5 などを初期化し、Sunshine の再起動と i3 の起動を行う。
 
 ホスト名が `helium` の場合は、i3 の時間経過による画面消灯を無効にし、Alacritty のフォントサイズを変更する。
+
+## 構成を切り替える
+
+`chezmoi edit-config` で `[data]` の `profile` を `"full"` または `"minimal"` に変更し、差分を確認して適用する。`profile` がない既存環境は full として扱う。
+
+```sh
+chezmoi edit-config
+chezmoi diff
+chezmoi apply --dry-run
+chezmoi apply
+```
+
+minimal から full に切り替えると GUI の設定・導入処理も対象になる。full から minimal に切り替えても、導入済みパッケージや除外した設定ファイルは自動削除しない。ログイン時の `startx` は無効になる。
+OS パッケージ導入は `run_once` のため、以前使った構成へ戻しただけでは再実行されない。必要なら下記の「OS パッケージの導入がスキップされた」のコマンドで再実行する。
 
 ## 設定とツールを更新する
 

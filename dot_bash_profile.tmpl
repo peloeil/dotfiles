@@ -10,6 +10,8 @@ if [[ -f ~/.bashrc ]] ; then
 	. ~/.bashrc
 fi
 
+{{ if ne (get . "profile" | default "full") "minimal" -}}
 if [ -z "$DISPLAY" ] && [ -z "$SSH_CONNECTION" ] && [ "$(tty)" = "/dev/tty1" ]; then
 	exec startx
 fi
+{{ end -}}

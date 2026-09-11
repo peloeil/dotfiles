@@ -8,6 +8,10 @@ if command -v apt-get >/dev/null; then
   # sudo権限が必要な操作。sudo不要の環境では、これらのツールが事前にインストールされていることを前提とする。
   if command -v sudo >/dev/null 2>&1 && sudo -v; then
     sudo apt-get update
+{{- if eq (get . "profile" | default "full") "minimal" }}
+    sudo apt-get install -y \
+      bison binutils build-essential curl elfutils file git libncurses-dev procps psmisc unzip
+{{- else }}
     sudo apt-get install -y \
       alacritty \
       bison \
@@ -48,6 +52,7 @@ if command -v apt-get >/dev/null; then
       xinput \
       xserver-xorg \
       xss-lock
+{{- end }}
   else
     echo "sudo権限がないため、前提パッケージ導入をスキップします。残りのセットアップは続行します。"
   fi
@@ -57,6 +62,10 @@ fi
 if command -v pacman >/dev/null; then
   echo "Arch Linux向けの前提条件をインストールします..."
   if command -v sudo >/dev/null 2>&1 && sudo -v; then
+{{- if eq (get . "profile" | default "full") "minimal" }}
+    sudo pacman -Syu --noconfirm --needed \
+      binutils curl elfutils git libarchive procps-ng psmisc unzip
+{{- else }}
     sudo pacman -Syu --noconfirm --needed \
       alacritty \
       binutils \
@@ -92,6 +101,7 @@ if command -v pacman >/dev/null; then
       xorg-xinit \
       xorg-xset \
       xss-lock
+{{- end }}
   else
     echo "sudo権限がないため、前提パッケージ導入をスキップします。残りのセットアップは続行します。"
   fi
@@ -102,6 +112,11 @@ fi
 if command -v emerge >/dev/null; then
   echo "Gentoo向けの前提条件をインストールします..."
   if command -v sudo >/dev/null 2>&1 && sudo -v; then
+{{- if eq (get . "profile" | default "full") "minimal" }}
+    sudo emerge --noreplace \
+      app-arch/libarchive app-arch/unzip dev-libs/elfutils dev-vcs/git \
+      net-misc/curl sys-devel/binutils sys-process/procps sys-process/psmisc
+{{- else }}
     sudo emerge --noreplace \
       app-arch/libarchive \
       app-arch/unzip \
@@ -137,6 +152,7 @@ if command -v emerge >/dev/null; then
       x11-misc/xss-lock \
       x11-terms/alacritty \
       x11-wm/i3
+{{- end }}
   else
     echo "sudo権限がないため、前提パッケージ導入をスキップします。残りのセットアップは続行します。"
   fi

@@ -1,3 +1,19 @@
+{{- $profile := get . "profile" | default "full" -}}
+{{- if not (has $profile (list "full" "minimal")) -}}
+{{- fail "profile must be full or minimal" -}}
+{{- end -}}
 README.md
 AGENTS.md
 tests
+
+{{ if eq $profile "minimal" -}}
+.xinitrc
+.xprofile
+.config/alacritty
+.config/fcitx5
+.config/i3
+.config/picom
+.config/polybar
+.config/sunshine
+.chezmoiscripts/20_install_hack_nerd_font.sh
+{{ end -}}

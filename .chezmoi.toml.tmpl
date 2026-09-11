@@ -1,3 +1,4 @@
+{{- $profile := promptChoiceOnce . "profile" "Install profile" (list "full" "minimal") "full" -}}
 {{- $email := promptStringOnce . "email" "Enter your Git email address" "peloeil20@gmail.com" -}}
 {{- $researchEmail := promptStringOnce . "researchEmail" "Enter your research Git email address" -}}
 {{- $researchDir := promptStringOnce . "researchDir" "Enter your research directory (absolute path or ~/...)" (joinPath .chezmoi.homeDir "workspace/univ/lab/research") -}}
@@ -5,6 +6,7 @@
 encryption = "age"
 
 [data]
+  profile = {{ $profile | quote }}
   email = "{{ $email }}"
   researchEmail = "{{ $researchEmail }}"
   researchDir = {{ $researchDir | quote }}

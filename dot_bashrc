@@ -6,14 +6,8 @@ if [[ -f "$HOME/.cargo/env" ]] ; then
 	. "$HOME/.cargo/env"
 fi
 
-# uv, mise
-case ":$PATH:" in
-	*:"$HOME/.local/bin":*)
-		;;
-	*)
-		export PATH="$HOME/.local/bin:$PATH"
-		;;
-esac
+# Standalone tools (Codex, uv, mise) take precedence over inherited shims.
+export PATH="$HOME/.local/bin:$PATH"
 
 export EDITOR="nvim"
 export VISUAL="nvim"
@@ -26,6 +20,8 @@ fi
 if command -v mise >/dev/null 2>&1 ; then
 	eval "$(mise activate bash)"
 fi
+
+export PATH="$HOME/.local/bin:$PATH"
 
 
 # Put your fun stuff here.

@@ -10,8 +10,8 @@ set -g fish_key_bindings fish_default_key_bindings
 set -gx EDITOR nvim
 set -gx VISUAL nvim
 
-# uv
-fish_add_path "$HOME/.local/bin"
+# Make mise available before activation.
+fish_add_path --path "$HOME/.local/bin"
 
 # miseの初期化
 if command -v mise >/dev/null
@@ -21,6 +21,9 @@ if command -v mise >/dev/null
         mise activate fish --shims | source
     end
 end
+
+# Prefer standalone tools over mise shims, including inherited PATH entries.
+fish_add_path --path --move --prepend "$HOME/.local/bin"
 
 function sc -d "Assemble x86_64 to shellcode"
     if test (count $argv) -eq 0

@@ -146,6 +146,43 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
       PATH="$HOME/.local/bin:/usr/bin:/bin" sh
 ```
 
+## AI の指示とスキル
+
+| 用途 | ソース・配置先 |
+| --- | --- |
+| このリポジトリの編集上の制約 | [AGENTS.md](AGENTS.md)（配布対象外） |
+| Codex 共通の応答方針 | `dot_codex/AGENTS.md.tmpl` → `~/.codex/AGENTS.md` |
+| コミットの分割・メッセージ規約 | `dot_agents/skills/commit/SKILL.md` → `~/.agents/skills/commit/SKILL.md` |
+| Claude Code からの commit 利用 | `~/.claude/skills/commit/SKILL.md` から共通スキルへのシンボリックリンク |
+| Claude Code の設定・rtk hook | `dot_claude/settings.json` → `~/.claude/settings.json` |
+| Ponytail の既定モード | `dot_config/ponytail/config.json` → `~/.config/ponytail/config.json` |
+
+[OpenAI のスキル・プロンプト見直し方針](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)を踏まえ、常時読む指示には環境固有の制約を置く。スキルの説明は適用する依頼を短く示し、本文は固有の規約と判断基準に絞る。復元・運用手順はこの README にまとめる。
+
+plugin 本体・キャッシュ・認証情報はこのリポジトリでは管理しない。
+
+## セットアップの構成
+
+初期入力と age の設定は `.chezmoi.toml.tmpl`、full / minimal の配布範囲は `.chezmoiignore`、開発ツールは `dot_config/mise/config.toml` で管理する。
+`init` は設定を生成し、`apply` はテンプレート評価後、before scripts、dotfiles、after scripts の順に処理する。
+
+以下はすべて `.chezmoiscripts/` 内のスクリプト。
+
+| 段階 | ソース | 処理 |
+| --- | --- | --- |
+| before | `run_once_before_00_install_prereqs.sh.tmpl` | Linux の OS パッケージ |
+| before | `run_once_before_01-install-mise.sh.tmpl` | `~/.local/bin/mise` がなければ導入する |
+| after | `run_onchange_after_10_install_mise_tools.sh.tmpl` | `mise install --yes` と `uv python install --default` |
+| after | `run_once_after_12_install_codex_standalone.sh.tmpl` | `~/.local/bin` に Codex CLI を導入する |
+| after | `run_onchange_after_15_init_rtk.sh` | Codex / Claude Code 向けの rtk 初期化 |
+| after | `run_onchange_after_20_install_fish_tools.sh.tmpl` | fisher を導入し、`fisher update` |
+| after | `run_onchange_after_20_install_hack_nerd_font.sh` | 未導入なら Hack Nerd Font を入れる |
+| after | `run_onchange_after_25_install_nvim_plugins.sh.tmpl` | headless Neovim で dpp plugins を導入する |
+| after | `run_onchange_after_30_install_ai_plugins.sh.tmpl` | CLI の検出後、Ponytail を導入する |
+
+`run_once` は展開後の内容ごとに成功を記録し、`run_onchange` は前回成功時から内容が変わると実行する。mise・fish・Neovim のスクリプトには対応する設定・plugin 一覧のハッシュを含めている。
+スキップも成功として記録されるため、依存を後から揃えただけでは再実行されない。詳細は [chezmoi のスクリプト仕様](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/)を参照する。
+
 ## セットアップを補完する
 
 ### OS パッケージの導入がスキップされた

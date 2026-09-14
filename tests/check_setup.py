@@ -275,6 +275,31 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         ".chezmoiscripts/30_install_ai_plugins.sh",
     } <= managed["minimal"]
 
+    # Remove retired skill files without deleting neighboring user files.
+    retired = (SOURCE / ".chezmoiremove").read_text().splitlines()
+    for relative in retired:
+        target = test_home / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text("retired skill\n")
+    keep = test_home / ".claude/skills/writeup/local-notes.md"
+    keep.write_text("user notes\n")
+    skill_targets = [
+        str(test_home / ".agents"),
+        str(test_home / ".claude/skills"),
+    ]
+    run(*cli, "apply", "--exclude", "scripts", "--dry-run", *skill_targets)
+    assert all((test_home / relative).exists() for relative in retired)
+    run(*cli, "apply", "--exclude", "scripts", *skill_targets)
+    assert all(not (test_home / relative).exists() for relative in retired)
+    assert keep.read_text() == "user notes\n"
+    commit_link = test_home / ".claude/skills/commit/SKILL.md"
+    assert commit_link.is_symlink()
+    assert commit_link.read_text() == (
+        SOURCE / "dot_agents/skills/commit/SKILL.md"
+    ).read_text()
+    run(*cli, "apply", "--exclude", "scripts", *skill_targets)
+    assert keep.read_text() == "user notes\n"
+
 print(
-    "OK: home paths, repository email, CLI detection, mise changes, picom startup, full/minimal setup"
+    "OK: home paths, repository email, CLI detection, mise changes, picom startup, full/minimal setup, skill cleanup"
 )

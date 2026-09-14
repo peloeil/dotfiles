@@ -159,6 +159,7 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 
 [OpenAI のスキル・プロンプト見直し方針](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)を踏まえ、常時読む指示には環境固有の制約を置く。スキルの説明は適用する依頼を短く示し、本文は固有の規約と判断基準に絞る。復元・運用手順はこの README にまとめる。
 
+writeup・prune スキルは廃止した。[.chezmoiremove](.chezmoiremove) に旧スキルと付属プロンプトのパスを列挙しているため、次の `chezmoi apply` で配置済みの該当ファイルも削除される。同じディレクトリに追加した別のファイルは残る。
 plugin 本体・キャッシュ・認証情報はこのリポジトリでは管理しない。
 
 ## セットアップの構成

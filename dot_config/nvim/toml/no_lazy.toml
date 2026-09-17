@@ -65,6 +65,7 @@ lua_source = '''
         numhl = true,
         current_line_blame = true,
     })
+    vim.keymap.set("n", "<leader>hp", require("gitsigns").preview_hunk, { desc = "Preview git hunk" })
 '''
 
 [[plugins]]

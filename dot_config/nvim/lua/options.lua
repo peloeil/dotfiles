@@ -19,6 +19,15 @@ vim.opt.autoindent = true
 vim.opt.list = true
 vim.opt.listchars = { tab = "|->", trail = "-" }
 
+-- コマンド入力中だけ専用行を確保し、ステータスラインを隠さない
+vim.opt.cmdheight = 0
+vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdlineLeave" }, {
+    group = vim.api.nvim_create_augroup("__cmdheight", { clear = true }),
+    callback = function(event)
+        vim.opt.cmdheight = (event.event == "CmdlineEnter" or vim.v.event.cmdlevel > 1) and 1 or 0
+    end,
+})
+
 -- その他
 vim.opt.number = true
 vim.opt.scrolloff = 5

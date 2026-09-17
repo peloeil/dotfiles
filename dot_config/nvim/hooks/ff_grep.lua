@@ -32,6 +32,14 @@ vim.fn["ddu#custom#patch_local"]("ff_grep", {
     },
     -- ddu-source-rg
     sources = { "rg" },
+    sourceParams = {
+        rg = {
+            args = {
+                "--column", "--no-heading", "--color", "never", "--hidden", "--no-ignore",
+                "--glob", "!{.git,node_modules,.venv,venv,__pycache__}",
+            },
+        },
+    },
     sourceOptions = {
         rg = {
             volatile = true,

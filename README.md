@@ -46,7 +46,7 @@ export PATH="$HOME/.local/bin:$PATH"
 | Xorg・i3・Alacritty・fcitx5・デスクトップ用 OS パッケージと設定 | あり | なし |
 | Sunshine の設定・Hack Nerd Font の導入・ログイン時の `startx` | あり | なし |
 
-minimal の tmux は内部バッファへコピーし、`xclip` を使わない。SSH 先で使う場合、Tide などのアイコン表示に必要な Nerd Font は接続元の端末で設定する。
+SSH 先で使う場合、Tide などのアイコン表示に必要な Nerd Font は接続元の端末で設定する。
 
 ### 3. 確認して適用する
 

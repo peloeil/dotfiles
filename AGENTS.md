@@ -8,7 +8,7 @@
 - このリポジトリ内のソースを編集する。配置先から調べるには `chezmoi source-path <target-path>` を使う。`dot_`、`private_`、`executable_`、`symlink_`、`.tmpl` は [chezmoi の属性](https://www.chezmoi.io/reference/source-state-attributes/)。`private_` は権限指定であり、暗号化ではない。
 - ルートの `AGENTS.md`、`README.md`、`tests/` は配布対象外。`~/.codex/AGENTS.md` のソースは `dot_codex/AGENTS.md.tmpl`。
 - ホームのパスはテンプレートでは `.chezmoi.homeDir`、シェルでは `$HOME` を使う。
-- `profile` は `full`（未設定時も既定）か `minimal`。配布範囲は `.chezmoiignore`、OS パッケージは前提パッケージのスクリプト、`startx` と `xclip` は Bash / tmux のテンプレートに分岐がある。
+- `profile` は `full`（未設定時も既定）か `minimal`。配布範囲は `.chezmoiignore`、OS パッケージは前提パッケージのスクリプト、`startx` は Bash のテンプレートに分岐がある。
 - ツールの追加先は原則 `dot_config/mise/config.toml`。Codex CLI は standalone installer、Python 本体は uv で導入する。Codex の検出・実行には `~/.local/bin/codex` を使う。
 - 壁紙、`monitor-hotplug.sh`、Sunshine 本体・user service、Podman の接続先は管理外。起動処理の変更では [マシン固有の設定](README.md#4-マシン固有の設定を整える) も確認する。
 - rtk の Claude Code hook は `dot_claude/settings.json` が管理する。初期化の `--no-patch` を維持する。

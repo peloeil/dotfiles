@@ -158,7 +158,6 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     profile_sources = (
         ".chezmoiignore",
         "dot_bash_profile.tmpl",
-        "dot_config/tmux/tmux.conf.tmpl",
         prereqs,
     )
     legacy = {relative: render(relative) for relative in profile_sources}
@@ -170,9 +169,6 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         if profile == "full":
             assert rendered == legacy
         assert ("exec startx" in rendered["dot_bash_profile.tmpl"]) == (
-            profile == "full"
-        )
-        assert ("xclip" in rendered["dot_config/tmux/tmux.conf.tmpl"]) == (
             profile == "full"
         )
         run("bash", "-n", input=rendered["dot_bash_profile.tmpl"])

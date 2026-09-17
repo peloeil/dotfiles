@@ -194,6 +194,8 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
             run("/bin/sh", input=rendered[prereqs], env=env)
             calls = log.read_text()
             assert "curl" in calls and "git" in calls and "binutils" in calls
+            if manager == "pacman":
+                assert calls.startswith("-S --noconfirm --needed ")
             assert (desktop_package in calls) == (profile == "full")
             assert ("xclip" in calls) == (profile == "full")
             assert ("fcitx" in calls) == (profile == "full")

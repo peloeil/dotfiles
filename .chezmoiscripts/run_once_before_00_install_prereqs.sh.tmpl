@@ -63,10 +63,10 @@ if command -v pacman >/dev/null; then
   echo "Arch Linux向けの前提条件をインストールします..."
   if command -v sudo >/dev/null 2>&1 && sudo -v; then
 {{- if eq (get . "profile" | default "full") "minimal" }}
-    sudo pacman -Syu --noconfirm --needed \
+    sudo pacman -S --noconfirm --needed \
       binutils curl elfutils git libarchive procps-ng psmisc unzip
 {{- else }}
-    sudo pacman -Syu --noconfirm --needed \
+    sudo pacman -S --noconfirm --needed \
       alacritty \
       binutils \
       curl \

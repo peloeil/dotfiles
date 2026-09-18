@@ -5,6 +5,7 @@ require("conform").setup({
         cpp = { "clang-format" },
         lua = { "stylua" },
         python = { "ruff_organize_import", "ruff_format", "ruff_fix" },
+        rust = { "rustfmt" },
         sh = { "shfmt" },
         zig = { "zigfmt" },
     },

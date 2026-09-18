@@ -18,6 +18,7 @@ local servers = {
     "clangd",
     "lua_ls",
     "pyright",
+    "rust_analyzer",
     "zls",
 }
 

@@ -33,7 +33,7 @@ podman = { version = "latest", asset_pattern = "podman-remote-static-linux_amd64
 ripgrep = "latest"
 rtk = "latest"
 ruff = "latest"
-rust = { version = "stable", profile = "default" }
+rust = { version = "stable", profile = "default", components = ["rust-analyzer", "rust-src"] }
 shellcheck = "latest"
 shfmt = "latest"
 stylua = "latest"

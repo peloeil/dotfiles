@@ -1,6 +1,7 @@
 [settings]
 auto_update = true
 experimental = true
+idiomatic_version_file_enable_tools = ["rust"]
 jobs = 4
 lockfile = true
 

@@ -1,9 +1,0 @@
-.claude/skills/writeup/SKILL.md
-.claude/skills/writeup/prompts/reader.md
-.claude/skills/writeup/prompts/factcheck.md
-.claude/skills/writeup/prompts/writer.md
-.claude/skills/prune/SKILL.md
-.claude/skills/prune/prompts/01-find.md
-.claude/skills/prune/prompts/02-refute.md
-.claude/skills/prune/prompts/04-inspect.md
-.claude/skills/prune/prompts/05-diff.md

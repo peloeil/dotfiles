@@ -5,6 +5,7 @@
 
 ## 編集する場所と制約
 
+- 文書の変更は、その必要性と必然性を説明できる場合に限る。
 - このリポジトリ内のソースを編集する。配置先から調べるには `chezmoi source-path <target-path>` を使う。`dot_`、`private_`、`executable_`、`symlink_`、`.tmpl` は [chezmoi の属性](https://www.chezmoi.io/reference/source-state-attributes/)。`private_` は権限指定であり、暗号化ではない。
 - ルートの `AGENTS.md`、`README.md`、`tests/` は配布対象外。`~/.codex/AGENTS.md` のソースは `dot_codex/AGENTS.md.tmpl`。
 - ホームのパスはテンプレートでは `.chezmoi.homeDir`、シェルでは `$HOME` を使う。
@@ -23,7 +24,7 @@
 - 別ファイルへの依存は自動追跡されない。mise・fish・Neovim の設定や plugin 一覧への依存を増やす場合は、スクリプト内のハッシュ対象も更新する。
 - `sudo` 不可や CLI 未検出によるスキップも正常終了として記録される。後から依存を揃えるだけでは再実行されない。
 
-復元手順や自動導入の範囲を変えたら README も更新する。
+復元手順や自動導入の範囲を変えた結果、README の記載が不正確または不足する場合は更新する。
 
 ## 検証と完了条件
 

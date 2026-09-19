@@ -194,6 +194,15 @@ chezmoi execute-template --file \
 chezmoi apply
 ```
 
+### Ponytail の導入がスキップされた
+
+Codex / Claude Code を導入した後、Ponytail の導入処理だけを再実行する。Codex は `~/.local/bin/codex`、Claude Code は `~/.local/bin/mise which claude` で検出できる状態にする。
+
+```sh
+chezmoi execute-template --file \
+  "$(chezmoi source-path)/.chezmoiscripts/run_onchange_after_30_install_ai_plugins.sh.tmpl" | sh
+```
+
 ### 状態を確認する
 
 ```sh

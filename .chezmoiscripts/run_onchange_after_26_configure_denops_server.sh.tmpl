@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+# unit_sha256={{ include "dot_config/systemd/user/denops-shared-server.service.tmpl" | sha256sum }}
+# port={{ template "denops-port" . }}
+if ! command -v systemctl >/dev/null 2>&1 || ! systemctl --user show-environment >/dev/null 2>&1; then
+    printf '%s\n' 'Skipping Denops service: systemd user manager is unavailable.'
+    exit 0
+fi
+
+systemctl --user daemon-reload
+{{ if get . "denopsSharedServer" -}}
+systemctl --user enable denops-shared-server.service
+systemctl --user restart denops-shared-server.service
+{{ else -}}
+systemctl --user disable --now denops-shared-server.service
+{{ end -}}

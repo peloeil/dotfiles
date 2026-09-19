@@ -5,6 +5,7 @@ Uses the repository config with isolated dpp state, data and test buffers.
 
 import json
 import os
+import select
 from pathlib import Path
 import shutil
 import subprocess
@@ -264,5 +265,39 @@ assert(close.buffer == 1, 'First picker missed its buffer mappings')
 vim.api.nvim_feedkeys('q', 'xt', false)
 assert(vim.wait(5000, function() return vim.bo.filetype ~= '{ft}' end), '{name} did not close')
 """, "sample.txt")
+
+    # Empty startup -> first filer use, with a local server, a shared server,
+    # and automatic local fallback when that shared server has stopped.
+    filer_check = """
+assert(vim.wait(10000, function() return vim.bo.filetype == 'ddu-filer' end), 'First filer did not open')
+"""
+    local_check = "assert(vim.fn['denops#_internal#server#proc#is_started']() ~= 0)"
+    run("", " e", filer_check + local_check)
+    denops = cache / "dpp/repos/vim-denops/denops.vim/denops/@denops-private"
+    with (work / "shared-server.log").open("w+") as log:
+        server = subprocess.Popen(
+            ["deno", "run", "-A", "--no-lock", "--config", str(denops / "deno.jsonc"),
+             str(denops / "cli.ts"), "--quiet", "--identity", "--hostname=127.0.0.1", "--port=0"],
+            env=env, cwd=work, stdout=subprocess.PIPE, stderr=log, text=True,
+        )
+        try:
+            assert select.select([server.stdout], [], [], 15)[0], 'Shared server did not listen'
+            address = server.stdout.readline().strip()
+            assert address.startswith('127.0.0.1:'), address
+            settings = subprocess.run(
+                ["chezmoi", "--source", str(source), "execute-template", "--override-data",
+                 json.dumps({"denopsSharedServer": True, "denopsServerPort": int(address.split(':')[1])}),
+                 "--file", str(source / "dot_config/nvim/denops-settings.vim.tmpl")],
+                check=True, capture_output=True, text=True,
+            ).stdout
+            (config / "denops-settings.vim").write_text(settings)
+            nvim("-c", "DppMakeState")
+            run("", " e", filer_check + """
+assert(vim.fn['denops#_internal#server#proc#is_started']() == 0, 'Shared connection spawned a local server')
+""")
+        finally:
+            server.terminate()
+            server.wait(timeout=10)
+        run("", " e", filer_check + local_check)
 
 print("OK: first-use mappings, pickers, syntax/Git display and Lua/Python LSP capabilities")

@@ -1,4 +1,5 @@
 {{- $profile := promptChoiceOnce . "profile" "Install profile" (list "full" "minimal") "full" -}}
+{{- $denopsSharedServer := promptBoolOnce . "denopsSharedServer" "Start a Denops shared server at login" false -}}
 {{- $email := promptStringOnce . "email" "Enter your Git email address" "peloeil20@gmail.com" -}}
 {{- $researchEmail := promptStringOnce . "researchEmail" "Enter your research Git email address" -}}
 {{- $researchDir := promptStringOnce . "researchDir" "Enter your research directory (absolute path or ~/...)" (joinPath .chezmoi.homeDir "workspace/univ/lab/research") -}}
@@ -7,6 +8,8 @@ encryption = "age"
 
 [data]
   profile = {{ $profile | quote }}
+  denopsSharedServer = {{ $denopsSharedServer }}
+  denopsServerPort = {{ get . "denopsServerPort" | default 32123 | int }}
   email = "{{ $email }}"
   researchEmail = "{{ $researchEmail }}"
   researchDir = {{ $researchDir | quote }}

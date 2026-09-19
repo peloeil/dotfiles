@@ -103,6 +103,44 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         == "research@example.invalid"
     )
 
+    denops_script = ".chezmoiscripts/run_onchange_after_26_configure_denops_server.sh.tmpl"
+    denops_unit = "dot_config/systemd/user/denops-shared-server.service.tmpl"
+    denops_config = "dot_config/nvim/denops-settings.vim.tmpl"
+    assert "denops_server_addr" not in render(denops_config)
+    service_calls = work / "service-calls"
+    service_bin = work / "service-bin"
+    service_bin.mkdir()
+    mock(service_bin / "systemctl", 'printf "%s\\n" "$*" >> "$CHECK_LOG"')
+    service_env = {**os.environ, "PATH": str(service_bin), "CHECK_LOG": str(service_calls)}
+    for enabled in (True, False):
+        data["denopsSharedServer"] = enabled
+        data["denopsServerPort"] = 32124
+        script = render(denops_script)
+        run("/bin/sh", "-n", input=script)
+        run("/bin/sh", input=script, env=service_env)
+        calls = service_calls.read_text()
+        assert ("enable denops-shared-server.service" in calls) == enabled
+        assert ("restart denops-shared-server.service" in calls) == enabled
+        assert ("disable --now denops-shared-server.service" in calls) != enabled
+        assert ("127.0.0.1:32124" in render(denops_config)) == enabled
+        assert '--port=32124' in render(denops_unit)
+        assert f'"{test_home}/.local/bin/mise"' in render(denops_unit)
+        service_calls.unlink()
+    previous = render(denops_script)
+    data["denopsServerPort"] = 32125
+    assert render(denops_script) != previous  # Restart after changing the port/unit.
+    mock(service_bin / "systemctl", 'exit 1')
+    assert 'Skipping Denops service' in run("/bin/sh", input=previous, env=service_env)
+    for invalid_port in (0, 70000):
+        data["denopsServerPort"] = invalid_port
+        invalid = subprocess.run(
+            [CHEZMOI, "--config", "/dev/null", "--config-format", "toml", "--source", str(SOURCE),
+             "execute-template", "--override-data", json.dumps(data), "--file", str(SOURCE / denops_unit)],
+            text=True, capture_output=True,
+        )
+        assert invalid.returncode != 0 and "denopsServerPort must be" in invalid.stderr
+    del data["denopsSharedServer"], data["denopsServerPort"]
+
     commands = work / "commands"
     commands.mkdir()
     (commands / "sh").symlink_to("/bin/sh")
@@ -229,8 +267,16 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
             "Enter your research Git email address=research@example.invalid",
         )
         assert tomllib.loads(config_path.read_text())["data"]["profile"] == profile
+        assert tomllib.loads(config_path.read_text())["data"]["denopsSharedServer"] is False
         run(*cli, "init", "--promptDefaults")
         assert tomllib.loads(config_path.read_text())["data"]["profile"] == profile
+        original_config = config_path.read_text()
+        config_path.write_text(original_config.replace("denopsSharedServer = false", "denopsSharedServer = true")
+                               .replace("denopsServerPort = 32123", "denopsServerPort = 32124"))
+        run(*cli, "init", "--promptDefaults")
+        saved_data = tomllib.loads(config_path.read_text())["data"]
+        assert saved_data["denopsSharedServer"] is True and saved_data["denopsServerPort"] == 32124
+        config_path.write_text(original_config)
         managed[profile] = set(run(*cli, "managed").splitlines())
         run(*cli, "diff")
         run(*cli, "apply", "--dry-run")

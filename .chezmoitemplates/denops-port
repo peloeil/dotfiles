@@ -1,0 +1,8 @@
+{{- $port := 32123 -}}
+{{- if hasKey . "denopsServerPort" -}}
+{{- $port = int .denopsServerPort -}}
+{{- end -}}
+{{- if or (lt $port 1024) (gt $port 65535) -}}
+{{- fail "denopsServerPort must be between 1024 and 65535" -}}
+{{- end -}}
+{{- $port -}}

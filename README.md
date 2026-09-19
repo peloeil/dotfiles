@@ -29,6 +29,7 @@ export PATH="$HOME/.local/bin:$PATH"
 ```
 
 `Install profile` で `full`（既定）か `minimal` を選び、Git の通常用メールアドレス、研究用メールアドレス、研究用ディレクトリ、名前を入力する。
+`Start a Denops shared server at login` は既定で無効。単独利用のマシンで、Neovim 間で Denops の常駐プロセスを使い回す場合に有効にする。
 入力値は `~/.config/chezmoi/chezmoi.toml` に保存される。研究用ディレクトリ配下のリポジトリでは、研究用メールアドレスへ自動で切り替わる。
 
 最初から minimal を指定して取得する場合は、上のインストーラのコマンドを次に置き換える。
@@ -62,6 +63,7 @@ chezmoi apply
 - Codex CLI、rtk のグローバル指示
 - fisher / fish plugins、Hack Nerd Font（full のみ）
 - Neovim の dpp plugins
+- Denops の systemd user service の有効・無効化（user manager がある場合）
 - Codex / Claude Code の Ponytail（CLI を検出できた場合）
 
 途中で失敗したら、原因を解消して `chezmoi apply` を再実行する。
@@ -100,6 +102,24 @@ chezmoi apply
 
 minimal から full に切り替えると GUI の設定・導入処理も対象になる。full から minimal に切り替えても、導入済みパッケージや除外した設定ファイルは自動削除しない。ログイン時の `startx` は無効になる。
 OS パッケージ導入は `run_once` のため、以前使った構成へ戻しただけでは再実行されない。必要なら下記の「OS パッケージの導入がスキップされた」のコマンドで再実行する。
+
+### Neovim の起動と Denops
+
+Denops はファイラーや補完の初回応答のために Neovim の起動時から開始する。
+`[data]` の `denopsSharedServer = true` で `denops-shared-server.service` をログイン時に起動し、接続先を `127.0.0.1:32123` にする。
+`denopsServerPort` でポートを変更できる。TCP ポートはユーザーごとに分離されず、同じポートでは競合する。共有サーバーは認証を行わないため、他のユーザーがいるマシンでは既定の `false` を使う。
+共有サーバーに接続できなければ、Denops 自身が個別プロセスを起動する。個別起動は空いているポートを自動選択し、Neovim の終了時に停止する。
+
+変更後は上記の差分確認と `chezmoi apply` を行う。systemd user manager がなく処理をスキップした場合、利用可能になってから次を実行する。
+
+```sh
+chezmoi execute-template --file \
+  "$(chezmoi source-path)/.chezmoiscripts/run_onchange_after_26_configure_denops_server.sh.tmpl" | sh
+```
+
+Treesitter は導入済みパーサーで直接ハイライトし、不足時または `:TSManager` などの管理コマンド実行時に管理処理を読み込む。
+netrw はディレクトリ、対応するリモート URL、`:Ex` などのコマンドで読み込む。gzip・tar・zip の通常操作は維持する。
+Colorizer の自動適用は配色を扱う設定・Web 系のファイルタイプに限る。他のバッファでも `:ColorizerAttachToBuffer` で有効にできる。
 
 ## 設定とツールを更新する
 
@@ -176,6 +196,7 @@ plugin 本体・キャッシュ・認証情報はこのリポジトリでは管�
 | after | `run_onchange_after_20_install_fish_tools.sh.tmpl` | fisher を導入し、`fisher update` |
 | after | `run_onchange_after_20_install_hack_nerd_font.sh` | 未導入なら Hack Nerd Font を入れる |
 | after | `run_onchange_after_25_install_nvim_plugins.sh.tmpl` | headless Neovim で dpp plugins を導入する |
+| after | `run_onchange_after_26_configure_denops_server.sh.tmpl` | 選択した Denops の常駐設定を systemd user service に反映する |
 | after | `run_onchange_after_30_install_ai_plugins.sh.tmpl` | CLI の検出後、Ponytail を導入する |
 
 `run_once` は展開後の内容ごとに成功を記録し、`run_onchange` は前回成功時から内容が変わると実行する。mise・fish・Neovim のスクリプトには対応する設定・plugin 一覧のハッシュを含めている。

@@ -1,0 +1,10 @@
+[Unit]
+Description=Denops shared server
+
+[Service]
+ExecStart="{{ .chezmoi.homeDir }}/.local/bin/mise" exec -- deno run -A --no-lock --config "%C/dpp/repos/vim-denops/denops.vim/denops/@denops-private/deno.jsonc" "%C/dpp/repos/vim-denops/denops.vim/denops/@denops-private/cli.ts" --hostname=127.0.0.1 --port={{ template "denops-port" . }}
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

@@ -1,4 +1,9 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
   "permissions": {
     "allow": [
       "Bash(git status*)",
@@ -9,11 +14,6 @@
     ]
   },
   "model": "claude-opus-5",
-  "attribution": {
-    "commit": "",
-    "pr": "",
-    "sessionUrl": false
-  },
   "hooks": {
     "PreToolUse": [
       {
@@ -32,11 +32,11 @@
   },
   "extraKnownMarketplaces": {
     "ponytail": {
-      "autoUpdate": true,
       "source": {
         "source": "github",
         "repo": "DietrichGebert/ponytail"
-      }
+      },
+      "autoUpdate": true
     }
   },
   "effortLevel": "high",

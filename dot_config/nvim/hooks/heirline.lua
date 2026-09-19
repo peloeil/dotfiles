@@ -35,7 +35,7 @@ local inactive_statusline = {
 
 local utils = require("heirline.utils")
 local colors = {
-    bright_bg = utils.get_highlight("Folded").bg,
+    bright_bg = utils.get_highlight("Folded").bg or utils.get_highlight("Pmenu").bg or "NONE",
     bright_fg = utils.get_highlight("Folded").fg,
     red = utils.get_highlight("DiagnosticError").fg,
     dark_red = utils.get_highlight("DiffDelete").bg,

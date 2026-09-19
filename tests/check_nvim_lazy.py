@@ -108,6 +108,11 @@ assert(#vim.api.nvim_get_autocmds({event='FileType', pattern='ddu-ff'}) == 0)
 assert(#vim.api.nvim_get_autocmds({event='FileType', pattern='ddu-filer'}) == 0)
 """)
 
+    run("vim.api.nvim_exec_autocmds('UIEnter', {modeline=false})", "", """
+local status = vim.api.nvim_eval_statusline(vim.o.statusline, {winid=0})
+assert(status.str:find('[No Name]', 1, true), 'Transparent theme broke statusline rendering')
+""")
+
     for opening in [("sample.md",), ("-c", "edit sample.md")]:
         run("", "", """
 assert(not loaded('tree-sitter-manager.nvim'), 'Installed parsers need no management UI')

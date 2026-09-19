@@ -6,6 +6,18 @@ import { dirname, join } from "jsr:@std/path@1";
 
 type Params = Record<never, never>;
 
+// Follow nvim-tree's Git symbols, with staged changes before unstaged changes.
+function gitMarker(status: string): string {
+  if (status === "??") return "★";
+  if (/U|AA|DD/.test(status)) return "";
+  return [...status].map((code, index) => {
+    if (code === " ") return "";
+    if (code === "R") return "➜";
+    if (code === "D") return "";
+    return index === 0 ? "✓" : "✗";
+  }).join("");
+}
+
 async function git(
   path: string,
   ...args: string[]
@@ -73,21 +85,23 @@ export class Filter extends BaseFilter<Params> {
       // icon_filename already adds one space per level; make it two.
       const padding = " ".repeat(item.__level);
       const display = padding + (item.display ?? item.word).trimEnd();
-      item.display = display;
       for (const highlight of item.highlights ?? []) {
         highlight.col += padding.length;
       }
+      const icon = item.highlights!.find((highlight) =>
+        highlight.name === "column-icons-icon"
+      )!;
+      // icon_filename uses byte offsets and one space between icon and name.
+      const prefix = new TextDecoder().decode(
+        new TextEncoder().encode(display).subarray(0, icon.col + icon.width),
+      );
+      const marker = gitMarker(status ?? "");
+      // Reserve two cells on every row so both icons and filenames stay aligned.
+      const markerPadding = " ".repeat(2 - marker.length);
+      item.display = `${prefix}${markerPadding}${marker} ${
+        display.slice(prefix.length)
+      }`;
       if (status) {
-        const icon = item.highlights!.find((highlight) =>
-          highlight.name === "column-icons-icon"
-        )!;
-        // Only spaces precede the icon, so byte and string offsets match.
-        const start = icon.col - 1;
-        const marker = `[${status}] `;
-        item.display = display.slice(0, start) + marker + display.slice(start);
-        for (const highlight of item.highlights!) {
-          highlight.col += marker.length;
-        }
         const group = /U|AA|DD/.test(status)
           ? "DiagnosticError"
           : status === "??"
@@ -100,8 +114,8 @@ export class Filter extends BaseFilter<Params> {
         (item.highlights ??= []).push({
           name: "filer_git_status",
           hl_group: group,
-          col: start + 1,
-          width: 4,
+          col: icon.col + icon.width + markerPadding.length + 1,
+          width: new TextEncoder().encode(marker).length,
         });
       }
     }

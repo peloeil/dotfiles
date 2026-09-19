@@ -46,6 +46,8 @@ local ok, err = pcall(function()
         local icon = assert(item.highlights[1], "File icon lost its highlight")
         assert(icon.col == 6, "File icon must follow two spaces per level and padding")
         assert(item.display:match("^ +"):len() == 5, "Non-Git files must retain aligned indentation")
+        assert(item.display:sub(icon.col + icon.width, icon.col + icon.width + 3) == "    ",
+            "Non-Git files must reserve the same space before the filename")
         assert(vim.fn.getcwd() == work, "Opening filer changed the working directory")
         vim.api.nvim_feedkeys("q", "xt", false)
         assert(vim.wait(5000, function() return vim.bo.filetype ~= "ddu-filer" end), "filer did not close")
@@ -61,6 +63,7 @@ local ok, err = pcall(function()
     local function git(dir, ...)
         local result = vim.system({ "git", "-C", dir, ... }, { text = true }):wait()
         assert(result.code == 0, result.stderr)
+        return vim.trim(result.stdout)
     end
     git(repo, "init", "--quiet")
     git(repo, "add", ".")
@@ -80,6 +83,14 @@ local ok, err = pcall(function()
     local long_name = "long_" .. string.rep("filename_", 8) .. "日本語.lua"
     vim.fn.writefile({ "new" }, checkout .. "/src/" .. long_name)
     vim.fn.writefile({ "new" }, checkout .. "/src/no_icon.unknown_extension")
+    vim.fn.writefile({ "conflict" }, checkout .. "/src/conflict.lua")
+    local blob = git(checkout, "hash-object", "-w", "src/conflict.lua")
+    local conflict = vim.system({ "git", "-C", checkout, "update-index", "--index-info" }, {
+        text = true,
+        stdin = ("100644 %s 1\tsrc/conflict.lua\n100644 %s 2\tsrc/conflict.lua\n100644 %s 3\tsrc/conflict.lua\n")
+            :format(blob, blob, blob),
+    }):wait()
+    assert(conflict.code == 0, conflict.stderr)
 
     local function draw()
         assert(vim.wait(10000, function()
@@ -101,33 +112,39 @@ local ok, err = pcall(function()
         local ending = " " .. filename
         assert(found.display:sub(-#ending) == ending, relative .. ": " .. found.display)
         local icon = found.highlights[1]
-        assert(icon.col == 2 + 2 * found.__level + (expected and 5 or 0), "Icon highlight is misaligned")
+        assert(icon.col == 2 + 2 * found.__level, "Git status must not shift the icon")
+        local filename_start = #found.display - #filename + 1
+        assert(vim.fn.strdisplaywidth(found.display:sub(1, filename_start - 1)) == 6 + 2 * found.__level,
+            "Filenames must align regardless of Git status: " .. found.display)
         local highlight = vim.iter(found.highlights):find(function(hl) return hl.name == "filer_git_status" end)
         assert((highlight and highlight.hl_group) == group, "Wrong Git highlight: " .. relative)
         if highlight then
-            assert(highlight.col == 2 + 2 * found.__level and highlight.width == 4,
-                "Git highlight must follow indentation and precede the icon: " .. relative)
-            assert(found.display:sub(highlight.col, highlight.col + 3) == "[" .. expected .. "]",
-                "Git highlight is misaligned before the icon: " .. relative)
+            assert(highlight.col > icon.col + icon.width and highlight.width == #expected,
+                "Git highlight must follow the icon: " .. relative)
+            assert(highlight.col + highlight.width + 1 == filename_start,
+                "Git status must directly precede the filename: " .. relative)
+            assert(found.display:sub(highlight.col, highlight.col + highlight.width - 1) == expected,
+                "Git highlight is misaligned: " .. relative)
             if relative == "src/" .. long_name then
                 local width = vim.api.nvim_win_get_width(0)
                 assert(not vim.wo.wrap and vim.fn.strdisplaywidth(found.display) > width,
                     "The long filename must exceed the filer window")
-                assert(vim.fn.strdisplaywidth(found.display:sub(1, highlight.col + 3)) <= width,
+                assert(vim.fn.strdisplaywidth(found.display:sub(1, highlight.col + highlight.width - 1)) <= width,
                     "Git status must remain visible when the filename is clipped")
             end
         end
     end
-    check_status("src/modified file.lua", " M", "DiagnosticWarn")
-    check_status("src/staged.lua", "M ", "DiagnosticOk")
-    check_status("src/added.lua", "AM", "DiagnosticWarn")
+    check_status("src/modified file.lua", "✗", "DiagnosticWarn")
+    check_status("src/staged.lua", "✓", "DiagnosticOk")
+    check_status("src/added.lua", "✓✗", "DiagnosticWarn")
     check_status("src/clean.lua", nil, nil)
-    check_status("src/" .. long_name, "??", "DiagnosticInfo")
-    check_status("src/no_icon.unknown_extension", "??", "DiagnosticInfo")
-    check_status("src", " *", "DiagnosticWarn")
-    check_status("removed", " *", "DiagnosticWarn")
-    check_status("renamed 日本語.txt", "R ", "DiagnosticOk")
-    check_status("new", " *", "DiagnosticWarn")
+    check_status("src/" .. long_name, "★", "DiagnosticInfo")
+    check_status("src/no_icon.unknown_extension", "★", "DiagnosticInfo")
+    check_status("src/conflict.lua", "", "DiagnosticError")
+    check_status("src", "✗", "DiagnosticWarn")
+    check_status("removed", "✗", "DiagnosticWarn")
+    check_status("renamed 日本語.txt", "➜", "DiagnosticOk")
+    check_status("new", "✗", "DiagnosticWarn")
     assert(vim.fn.getcwd() == work, "Git status changed the working directory")
 
     -- Refresh must observe index changes, and expanding must retain indentation.
@@ -137,15 +154,15 @@ local ok, err = pcall(function()
     assert(vim.wait(10000, function()
         return vim.iter(vim.fn["ddu#ui#get_items"]("filer")):any(function(item)
             return (item.action or {}).path == checkout .. "/src/modified file.lua"
-                and item.display:find("[M ]", 1, true) ~= nil
+                and item.display:find("✓", 1, true) ~= nil
         end)
     end), "Refreshed Git status did not appear")
-    check_status("src/modified file.lua", "M ", "DiagnosticOk")
+    check_status("src/modified file.lua", "✓", "DiagnosticOk")
     vim.fn["ddu#ui#do_action"]("quit", vim.empty_dict(), "filer")
     vim.fn["ddu#start"]({ name = "filer", sourceOptions = { file = { path = checkout .. "/new" } },
         searchPath = checkout .. "/new/untracked 日本語.lua" })
     draw()
-    check_status("new/untracked 日本語.lua", "??", "DiagnosticInfo")
+    check_status("new/untracked 日本語.lua", "★", "DiagnosticInfo")
     vim.fn["ddu#ui#do_action"]("quit", vim.empty_dict(), "filer")
 end)
 vim.cmd.cd(vim.fn.fnameescape(cwd))

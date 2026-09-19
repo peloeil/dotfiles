@@ -19,7 +19,7 @@ local function install_plugin(repo_name)
     if vim.fn.isdirectory(repo_dir) ~= 1 then
         vim.system({ "git", "clone", url, repo_dir }):wait()
     end
-    vim.opt.runtimepath:prepend(repo_dir)
+    return repo_dir
 end
 
 local config_dir = vim.fs.joinpath(xdg_config_home, "nvim")
@@ -33,12 +33,14 @@ local function is_dpp_config_file(path)
 end
 
 local function dpp_init()
-    install_plugin("Shougo/dpp-protocol-git")
-    install_plugin("Shougo/dpp-ext-toml")
-    install_plugin("Shougo/dpp-ext-lazy")
-    install_plugin("Shougo/dpp-ext-installer")
-    install_plugin("Shougo/dpp.vim")
-    install_plugin("vim-denops/denops.vim")
+    local paths = {}
+    for _, repo in ipairs({
+        "Shougo/dpp-protocol-git", "Shougo/dpp-ext-toml", "Shougo/dpp-ext-lazy",
+        "Shougo/dpp-ext-installer", "Shougo/dpp.vim", "vim-denops/denops.vim",
+    }) do
+        table.insert(paths, 1, install_plugin(repo))
+    end
+    vim.opt.runtimepath:prepend(paths)
 end
 
 local function dpp_load()

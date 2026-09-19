@@ -29,7 +29,7 @@ export PATH="$HOME/.local/bin:$PATH"
 ```
 
 `Install profile` で `full`（既定）か `minimal` を選び、Git の通常用メールアドレス、研究用メールアドレス、研究用ディレクトリ、名前を入力する。
-`Start a Denops shared server at login` は既定で無効。単独利用のマシンで、Neovim 間で Denops の常駐プロセスを使い回す場合に有効にする。
+`Start a Denops shared server at login` では [Denops の共有サーバー](#denops-の共有サーバー)を使うか選ぶ。既定は無効。
 入力値は `~/.config/chezmoi/chezmoi.toml` に保存される。研究用ディレクトリ配下のリポジトリでは、研究用メールアドレスへ自動で切り替わる。
 
 最初から minimal を指定して取得する場合は、上のインストーラのコマンドを次に置き換える。
@@ -91,7 +91,7 @@ full の Bash のログイン設定は、SSH 接続ではなく、`DISPLAY` が�
 
 ## 構成を切り替える
 
-`chezmoi edit-config` で `[data]` の `profile` を `"full"` または `"minimal"` に変更し、差分を確認して適用する。`profile` がない既存環境は full として扱う。
+`chezmoi edit-config` で `[data]` の設定を変更し、差分を確認して適用する。
 
 ```sh
 chezmoi edit-config
@@ -100,26 +100,19 @@ chezmoi apply --dry-run
 chezmoi apply
 ```
 
+### full / minimal
+
+`profile` を `"full"` または `"minimal"` にする。未設定の既存環境は full として扱う。
 minimal から full に切り替えると GUI の設定・導入処理も対象になる。full から minimal に切り替えても、導入済みパッケージや除外した設定ファイルは自動削除しない。ログイン時の `startx` は無効になる。
 OS パッケージ導入は `run_once` のため、以前使った構成へ戻しただけでは再実行されない。必要なら下記の「OS パッケージの導入がスキップされた」のコマンドで再実行する。
 
-### Neovim の起動と Denops
+### Denops の共有サーバー
 
-Denops はファイラーや補完の初回応答のために Neovim の起動時から開始する。
-`[data]` の `denopsSharedServer = true` で `denops-shared-server.service` をログイン時に起動し、接続先を `127.0.0.1:32123` にする。
-`denopsServerPort` でポートを変更できる。TCP ポートはユーザーごとに分離されず、同じポートでは競合する。共有サーバーは認証を行わないため、他のユーザーがいるマシンでは既定の `false` を使う。
-共有サーバーに接続できなければ、Denops 自身が個別プロセスを起動する。個別起動は空いているポートを自動選択し、Neovim の終了時に停止する。
+`denopsSharedServer = true` にすると、`denops-shared-server.service` がログイン時に起動し、Neovim 間で Denops を使い回してファイラーなどの初回応答を早める。systemd user manager が必要。
+`false`（既定）に戻して適用すると常駐を停止し、Neovim ごとに Denops を起動する。
 
-変更後は上記の差分確認と `chezmoi apply` を行う。systemd user manager がなく処理をスキップした場合、利用可能になってから次を実行する。
-
-```sh
-chezmoi execute-template --file \
-  "$(chezmoi source-path)/.chezmoiscripts/run_onchange_after_26_configure_denops_server.sh.tmpl" | sh
-```
-
-Treesitter は導入済みパーサーで直接ハイライトし、不足時または `:TSManager` などの管理コマンド実行時に管理処理を読み込む。
-netrw はディレクトリ、対応するリモート URL、`:Ex` などのコマンドで読み込む。gzip・tar・zip の通常操作は維持する。
-Colorizer の自動適用は配色を扱う設定・Web 系のファイルタイプに限る。他のバッファでも `:ColorizerAttachToBuffer` で有効にできる。
+接続先は `127.0.0.1:32123`。競合時は `denopsServerPort` でポートを変更できる。
+共有サーバーは認証を行わないため、複数人で使うマシンでは無効のまま使う。
 
 ## 設定とツールを更新する
 
@@ -206,13 +199,21 @@ plugin 本体・キャッシュ・認証情報はこのリポジトリでは管�
 
 ### OS パッケージの導入がスキップされた
 
-スキップもスクリプトの正常終了として記録されるため、後から `sudo` が使えるようになっても、同じ内容のスクリプトは通常の `apply` では再実行されない。
-前提パッケージの処理だけを実行し、その後に適用を再開する。
+`sudo` が使える状態にして前提パッケージの処理を再実行し、その後に適用を再開する。
 
 ```sh
 chezmoi execute-template --file \
   "$(chezmoi source-path)/.chezmoiscripts/run_once_before_00_install_prereqs.sh.tmpl" | sh
 chezmoi apply
+```
+
+### Denops の共有サーバー設定がスキップされた
+
+systemd user manager が利用可能になってから、設定処理を再実行する。
+
+```sh
+chezmoi execute-template --file \
+  "$(chezmoi source-path)/.chezmoiscripts/run_onchange_after_26_configure_denops_server.sh.tmpl" | sh
 ```
 
 ### Ponytail の導入がスキップされた

@@ -7,6 +7,7 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.keymap.set("n", "<leader>e", [[<cmd>call ddu#ui#do_action("quit", {}, "filer")<cr>]], opts)
         vim.keymap.set("n", "q", [[<cmd>call ddu#ui#do_action("quit", {}, "filer")<cr>]], opts)
         vim.keymap.set("n", "o", [[<cmd>call ddu#ui#do_action("expandItem", #{ mode: "toggle" }, "filer")<cr>]], opts)
+        vim.keymap.set("n", "r", [[<cmd>call ddu#ui#do_action("redraw", #{method: "refreshItems"}, "filer")<cr>]], opts)
         vim.keymap.set(
             "n",
             "..",
@@ -36,6 +37,7 @@ vim.fn["ddu#custom#patch_local"]("filer", {
         file = {
             sorters = { "sorter_alpha" },
             columns = { "icon_filename" },
+            converters = { "converter_filer" },
         },
     },
     -- ddu-kind-file

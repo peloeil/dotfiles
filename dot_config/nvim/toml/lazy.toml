@@ -33,7 +33,7 @@ lua_source = '''
 [[plugins]]
 repo = "hiphish/rainbow-delimiters.nvim"
 on_event = "FileType"
-on_if = "&buftype ==# ''"
+on_if = "&buftype ==# '' && &filetype !=# 'text'"
 
 [[plugins]]
 repo = "nvimdev/indentmini.nvim"
@@ -60,7 +60,7 @@ lua_source = '''
         char = "▏",
         minlevel = 1,
         only_current = false,
-        exclude = { "help", "markdown", "text" },
+        exclude = { "help", "markdown", "text", "nofile", "nowrite", "acwrite", "prompt", "terminal", "quickfix" },
     })
 '''
 
@@ -108,13 +108,32 @@ lua_source = '''
 
 [[plugins]]
 repo = "catgoose/nvim-colorizer.lua"
+lua_add = '''
+    vim.g.colorizer_filetypes = {
+        "css", "scss", "sass", "less", "html", "javascript", "javascriptreact",
+        "typescript", "typescriptreact", "vue", "svelte", "astro", "lua", "vim",
+        "json", "jsonc", "json5", "toml", "yaml", "conf", "dosini", "sh", "fish", "tmux",
+    }
+'''
 on_event = ["BufWinEnter", "FileType", "TextChanged", "TextChangedI"]
-on_if = "&buftype ==# '' && (line('$') > 1 || getline(1) !=# '')"
+on_if = "&buftype ==# '' && index(g:colorizer_filetypes, &filetype) >= 0 && (line('$') > 1 || getline(1) !=# '')"
+on_cmd = ["ColorizerAttachToBuffer", "ColorizerDetachFromBuffer", "ColorizerReloadAllBuffers", "ColorizerToggle"]
 lua_source = '''
     local colorizer = require("colorizer")
-    colorizer.setup({ buftypes = { "" } })
+    local filetypes = vim.g.colorizer_filetypes
+    colorizer.setup({
+        filetypes = filetypes,
+        buftypes = { "!nofile", "!nowrite", "!acwrite", "!prompt", "!terminal", "!quickfix", "!help" },
+        lazy_load = true,
+    })
     -- TextChanged can be the first trigger, without FileType or BufWinEnter to replay.
-    colorizer.attach_to_buffer(0)
+    local buf = vim.api.nvim_get_current_buf()
+    vim.schedule(function()
+        if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buftype == ""
+            and vim.list_contains(filetypes, vim.bo[buf].filetype) then
+            colorizer.attach_to_buffer(buf, nil, "filetype")
+        end
+    end)
 '''
 
 [[plugins]]

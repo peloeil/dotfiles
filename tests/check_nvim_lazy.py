@@ -54,7 +54,7 @@ with tempfile.TemporaryDirectory(prefix="nvim-lazy-") as temporary:
     (work / "sample.lua").write_text("local answer = { 42 }\nreturn answer\n")
     (work / "sample.py").write_text("answer: int = 42\n")
     (work / "sample.css").write_text("body { color: #ff0000; }\n")
-    (work / "colors").write_text("#ff0000\n")
+    (work / "colors.txt").write_text("#ff0000\n")
     (work / "sample.md").write_text("# Example\n\nbefore\n")
     for args in [
         ("init", "--quiet"), ("add", "sample.md"),
@@ -179,6 +179,7 @@ assert(not loaded('indentmini.nvim') and not loaded('nvim-colorizer.lua'))
 
     run("", "", """
 assert(not loaded('indentmini.nvim'), 'Plain text is excluded from indent guides')
+assert(not loaded('nvim-colorizer.lua') and not loaded('rainbow-delimiters.nvim'))
 """, "sample.txt")
 
     color_check = """
@@ -189,9 +190,14 @@ assert(vim.wait(3000, function()
     return #vim.api.nvim_buf_get_extmarks(0, ns, 0, -1, {}) > 0
 end), 'First buffer is missing color highlights')
 """
-    run("", "", color_check, "colors")
-    run("assert(not loaded('nvim-colorizer.lua'))", "i#ff0000<Esc>", color_check)
-    run("assert(not loaded('nvim-colorizer.lua'))", "i#ff0000<Esc>", color_check, "new.txt")
+    run("", "", color_check, "sample.css")
+    run("assert(not loaded('nvim-colorizer.lua'))", "i#ff0000<Esc>", color_check, "new.css")
+    run("assert(not loaded('nvim-colorizer.lua'))", ":ColorizerAttachToBuffer<CR>", color_check, "colors.txt")
+    run("", "", """
+assert(require('colorizer').is_buffer_attached(0))
+vim.cmd.edit('sample.txt')
+assert(not require('colorizer').is_buffer_attached(0), 'Later plain text must remain excluded')
+""", "sample.css")
     run("", "", """
 assert(loaded('rainbow-delimiters.nvim') and loaded('indentmini.nvim'))
 assert(require('rainbow-delimiters').is_enabled(0), 'Unnamed Lua buffer missed delimiter highlighting')

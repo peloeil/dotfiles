@@ -43,7 +43,8 @@ vim.cmd([[call ddc#enable()]])
 repo = "Shougo/ddc-ui-native"
 
 # source
-## ddc-source-lsp config is in `no_lazy.toml`
+[[plugins]]
+repo = "Shougo/ddc-source-lsp"
 [[plugins]]
 repo = "Shougo/ddc-source-around"
 [[plugins]]

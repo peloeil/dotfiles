@@ -1,4 +1,4 @@
-"""Run: python3 tests/check_nvim_lazy.py. Requires installed plugins and parsers.
+"""Run: python3 tests/check_nvim_lazy.py. Requires plugins, parsers, Lua LS and Pyright.
 
 Uses the repository config with isolated dpp state, data and test buffers.
 """
@@ -50,6 +50,17 @@ with tempfile.TemporaryDirectory(prefix="nvim-lazy-") as temporary:
 
     nvim("-c", "DppMakeState")
     (work / "sample.txt").write_text("hello x world x more\n")
+    (work / "sample.lua").write_text("local answer = { 42 }\nreturn answer\n")
+    (work / "sample.py").write_text("answer: int = 42\n")
+    (work / "sample.md").write_text("# Example\n\nbefore\n")
+    for args in [
+        ("init", "--quiet"), ("add", "sample.md"),
+        ("-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+         "-c", "commit.gpgsign=false", "-c", "core.hooksPath=/dev/null",
+         "commit", "--quiet", "-m", "Initial"),
+    ]:
+        subprocess.run(["git", *args], cwd=work, check=True, capture_output=True)
+    (work / "sample.md").write_text("# Example\n\nafter\n")
     check = work / "check.lua"
 
     def run(before, keys, after, *args):
@@ -81,11 +92,47 @@ end, 100)
 
     run("", "", """
 assert(loaded('gitsigns.nvim'), 'Gitsigns must retain its own lazy-loading behavior')
-for _, name in ipairs({'flash.nvim', 'nvim-surround', 'ddu.vim', 'ddc.vim'}) do
+for _, name in ipairs({
+    'flash.nvim', 'nvim-surround', 'ddu.vim', 'ddc.vim',
+    'nvim-lspconfig', 'ddc-source-lsp', 'fidget.nvim', 'tree-sitter-manager.nvim',
+}) do
     assert(not loaded(name), name .. ' loaded without being used')
 end
 assert(#vim.api.nvim_get_autocmds({event='FileType', pattern='ddu-ff'}) == 0)
 assert(#vim.api.nvim_get_autocmds({event='FileType', pattern='ddu-filer'}) == 0)
+""")
+
+    for opening in [("sample.md",), ("-c", "edit sample.md")]:
+        run("", "", """
+assert(loaded('tree-sitter-manager.nvim'))
+assert(not loaded('nvim-lspconfig') and not loaded('fidget.nvim'))
+assert(vim.wait(5000, function()
+    return vim.treesitter.highlighter.active[vim.api.nvim_get_current_buf()] ~= nil
+        and (vim.b.gitsigns_status_dict or {}).changed == 1
+end), 'First file lost highlighting or Git signs')
+""", *opening)
+
+    run("assert(not loaded('tree-sitter-manager.nvim'))", ":TSManager<CR>", """
+assert(loaded('tree-sitter-manager.nvim'), 'TSManager must work before opening a file')
+""")
+
+    for filename, server in [("sample.lua", "lua_ls"), ("sample.py", "pyright")]:
+        for opening in [(filename,), ("-c", "edit " + filename)]:
+            run("", "", f"""
+assert(loaded('nvim-lspconfig') and loaded('fidget.nvim'))
+assert(not loaded('ddc.vim'), 'LSP setup must not start completion')
+assert(vim.wait(10000, function()
+    local clients = vim.lsp.get_clients({{bufnr=0, name='{server}'}})
+    return #clients == 1 and clients[1].initialized
+end), '{server} did not attach to the first file')
+local client = vim.lsp.get_clients({{bufnr=0, name='{server}'}})[1]
+assert(client.config.capabilities.textDocument.completion.completionItem.snippetSupport)
+""", *opening)
+
+    run("", "i(<Esc>", """
+assert(loaded('ddc.vim') and loaded('ddc-source-lsp'))
+assert(not loaded('nvim-lspconfig'), 'Completion alone must not configure LSP servers')
+assert(vim.api.nvim_get_current_line() == '()', 'First pair insertion failed')
 """)
 
     # Each operation starts in a fresh process, exercising the first-use loader.
@@ -127,4 +174,4 @@ vim.api.nvim_feedkeys('q', 'xt', false)
 assert(vim.wait(5000, function() return vim.bo.filetype ~= '{ft}' end), '{name} did not close')
 """, "sample.txt")
 
-print("OK: lazy first-use mappings preserve Flash motions, surround modes and all DDU pickers")
+print("OK: first-use mappings, pickers, syntax/Git display and Lua/Python LSP capabilities")

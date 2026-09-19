@@ -73,7 +73,6 @@ lua_source = '''
 
 [[plugins]]
 repo = "j-hui/fidget.nvim"
-on_event = "VimEnter"
 lua_source = '''
     require("fidget").setup({})
 '''
@@ -114,3 +113,38 @@ on_if = "expand('%') !=# ''"
 lua_source = '''
     require("colorizer").setup()
 '''
+
+[[plugins]]
+repo = "romus204/tree-sitter-manager.nvim"
+on_event = "FileType"
+on_cmd = ["TSManager", "TSInstall", "TSInstallSync", "TSUninstall", "TSUpdate", "TSUpdateSync"]
+lua_source = '''
+    require("tree-sitter-manager").setup({
+        highlight = false,
+        ensure_installed = {
+            "bash", "cpp", "dockerfile", "git_config", "git_rebase",
+            "gitignore", "json", "json5", "make", "python", "rust",
+            "ssh_config", "tmux", "typescript", "zig",
+        },
+        auto_install = true,
+        noauto_install = {
+            "c", "lua", "markdown", "markdown_inline", "query", "vim", "vimdoc",
+        },
+    })
+    vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("__treesitter_highlight", { clear = true }),
+        -- Work around suppressed BufReadPost when start() loads a buffer inside FileType.
+        callback = vim.schedule_wrap(function(event)
+            if vim.api.nvim_buf_is_loaded(event.buf) then
+                pcall(vim.treesitter.start, event.buf)
+            end
+        end),
+    })
+'''
+
+[[plugins]]
+repo = "neovim/nvim-lspconfig"
+on_ft = ["c", "cpp", "objc", "objcpp", "cuda", "lua", "python", "rust", "zig", "zir"]
+# Capabilities and progress handlers must be ready before any client starts.
+depends = ["ddc-source-lsp", "fidget.nvim"]
+hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/lsp.lua"

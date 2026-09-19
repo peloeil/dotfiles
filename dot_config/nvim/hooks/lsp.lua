@@ -13,6 +13,15 @@ vim.diagnostic.config({
 vim.lsp.config("*", {
     capabilities = require("ddc_source_lsp").make_client_capabilities(),
 })
+vim.lsp.config("rust_analyzer", {
+    settings = {
+        ["rust-analyzer"] = {
+            check = {
+                command = "clippy",
+            },
+        },
+    },
+})
 
 local servers = {
     "clangd",

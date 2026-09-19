@@ -31,6 +31,8 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.fn["ddu#custom#patch_local"]("filer", {
     -- ddu-ui-filer
     ui = "filer",
+    -- Avoid a later async redraw collapsing the tree expanded by searchPath.
+    sync = true,
     -- ddu-source-file
     sources = { "file" },
     sourceOptions = {

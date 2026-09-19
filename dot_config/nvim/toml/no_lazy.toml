@@ -12,27 +12,3 @@ lua_source = '''
     vim.api.nvim_set_hl(0, "FloatBorder", { fg = vim.api.nvim_get_hl(0, { name = "FloatBorder" }).fg, bg = nil })
     vim.api.nvim_set_hl(0, "FloatTitle", { fg = vim.api.nvim_get_hl(0, { name = "FloatTitle" }).fg, bg = nil })
 '''
-
-[[plugins]]
-repo = "lewis6991/gitsigns.nvim"
-# Gitsigns defers buffer work internally; the author advises against external lazy loading.
-# https://github.com/lewis6991/gitsigns.nvim/issues/1289#issuecomment-2840371229
-lua_source = '''
-    vim.api.nvim_set_hl(0, "GitSignsAddInline", { fg = nil, bg = "#003800" })
-    vim.api.nvim_set_hl(0, "GitSignsChangeInline", { fg = nil, bg = "#404000" })
-    vim.api.nvim_set_hl(0, "GitSignsDeleteInline", { fg = nil, bg = "#400000" })
-    require("gitsigns").setup({
-        signs = {
-            add = { text = "┃+" },
-            change = { text = "┃~" },
-        },
-        signs_staged = {
-            add = { text = '┃+' },
-            change = { text = "┃~" },
-        },
-        word_diff = true,
-        numhl = true,
-        current_line_blame = true,
-    })
-    vim.keymap.set("n", "<leader>hp", function() require("gitsigns").preview_hunk() end, { desc = "Preview git hunk" })
-'''

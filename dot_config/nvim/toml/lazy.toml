@@ -151,3 +151,33 @@ on_ft = ["c", "cpp", "objc", "objcpp", "cuda", "lua", "python", "rust", "zig", "
 # Capabilities and progress handlers must be ready before any client starts.
 depends = ["ddc-source-lsp", "fidget.nvim"]
 hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/lsp.lua"
+
+[[plugins]]
+repo = "lewis6991/gitsigns.nvim"
+# Keep unnamed buffers idle; include naming/writing a buffer without reading a file.
+on_event = ["BufReadPost", "BufNewFile", "BufFilePost", "BufWritePost"]
+on_if = "&buftype ==# '' && expand('%:p') !=# ''"
+on_cmd = "Gitsigns"
+on_lua = "gitsigns"
+lua_source = '''
+    vim.api.nvim_set_hl(0, "GitSignsAddInline", { fg = nil, bg = "#003800" })
+    vim.api.nvim_set_hl(0, "GitSignsChangeInline", { fg = nil, bg = "#404000" })
+    vim.api.nvim_set_hl(0, "GitSignsDeleteInline", { fg = nil, bg = "#400000" })
+    require("gitsigns").setup({
+        signs = {
+            add = { text = "┃+" },
+            change = { text = "┃~" },
+        },
+        signs_staged = {
+            add = { text = '┃+' },
+            change = { text = "┃~" },
+        },
+        word_diff = true,
+        numhl = true,
+        current_line_blame = true,
+    })
+'''
+
+lua_add = '''
+    vim.keymap.set("n", "<leader>hp", function() require("gitsigns").preview_hunk() end, { desc = "Preview git hunk" })
+'''

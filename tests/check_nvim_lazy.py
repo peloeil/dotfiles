@@ -92,7 +92,7 @@ end, 100)
         nvim(*args, "-c", "lua dofile(" + json.dumps(str(check)) + ")")
 
     run("", "", """
-assert(loaded('gitsigns.nvim'), 'Gitsigns must retain its own lazy-loading behavior')
+assert(not loaded('gitsigns.nvim'), 'Unnamed buffers must not initialize Git monitoring')
 assert(not package.loaded['gitsigns.actions'], 'Preview mapping must not defeat internal lazy loading')
 for _, name in ipairs({
     'flash.nvim', 'nvim-surround', 'ddu.vim', 'ddc.vim',
@@ -124,6 +124,22 @@ assert(vim.iter(vim.api.nvim_list_wins()):any(function(win)
     return vim.api.nvim_win_get_config(win).relative ~= ''
 end), 'First hunk preview did not open')
 """, "sample.md")
+
+    # These actions run after VimEnter, including naming a buffer without :edit.
+    for action in [
+        "vim.cmd.edit('sample.md')",
+        "vim.cmd.edit('new-git.txt')",
+        "vim.cmd('file renamed.txt')",
+        "vim.api.nvim_buf_set_lines(0, 0, -1, false, {'new'}); vim.cmd('write written.txt')",
+    ]:
+        run("assert(vim.v.vim_did_enter == 1); assert(not loaded('gitsigns.nvim')); " + action,
+            "", """
+assert(loaded('gitsigns.nvim'))
+assert(vim.wait(5000, function() return vim.b.gitsigns_head ~= nil end), 'Git did not attach')
+""")
+    for action in ["vim.cmd('Gitsigns toggle_current_line_blame')",
+                   "vim.fn.maparg(' hp', 'n', false, true).callback()"]:
+        run("assert(not loaded('gitsigns.nvim')); " + action, "", "assert(loaded('gitsigns.nvim'))")
 
     run("assert(not loaded('tree-sitter-manager.nvim'))", ":TSManager<CR>", """
 assert(loaded('tree-sitter-manager.nvim'), 'TSManager must work before opening a file')

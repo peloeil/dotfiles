@@ -48,6 +48,8 @@ lua_source = '''
 
 [[plugins]]
 repo = "lewis6991/gitsigns.nvim"
+# Gitsigns defers buffer work internally; the author advises against external lazy loading.
+# https://github.com/lewis6991/gitsigns.nvim/issues/1289#issuecomment-2840371229
 lua_source = '''
     vim.api.nvim_set_hl(0, "GitSignsAddInline", { fg = nil, bg = "#003800" })
     vim.api.nvim_set_hl(0, "GitSignsChangeInline", { fg = nil, bg = "#404000" })
@@ -66,11 +68,4 @@ lua_source = '''
         current_line_blame = true,
     })
     vim.keymap.set("n", "<leader>hp", require("gitsigns").preview_hunk, { desc = "Preview git hunk" })
-'''
-
-[[plugins]]
-repo = "folke/flash.nvim"
-lua_source = '''
-    require("flash").setup({})
-    vim.keymap.set({ "n", "x", "o" }, "s", function() require("flash").jump() end, { noremap = true, silent = true, desc = "Flash" })
 '''

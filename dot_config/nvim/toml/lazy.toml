@@ -2,6 +2,26 @@
 repo = "nvim-tree/nvim-web-devicons"
 
 [[plugins]]
+repo = "folke/flash.nvim"
+on_lua = "flash"
+lua_add = '''
+    vim.keymap.set({ "n", "x", "o" }, "s", function() require("flash").jump() end, { silent = true, desc = "Flash" })
+    -- Invoke the real callback without dpp's operator-pending key replay.
+    for _, key in ipairs({ "f", "F", "t", "T", ";", "," }) do
+        vim.keymap.set({ "n", "x", "o" }, key, function()
+            require("flash")
+            vim.fn.maparg(key, "n", false, true).callback()
+        end, { silent = true })
+    end
+'''
+lua_source = '''
+    -- Flash preserves existing repeat mappings; remove our loading callbacks first.
+    vim.keymap.del({ "n", "x", "o" }, ";")
+    vim.keymap.del({ "n", "x", "o" }, ",")
+    require("flash").setup({})
+'''
+
+[[plugins]]
 repo = "windwp/nvim-autopairs"
 on_event = "InsertEnter"
 lua_source = '''
@@ -82,7 +102,7 @@ on_map = { n = "<leader>lf" }
 
 [[plugins]]
 repo = "kylechui/nvim-surround"
-on_event = "VimEnter"
+on_map = { n = ["ys", "yss", "yS", "ySS", "ds", "cs", "cS"], x = ["S", "gS"], i = ["<C-g>s", "<C-g>S"] }
 lua_source = '''
     require("nvim-surround").setup({})
 '''

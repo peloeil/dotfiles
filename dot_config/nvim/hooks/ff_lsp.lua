@@ -1,4 +1,4 @@
--- lua_add {{{
+-- lua_post_source {{{
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "ddu-ff",
     group = vim.api.nvim_create_augroup("__ddu_lsp", { clear = true }),
@@ -14,9 +14,6 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.keymap.set("n", "a", [[<cmd>call ddu#ui#do_action("openFilterWindow", {})<cr>]], opts)
     end,
 })
--- }}}
-
--- lua_post_source {{{
 vim.fn["ddu#custom#patch_global"]({
     kindOptions = {
         lsp = {

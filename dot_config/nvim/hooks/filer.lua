@@ -1,4 +1,4 @@
--- lua_add {{{
+-- lua_post_source {{{
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "ddu-filer",
     group = vim.api.nvim_create_augroup("__ddu_filer", { clear = true }),
@@ -25,9 +25,6 @@ vim.api.nvim_create_autocmd("FileType", {
         end, opts)
     end,
 })
--- }}}
-
--- lua_post_source {{{
 vim.fn["ddu#custom#patch_local"]("filer", {
     -- ddu-ui-filer
     ui = "filer",

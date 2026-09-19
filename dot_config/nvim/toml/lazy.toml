@@ -119,7 +119,7 @@ lua_source = '''
 
 [[plugins]]
 repo = "romus204/tree-sitter-manager.nvim"
-on_event = "FileType"
+on_lua = "tree-sitter-manager"
 on_cmd = ["TSManager", "TSInstall", "TSInstallSync", "TSUninstall", "TSUpdate", "TSUpdateSync"]
 lua_source = '''
     require("tree-sitter-manager").setup({
@@ -129,19 +129,7 @@ lua_source = '''
             "gitignore", "json", "json5", "make", "python", "rust",
             "ssh_config", "tmux", "typescript", "zig",
         },
-        auto_install = true,
-        noauto_install = {
-            "c", "lua", "markdown", "markdown_inline", "query", "vim", "vimdoc",
-        },
-    })
-    vim.api.nvim_create_autocmd("FileType", {
-        group = vim.api.nvim_create_augroup("__treesitter_highlight", { clear = true }),
-        -- Work around suppressed BufReadPost when start() loads a buffer inside FileType.
-        callback = vim.schedule_wrap(function(event)
-            if vim.api.nvim_buf_is_loaded(event.buf) then
-                pcall(vim.treesitter.start, event.buf)
-            end
-        end),
+        auto_install = false,
     })
 '''
 

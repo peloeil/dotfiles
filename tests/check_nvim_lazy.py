@@ -19,7 +19,8 @@ with tempfile.TemporaryDirectory(prefix="nvim-lazy-") as temporary:
     work = Path(temporary)
     config = work / "config/nvim"
     shutil.copytree(source / "dot_config/nvim", config)
-    shutil.copytree(data / "nvim/site", work / "data/nvim/site")
+    # Old installations may link queries into a dpp runtime that was regenerated.
+    shutil.copytree(data / "nvim/site", work / "data/nvim/site", ignore_dangling_symlinks=True)
     for toml in config.glob("toml/*.toml"):
         for plugin in tomllib.loads(toml.read_text())["plugins"]:
             for relative in (plugin["repo"], "github.com/" + plugin["repo"]):
@@ -52,6 +53,7 @@ with tempfile.TemporaryDirectory(prefix="nvim-lazy-") as temporary:
     (work / "sample.txt").write_text("hello x world x more\n")
     (work / "sample.lua").write_text("local answer = { 42 }\nreturn answer\n")
     (work / "sample.py").write_text("answer: int = 42\n")
+    (work / "sample.css").write_text("body { color: #ff0000; }\n")
     (work / "colors").write_text("#ff0000\n")
     (work / "sample.md").write_text("# Example\n\nbefore\n")
     for args in [
@@ -107,7 +109,7 @@ assert(#vim.api.nvim_get_autocmds({event='FileType', pattern='ddu-filer'}) == 0)
 
     for opening in [("sample.md",), ("-c", "edit sample.md")]:
         run("", "", """
-assert(loaded('tree-sitter-manager.nvim'))
+assert(not loaded('tree-sitter-manager.nvim'), 'Installed parsers need no management UI')
 assert(not loaded('nvim-lspconfig') and not loaded('fidget.nvim'))
 assert(not loaded('indentmini.nvim'), 'Markdown is excluded from indent guides')
 assert(vim.wait(5000, function()
@@ -115,6 +117,12 @@ assert(vim.wait(5000, function()
         and (vim.b.gitsigns_status_dict or {}).changed == 1
 end), 'First file lost highlighting or Git signs')
 """, *opening)
+
+    run("", "", """
+assert(not loaded('tree-sitter-manager.nvim'))
+assert(vim.treesitter.highlighter.active[vim.api.nvim_get_current_buf()])
+assert(vim.treesitter.query.get('css', 'highlights'), 'Manager queries must remain available')
+""", "sample.css")
 
     run("""
 assert(vim.wait(5000, function() return (vim.b.gitsigns_status_dict or {}).changed == 1 end))
@@ -144,6 +152,25 @@ assert(vim.wait(5000, function() return vim.b.gitsigns_head ~= nil end), 'Git di
     run("assert(not loaded('tree-sitter-manager.nvim'))", ":TSManager<CR>", """
 assert(loaded('tree-sitter-manager.nvim'), 'TSManager must work before opening a file')
 """)
+
+    # A missing managed parser must still invoke installation, without network in tests.
+    parser = work / "data/nvim/site/parser/python.so"
+    hidden_parser = work / "python.so.disabled"
+    parser.rename(hidden_parser)
+    try:
+        run("""
+package.preload['tree-sitter-manager.installer'] = function()
+    return { setup = function() end, install = function(languages)
+        if vim.list_contains(languages, 'python') then vim.g.requested_python_parser = true end
+    end }
+end
+vim.cmd.edit('sample.py')
+""", "", """
+assert(loaded('tree-sitter-manager.nvim'))
+assert(vim.g.requested_python_parser, 'Missing parser did not request installation')
+""")
+    finally:
+        hidden_parser.rename(parser)
 
     run("", "", """
 assert(not loaded('rainbow-delimiters.nvim'))

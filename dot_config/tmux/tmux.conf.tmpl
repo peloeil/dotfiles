@@ -90,6 +90,7 @@ bind-key -T copy-mode-vi Enter send-keys -X copy-selection-no-clear
 
 # misc
 set-option -g base-index 1
+set-option -g renumber-windows on
 set-window-option -g pane-base-index 1
 # tmux starts a login shell with argv[0] set to "-fish". mise's generic shim
 # interprets that as a shim name and exits, so point tmux at the real binary.

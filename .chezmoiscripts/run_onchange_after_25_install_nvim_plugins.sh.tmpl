@@ -13,4 +13,4 @@ mise_path="{{ .chezmoi.homeDir }}/.local/bin/mise"
 "$mise_path" exec -- nvim --headless \
     --cmd 'autocmd User Dpp:makeStatePost ++once call timer_start(0, {-> dpp#async_ext_action("installer", "install")})' \
     --cmd 'autocmd User DenopsReady ++once execute "if !empty(dpp#get(\"denops.vim\")) && empty(dpp#check_files()) | call dpp#async_ext_action(\"installer\", \"install\") | endif"' \
-    --cmd 'autocmd User Dpp:ext:installer:updateDone ++once qall!'
+    --cmd 'autocmd User Dpp:ext:installer:updateDone ++once call timer_start(0, {-> execute(empty(dpp#sync_ext_action("installer", "getFailed")) ? "qall!" : "cquit")})'

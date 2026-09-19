@@ -6,6 +6,7 @@ Uses isolated configuration/state and existing plugin checkouts; installs nothin
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import tempfile
@@ -80,4 +81,28 @@ end, 100)
     run("-c", "lua dofile(" + json.dumps(str(check)) + ")")
     assert (work / "cache/dpp/nvim/state.vim").is_file()
 
-print("OK: dpp state generation can retry after errors through saves and DppMakeState")
+    # Run the installer's exact autocmds with Git failures confined to this cache.
+    script = (source / ".chezmoiscripts/run_onchange_after_25_install_nvim_plugins.sh.tmpl").read_text()
+    args = []
+    for command in re.findall(r"--cmd '([^']+)'", script):
+        args.extend(["--cmd", command])
+    run(*args)  # Already installed: success without downloads.
+    (config / "toml/no_lazy.toml").write_text(
+        '[[plugins]]\nrepo = "audit-test/unavailable-plugin"\n'
+    )
+    run("-c", "DppMakeState")
+    commands = work / "bin"
+    commands.mkdir()
+    git = commands / "git"
+    git.write_text("#!/bin/sh\necho 'Simulated offline clone failure' >&2\nexit 23\n")
+    git.chmod(0o755)
+    env["PATH"] = str(commands) + os.pathsep + env["PATH"]
+    result = subprocess.run(
+        ["nvim", "--headless", "-i", "NONE", *args],
+        cwd=work, env=env, text=True, capture_output=True, timeout=30,
+    )
+    assert "Failed plugins" in result.stdout + result.stderr
+    assert result.returncode != 0, "Plugin installation failure was reported as success"
+    assert not (work / "cache/dpp/repos/github.com/audit-test/unavailable-plugin").exists()
+
+print("OK: dpp retries after config errors; installer distinguishes success and clone failure")

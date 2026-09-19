@@ -2,13 +2,20 @@
 repo = "sainnhe/everforest"
 hook_add = '''
     let g:everforest_background = 'hard'
+    let g:everforest_transparent_background = 2
     colorscheme everforest
 '''
-
-[[plugins]]
-repo = "xiyaowong/transparent.nvim"
 lua_source = '''
-    vim.api.nvim_set_hl(0, "NormalFloat", { fg = vim.api.nvim_get_hl(0, { name = "NormalFloat" }).fg, bg = nil })
-    vim.api.nvim_set_hl(0, "FloatBorder", { fg = vim.api.nvim_get_hl(0, { name = "FloatBorder" }).fg, bg = nil })
-    vim.api.nvim_set_hl(0, "FloatTitle", { fg = vim.api.nvim_get_hl(0, { name = "FloatTitle" }).fg, bg = nil })
+    local function clear_backgrounds()
+        for _, name in ipairs({ "NormalFloat", "FloatBorder", "FloatTitle", "CursorLine", "CursorLineNr" }) do
+            local hl = vim.api.nvim_get_hl(0, { name = name, link = false })
+            hl.bg, hl.ctermbg = nil, nil
+            vim.api.nvim_set_hl(0, name, hl)
+        end
+    end
+    clear_backgrounds()
+    vim.api.nvim_create_autocmd("ColorScheme", {
+        group = vim.api.nvim_create_augroup("__transparent_highlights", { clear = true }),
+        callback = clear_backgrounds,
+    })
 '''

@@ -30,7 +30,7 @@ local filename = {
         if not conditions.width_percent_below(#filename, 0.25) then
             filename = vim.fn.pathshorten(filename)
         end
-        return filename
+        return filename:gsub("%%", "%%%%")
     end,
     hl = { fg = utils.get_highlight("Directory").fg },
 }

@@ -128,7 +128,7 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         service_calls.unlink()
     previous = render(denops_script)
     data["denopsServerPort"] = 32125
-    assert render(denops_script) != previous  # Restart after changing the port/unit.
+    assert render(denops_script) != previous  # A hash of the unit template alone misses port changes.
     mock(service_bin / "systemctl", 'exit 1')
     assert 'Skipping Denops service' in run("/bin/sh", input=previous, env=service_env)
     for invalid_port in (0, 70000):

@@ -5,13 +5,11 @@ depends = [
 ]
 hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ddu.lua"
 
-# ui
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
 [[plugins]]
 repo = "Shougo/ddu-ui-filer"
 
-# source
 [[plugins]]
 repo = "Shougo/ddu-source-file"
 [[plugins]]
@@ -25,7 +23,6 @@ repo = "matsui54/ddu-source-help"
 [[plugins]]
 repo = "shun/ddu-source-rg"
 
-# filter
 [[plugins]]
 repo = "Shougo/ddu-filter-matcher_substring"
 [[plugins]]
@@ -33,17 +30,12 @@ repo = "Shougo/ddu-filter-sorter_alpha"
 [[plugins]]
 repo = "yuki-yano/ddu-filter-fzf"
 
-# kind
 [[plugins]]
 repo = "Shougo/ddu-kind-file"
 
-# column
 [[plugins]]
 repo = "ryota2357/ddu-column-icon_filename"
 
-# ------------------------------------------------
-
-# filer
 [[plugins]]
 repo = "Shougo/ddu-ui-filer"
 name = "ddu-tool-filer"
@@ -60,7 +52,6 @@ hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/filer.lua"
 [plugins.extAttrs]
 installerFrozen = true
 
-# fuzzy finder
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
 name = "ddu-tool-ff_file"
@@ -119,7 +110,6 @@ hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_help.lua"
 [plugins.extAttrs]
 installerFrozen = true
 
-# lsp
 [[plugins]]
 repo = "Shougo/ddu-ui-ff"
 name = "ddu-tool-lsp_definition"

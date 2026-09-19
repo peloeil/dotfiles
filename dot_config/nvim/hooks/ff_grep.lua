@@ -14,7 +14,6 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 vim.fn["ddu#custom#patch_local"]("ff_grep", {
-    -- ddu-ui-ff
     ui = "ff",
     uiParams = {
         ff = {
@@ -27,7 +26,6 @@ vim.fn["ddu#custom#patch_local"]("ff_grep", {
             autoResize = false,
         },
     },
-    -- ddu-source-rg
     sources = { "rg" },
     sourceParams = {
         rg = {
@@ -49,7 +47,6 @@ vim.fn["ddu#custom#patch_local"]("ff_grep", {
             matchers = {},
         },
     },
-    -- ddu-kind-file
     kindOptions = {
         file = {
             defaultAction = "open",

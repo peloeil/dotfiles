@@ -14,7 +14,6 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 vim.fn["ddu#custom#patch_local"]("ff_file", {
-    -- ddu-ui-ff
     ui = "ff",
     uiParams = {
         ff = {
@@ -24,7 +23,6 @@ vim.fn["ddu#custom#patch_local"]("ff_file", {
             },
         },
     },
-    -- ddu-source-file_rec
     sources = { "file_rec" },
     sourceOptions = {
         file_rec = {
@@ -44,7 +42,6 @@ vim.fn["ddu#custom#patch_local"]("ff_file", {
             },
         },
     },
-    -- ddu-kind-file
     kindOptions = {
         file = {
             defaultAction = "open",

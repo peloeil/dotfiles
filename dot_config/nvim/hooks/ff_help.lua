@@ -14,7 +14,6 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 vim.fn["ddu#custom#patch_local"]("ff_help", {
-    -- ddu-ui-ff
     ui = "ff",
     uiParams = {
         ff = {
@@ -25,7 +24,6 @@ vim.fn["ddu#custom#patch_local"]("ff_help", {
             },
         },
     },
-    -- ddu-source-help
     sources = { "help" },
     sourceOptions = {
         help = {
@@ -34,7 +32,6 @@ vim.fn["ddu#custom#patch_local"]("ff_help", {
             sorters = { "sorter_fzf" },
         },
     },
-    -- ddu-kind-help
     kindOptions = {
         help = {
             defaultAction = "open",

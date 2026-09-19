@@ -139,7 +139,6 @@ assert(vim.iter(vim.api.nvim_list_wins()):any(function(win)
 end), 'First hunk preview did not open')
 """, "sample.md")
 
-    # These actions run after VimEnter, including naming a buffer without :edit.
     for action in [
         "vim.cmd.edit('sample.md')",
         "vim.cmd.edit('new-git.txt')",
@@ -159,7 +158,7 @@ assert(vim.wait(5000, function() return vim.b.gitsigns_head ~= nil end), 'Git di
 assert(loaded('tree-sitter-manager.nvim'), 'TSManager must work before opening a file')
 """)
 
-    # A missing managed parser must still invoke installation, without network in tests.
+    # Mock installation so this check cannot download or build a missing parser.
     parser = work / "data/nvim/site/parser/python.so"
     hidden_parser = work / "python.so.disabled"
     parser.rename(hidden_parser)
@@ -232,7 +231,7 @@ assert(not loaded('nvim-lspconfig'), 'Completion alone must not configure LSP se
 assert(vim.api.nvim_get_current_line() == '()', 'First pair insertion failed')
 """)
 
-    # Each operation starts in a fresh process, exercising the first-use loader.
+    # Reusing one process would skip the lazy loader after the first motion.
     for keys, expected in [
         ("fx;,", "assert(vim.api.nvim_win_get_cursor(0)[2] == 6)"),
         ("2fx", "assert(vim.api.nvim_win_get_cursor(0)[2] == 14)"),
@@ -271,8 +270,6 @@ vim.api.nvim_feedkeys('q', 'xt', false)
 assert(vim.wait(5000, function() return vim.bo.filetype ~= '{ft}' end), '{name} did not close')
 """, "sample.txt")
 
-    # Empty startup -> first filer use, with a local server, a shared server,
-    # and automatic local fallback when that shared server has stopped.
     filer_check = """
 assert(vim.wait(10000, function() return vim.bo.filetype == 'ddu-filer' end), 'First filer did not open')
 """

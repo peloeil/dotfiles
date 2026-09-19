@@ -1,5 +1,4 @@
--- These runtime plugins provide commands/file handlers we do not use.
--- loaded_shada_plugin only disables editing *.shada; history still persists.
+-- Disabling 'shada' itself would lose history and registers between sessions.
 for _, name in ipairs({
     "remote_plugins", "man", "tutor_mode_plugin", "spellfile_plugin",
     "shada_plugin", "nvim_net_plugin",
@@ -7,7 +6,6 @@ for _, name in ipairs({
     vim.g["loaded_" .. name] = 1
 end
 
--- Keep directory and remote-file browsing available after startup, too.
 vim.g.loaded_netrwPlugin = 1
 local group = vim.api.nvim_create_augroup("__netrw_lazy", { clear = true })
 local function load_netrw()
@@ -15,7 +13,7 @@ local function load_netrw()
     vim.g.loaded_netrwPlugin = nil
     vim.cmd.packadd("netrw")
     if vim.v.vim_did_enter == 1 then
-        -- netrw initializes its directory handlers at VimEnter.
+        -- netrw ignores directory browsing until its VimEnter handler has run.
         vim.api.nvim_exec_autocmds("VimEnter", { group = "FileExplorer", modeline = false })
     end
 end

@@ -25,7 +25,6 @@ vim.fn["ddu#custom#patch_global"]({
     },
 })
 vim.fn["ddu#custom#patch_local"]("lsp_definition", {
-    -- ddu-ui-ff
     ui = "ff",
     uiParams = {
         ff = {
@@ -33,12 +32,10 @@ vim.fn["ddu#custom#patch_local"]("lsp_definition", {
             immediateAction = "open",
         },
     },
-    -- ddu-source-lsp_definition
     sources = { "lsp_definition" },
     sync = true,
 })
 vim.fn["ddu#custom#patch_local"]("lsp_documentSymbol", {
-    -- ddu-ui-ff
     ui = "ff",
     uiParams = {
         ff = {
@@ -46,7 +43,6 @@ vim.fn["ddu#custom#patch_local"]("lsp_documentSymbol", {
             ignoreEmpty = false,
         },
     },
-    -- ddu-source-lsp_documentSymbol
     sources = { "lsp_documentSymbol" },
     sourceOptions = {
         lsp_documentSymbol = {
@@ -90,7 +86,6 @@ vim.fn["ddu#custom#patch_local"]("lsp_documentSymbol", {
     },
 })
 vim.fn["ddu#custom#patch_local"]("lsp_diagnostic", {
-    -- ddu-ui-ff
     ui = "ff",
     uiParams = {
         ff = {
@@ -98,7 +93,6 @@ vim.fn["ddu#custom#patch_local"]("lsp_diagnostic", {
             immediateAction = "open",
         },
     },
-    -- ddu-source-lsp_diagnostic
     sources = { "lsp_diagnostic" },
     sourceOptions = {
         lsp_diagnostic = {

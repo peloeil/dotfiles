@@ -27,11 +27,9 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 vim.fn["ddu#custom#patch_local"]("filer", {
-    -- ddu-ui-filer
     ui = "filer",
     -- Avoid a later async redraw collapsing the tree expanded by searchPath.
     sync = true,
-    -- ddu-source-file
     sources = { "file" },
     sourceOptions = {
         file = {
@@ -40,7 +38,6 @@ vim.fn["ddu#custom#patch_local"]("filer", {
             converters = { "converter_filer" },
         },
     },
-    -- ddu-kind-file
     kindOptions = {
         file = {
             defaultAction = "open",

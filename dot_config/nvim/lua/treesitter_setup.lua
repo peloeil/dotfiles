@@ -15,7 +15,7 @@ vim.api.nvim_create_autocmd("FileType", {
         if not queries_added then
             local manager = vim.fn["dpp#get"]("tree-sitter-manager.nvim")
             if manager.path then
-                -- Queries are data; keep them available without executing the manager.
+                -- Requiring the manager for queries would also load its installer and UI.
                 vim.opt.runtimepath:append(manager.path .. "/runtime")
                 queries_added = true
             end
@@ -27,7 +27,6 @@ vim.api.nvim_create_autocmd("FileType", {
         if vim.bo[event.buf].buftype ~= "" or vim.list_contains(bundled, lang) then
             return
         end
-        -- Installed parsers need no manager UI, installer, or repository catalogue.
         require("tree-sitter-manager")
         if require("tree-sitter-manager.config").effective_repos[lang] then
             vim.cmd.TSInstall(lang)

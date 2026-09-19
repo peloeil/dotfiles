@@ -14,7 +14,6 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 vim.fn["ddu#custom#patch_local"]("ff_buffer", {
-    -- ddu-ui-ff
     ui = "ff",
     uiParams = {
         ff = {
@@ -25,7 +24,6 @@ vim.fn["ddu#custom#patch_local"]("ff_buffer", {
             },
         },
     },
-    -- ddu-source-file_rec
     sources = { "buffer" },
     sourceOptions = {
         buffer = {
@@ -34,7 +32,6 @@ vim.fn["ddu#custom#patch_local"]("ff_buffer", {
             sorters = { "sorter_fzf" },
         },
     },
-    -- ddu-kind-file
     kindOptions = {
         file = {
             defaultAction = "open",

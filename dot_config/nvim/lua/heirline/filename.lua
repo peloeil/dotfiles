@@ -60,5 +60,4 @@ local filename_modifier = {
     end,
 }
 
--- let's add the children to our FileNameBlock component
 return utils.insert(filename_block, fileicon, utils.insert(filename_modifier, filename), fileflags, { provider = "%<" })

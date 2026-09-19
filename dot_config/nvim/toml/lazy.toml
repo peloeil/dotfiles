@@ -6,7 +6,7 @@ repo = "folke/flash.nvim"
 on_lua = "flash"
 lua_add = '''
     vim.keymap.set({ "n", "x", "o" }, "s", function() require("flash").jump() end, { silent = true, desc = "Flash" })
-    -- Invoke the real callback without dpp's operator-pending key replay.
+    -- dpp's key replay breaks the first operator-pending motion; call Flash directly.
     for _, key in ipairs({ "f", "F", "t", "T", ";", "," }) do
         vim.keymap.set({ "n", "x", "o" }, key, function()
             require("flash")
@@ -155,13 +155,13 @@ lua_source = '''
 [[plugins]]
 repo = "neovim/nvim-lspconfig"
 on_ft = ["c", "cpp", "objc", "objcpp", "cuda", "lua", "python", "rust", "zig", "zir"]
-# Capabilities and progress handlers must be ready before any client starts.
+# InsertEnter is too late for the initial LSP capabilities and progress notifications.
 depends = ["ddc-source-lsp", "fidget.nvim"]
 hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/lsp.lua"
 
 [[plugins]]
 repo = "lewis6991/gitsigns.nvim"
-# Keep unnamed buffers idle; include naming/writing a buffer without reading a file.
+# BufReadPost alone misses buffers first named with :file or :write.
 on_event = ["BufReadPost", "BufNewFile", "BufFilePost", "BufWritePost"]
 on_if = "&buftype ==# '' && expand('%:p') !=# ''"
 on_cmd = "Gitsigns"

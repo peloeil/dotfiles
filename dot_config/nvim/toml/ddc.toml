@@ -38,11 +38,9 @@ vim.fn["ddc#custom#patch_global"]({
 vim.cmd([[call ddc#enable()]])
 '''
 
-# ui
 [[plugins]]
 repo = "Shougo/ddc-ui-native"
 
-# source
 [[plugins]]
 repo = "Shougo/ddc-source-lsp"
 [[plugins]]
@@ -50,7 +48,5 @@ repo = "Shougo/ddc-source-around"
 [[plugins]]
 repo = "matsui54/ddc-source-buffer"
 
-
-# filter
 [[plugins]]
 repo = "tani/ddc-fuzzy"

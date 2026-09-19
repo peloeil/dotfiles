@@ -127,6 +127,7 @@ local = true
 depends = [
     "ddu.vim",
     "ddu-source-lsp",
+    "ddu-filter-fzf",
 ]
 on_map = { n = "<leader>ld" }
 hooks_file = "$XDG_CONFIG_HOME/nvim/hooks/ff_lsp.lua"

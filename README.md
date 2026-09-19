@@ -153,7 +153,7 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 | このリポジトリの編集上の制約 | [AGENTS.md](AGENTS.md)（配布対象外） |
 | Codex 共通の応答方針 | `dot_codex/AGENTS.md.tmpl` → `~/.codex/AGENTS.md` |
 | コミットの分割・メッセージ規約 | `dot_agents/skills/commit/SKILL.md` → `~/.agents/skills/commit/SKILL.md` |
-| Claude Code からの commit 利用 | `~/.claude/skills/commit/SKILL.md` から共通スキルへのシンボリックリンク |
+| Claude Code からの commit 利用 | `~/.claude/skills/commit` → `~/.agents/skills/commit`（補助資料を含むディレクトリへのシンボリックリンク） |
 | Claude Code の設定・rtk hook | `dot_claude/settings.json` → `~/.claude/settings.json` |
 | Ponytail の既定モード | `dot_config/ponytail/config.json` → `~/.config/ponytail/config.json` |
 

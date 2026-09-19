@@ -235,6 +235,25 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         run(*cli, "diff")
         run(*cli, "apply", "--dry-run")
 
+    # Migrate the old file-only link and keep supporting documents reachable.
+    shared_skill = test_home / ".agents/skills/commit"
+    claude_skill = test_home / ".claude/skills/commit"
+    claude_skill.mkdir(parents=True)
+    (claude_skill / "SKILL.md").symlink_to("../../../.agents/skills/commit/SKILL.md")
+    run(*cli, "apply", "--parent-dirs", str(shared_skill), str(claude_skill))
+    assert claude_skill.is_symlink() and claude_skill.resolve() == shared_skill
+    for relative in (
+        "SKILL.md",
+        "references/examples.md",
+        "references/research.md",
+        "evals/cases.md",
+    ):
+        assert (claude_skill / relative).read_bytes() == (
+            SOURCE / "dot_agents/skills/commit" / relative
+        ).read_bytes()
+    run(*cli, "apply", str(shared_skill), str(claude_skill))
+    assert not run(*cli, "diff", str(shared_skill), str(claude_skill))
+
     invalid = subprocess.run(
         (*cli, "--override-data", '{"profile":"typo"}', "managed"),
         text=True,
@@ -274,5 +293,5 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     } <= managed["minimal"]
 
 print(
-    "OK: home paths, repository email, CLI detection, mise changes, picom startup, full/minimal setup"
+    "OK: home paths, repository email, CLI detection, mise changes, picom startup, full/minimal setup, shared commit skill"
 )

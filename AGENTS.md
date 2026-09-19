@@ -5,7 +5,7 @@
 
 ## 編集する場所と制約
 
-- 文書の変更は、その必要性と必然性を説明できる場合に限る。
+- 扱う文書は、既存の記述も含めて、現在の目的・要件・制約に照らして必要性と採用理由を説明できる内容に保つ。不要になった記述は削除・整理する。
 - このリポジトリ内のソースを編集する。配置先から調べるには `chezmoi source-path <target-path>` を使う。`dot_`、`private_`、`executable_`、`symlink_`、`.tmpl` は [chezmoi の属性](https://www.chezmoi.io/reference/source-state-attributes/)。`private_` は権限指定であり、暗号化ではない。
 - ルートの `AGENTS.md`、`README.md`、`tests/` は配布対象外。`~/.codex/AGENTS.md` のソースは `dot_codex/AGENTS.md.tmpl`。
 - ホームのパスはテンプレートでは `.chezmoi.homeDir`、シェルでは `$HOME` を使う。

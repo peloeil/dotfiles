@@ -35,8 +35,14 @@ vim.fn["ddu#custom#patch_local"]("ff_grep", {
     sourceParams = {
         rg = {
             args = {
-                "--column", "--no-heading", "--color", "never", "--hidden", "--no-ignore",
-                "--glob", "!{.git,node_modules,.venv,venv,__pycache__}",
+                "--column",
+                "--no-heading",
+                "--color",
+                "never",
+                "--hidden",
+                "--no-ignore",
+                "--glob",
+                "!{.git,node_modules,.venv,venv,__pycache__}",
             },
         },
     },

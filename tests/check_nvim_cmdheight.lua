@@ -16,10 +16,12 @@ local ok, err = pcall(function()
 
     local function check(keys, mode, height)
         request("nvim_input", keys)
-        assert(vim.wait(1000, function()
-            return request("nvim_get_mode").mode == mode
-                and request("nvim_eval", "&cmdheight") == height
-        end), "Unexpected mode or command-line height after " .. keys)
+        assert(
+            vim.wait(1000, function()
+                return request("nvim_get_mode").mode == mode and request("nvim_eval", "&cmdheight") == height
+            end),
+            "Unexpected mode or command-line height after " .. keys
+        )
         request("nvim_command", "redraw")
         local row = 24 - height
         local line = request("nvim_eval", ("join(map(range(1, 80), 'screenstring(%d, v:val)'), '')"):format(row))

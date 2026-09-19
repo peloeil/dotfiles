@@ -29,11 +29,7 @@ local function is_dpp_config_file(path)
     local dir = vim.fs.normalize(config_dir)
 
     return vim.startswith(file, dir .. "/")
-        and (
-            file:match("%.lua$") ~= nil
-            or file:match("%.ts$") ~= nil
-            or file:match("%.toml$") ~= nil
-        )
+        and (file:match("%.lua$") ~= nil or file:match("%.ts$") ~= nil or file:match("%.toml$") ~= nil)
 end
 
 local function dpp_init()

@@ -4,6 +4,7 @@ end
 
 vim.g.mapleader = " "
 
+require("builtin_plugins")
 require("options")
 require("keymaps")
 require("dpp_setup")

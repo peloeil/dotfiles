@@ -32,13 +32,13 @@ lua_source = '''
 
 [[plugins]]
 repo = "hiphish/rainbow-delimiters.nvim"
-on_event = ["BufNewFile", "BufReadPost", "VimEnter"]
-on_if = "expand('%') !=# ''"
+on_event = "FileType"
+on_if = "&buftype ==# ''"
 
 [[plugins]]
 repo = "nvimdev/indentmini.nvim"
-on_event = ["BufNewFile", "BufReadPost", "VimEnter"]
-on_if = "expand('%') !=# ''"
+on_event = ["BufWinEnter", "FileType", "TextChanged", "TextChangedI"]
+on_if = "&buftype ==# '' && index(['help', 'markdown', 'text'], &filetype) < 0 && (line('$') > 1 || getline(1) !=# '')"
 on_cmd = ["IndentToggle", "IndentEnable", "IndentDisable"]
 lua_source = '''
     local indentmini_augroup = vim.api.nvim_create_augroup("__indentmini__", { clear = true })
@@ -108,10 +108,13 @@ lua_source = '''
 
 [[plugins]]
 repo = "catgoose/nvim-colorizer.lua"
-on_event = ["BufNewFile", "BufReadPost", "VimEnter"]
-on_if = "expand('%') !=# ''"
+on_event = ["BufWinEnter", "FileType", "TextChanged", "TextChangedI"]
+on_if = "&buftype ==# '' && (line('$') > 1 || getline(1) !=# '')"
 lua_source = '''
-    require("colorizer").setup()
+    local colorizer = require("colorizer")
+    colorizer.setup({ buftypes = { "" } })
+    -- TextChanged can be the first trigger, without FileType or BufWinEnter to replay.
+    colorizer.attach_to_buffer(0)
 '''
 
 [[plugins]]

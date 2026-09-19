@@ -52,6 +52,7 @@ with tempfile.TemporaryDirectory(prefix="nvim-lazy-") as temporary:
     (work / "sample.txt").write_text("hello x world x more\n")
     (work / "sample.lua").write_text("local answer = { 42 }\nreturn answer\n")
     (work / "sample.py").write_text("answer: int = 42\n")
+    (work / "colors").write_text("#ff0000\n")
     (work / "sample.md").write_text("# Example\n\nbefore\n")
     for args in [
         ("init", "--quiet"), ("add", "sample.md"),
@@ -92,9 +93,11 @@ end, 100)
 
     run("", "", """
 assert(loaded('gitsigns.nvim'), 'Gitsigns must retain its own lazy-loading behavior')
+assert(not package.loaded['gitsigns.actions'], 'Preview mapping must not defeat internal lazy loading')
 for _, name in ipairs({
     'flash.nvim', 'nvim-surround', 'ddu.vim', 'ddc.vim',
     'nvim-lspconfig', 'ddc-source-lsp', 'fidget.nvim', 'tree-sitter-manager.nvim',
+    'rainbow-delimiters.nvim', 'indentmini.nvim', 'nvim-colorizer.lua',
 }) do
     assert(not loaded(name), name .. ' loaded without being used')
 end
@@ -106,15 +109,54 @@ assert(#vim.api.nvim_get_autocmds({event='FileType', pattern='ddu-filer'}) == 0)
         run("", "", """
 assert(loaded('tree-sitter-manager.nvim'))
 assert(not loaded('nvim-lspconfig') and not loaded('fidget.nvim'))
+assert(not loaded('indentmini.nvim'), 'Markdown is excluded from indent guides')
 assert(vim.wait(5000, function()
     return vim.treesitter.highlighter.active[vim.api.nvim_get_current_buf()] ~= nil
         and (vim.b.gitsigns_status_dict or {}).changed == 1
 end), 'First file lost highlighting or Git signs')
 """, *opening)
 
+    run("""
+assert(vim.wait(5000, function() return (vim.b.gitsigns_status_dict or {}).changed == 1 end))
+vim.api.nvim_win_set_cursor(0, {3, 0})
+""", " hp", """
+assert(vim.iter(vim.api.nvim_list_wins()):any(function(win)
+    return vim.api.nvim_win_get_config(win).relative ~= ''
+end), 'First hunk preview did not open')
+""", "sample.md")
+
     run("assert(not loaded('tree-sitter-manager.nvim'))", ":TSManager<CR>", """
 assert(loaded('tree-sitter-manager.nvim'), 'TSManager must work before opening a file')
 """)
+
+    run("", "", """
+assert(not loaded('rainbow-delimiters.nvim'))
+assert(not loaded('indentmini.nvim') and not loaded('nvim-colorizer.lua'))
+""", "-c", "help help")
+
+    run("", "", """
+assert(not loaded('indentmini.nvim'), 'Plain text is excluded from indent guides')
+""", "sample.txt")
+
+    color_check = """
+assert(loaded('nvim-colorizer.lua'))
+assert(require('colorizer').is_buffer_attached(0))
+local ns = vim.api.nvim_get_namespaces().colorizer
+assert(vim.wait(3000, function()
+    return #vim.api.nvim_buf_get_extmarks(0, ns, 0, -1, {}) > 0
+end), 'First buffer is missing color highlights')
+"""
+    run("", "", color_check, "colors")
+    run("assert(not loaded('nvim-colorizer.lua'))", "i#ff0000<Esc>", color_check)
+    run("assert(not loaded('nvim-colorizer.lua'))", "i#ff0000<Esc>", color_check, "new.txt")
+    run("", "", """
+assert(loaded('rainbow-delimiters.nvim') and loaded('indentmini.nvim'))
+assert(require('rainbow-delimiters').is_enabled(0), 'Unnamed Lua buffer missed delimiter highlighting')
+assert(vim.treesitter.highlighter.active[vim.api.nvim_get_current_buf()])
+""", "-c", "lua vim.api.nvim_buf_set_lines(0, 0, -1, false, {'local t = { 1 }'})",
+        "-c", "setfiletype lua")
+
+    run("", ":IndentToggle<CR>", "assert(loaded('indentmini.nvim'))")
 
     for filename, server in [("sample.lua", "lua_ls"), ("sample.py", "pyright")]:
         for opening in [(filename,), ("-c", "edit " + filename)]:

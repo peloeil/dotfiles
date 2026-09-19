@@ -43,5 +43,6 @@
   "autoMemoryEnabled": false,
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark",
+  "switchModelsOnFlag": false,
   "agentPushNotifEnabled": true
 }

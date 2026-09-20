@@ -2,5 +2,5 @@
   "bot_token": "",
   "channel_id": "1427562628489941012",
   "mention_user_id": "819483685359190017",
-  "threshold_seconds": 300
+  "threshold_seconds": 600
 }

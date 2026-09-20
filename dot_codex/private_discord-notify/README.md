@@ -1,6 +1,6 @@
 # Codex の Discord 完了通知
 
-既定では 300 秒以上かかった回答の完了時に、指定ユーザーをメンションして通知する。
+既定では 600 秒以上かかった回答の完了時に、指定ユーザーをメンションして通知する。
 所要時間にはコマンド実行や承認待ちも含む。しきい値に達した時点では投稿しない。
 
 Python 3.11 以上と、`UserPromptSubmit` / `Interrupt` / `notify` に対応した
@@ -24,7 +24,7 @@ $EDITOR "$HOME/.codex/discord-notify/config.json"
 - `bot_token`: 投稿する Bot のトークン。
 - `channel_id`: 投稿先チャンネル ID。
 - `mention_user_id`: メンションするユーザー ID。
-- `threshold_seconds`: 通知のしきい値。初期値は 300 秒。
+- `threshold_seconds`: 通知のしきい値。初期値は 600 秒。
 
 Bot トークンを含む `config.json` は暗号化しても chezmoi の管理対象に加えない。
 `.chezmoiignore` でこの設定・実行状態・キャッシュを除外している。

@@ -42,7 +42,7 @@ def load_settings(root: Path) -> Settings:
         value = required_string(data, key)
         if not value.isascii() or not value.isdecimal() or not 0 < int(value) < 2**64:
             raise ValueError(f"{key} must be a Discord snowflake ID")
-    threshold = data.get("threshold_seconds", 300)
+    threshold = data.get("threshold_seconds", 600)
     if type(threshold) is not int or threshold <= 0:
         raise ValueError("threshold_seconds must be a positive integer")
     return Settings(token, data["channel_id"], data["mention_user_id"], threshold)

@@ -1,0 +1,11 @@
+# Fish Keyboard: T+N (LANG1) enables IME; A+O (LANG2) disables it.
+# X11 maps LANG1/LANG2 to Hangul/Hangul_Hanja with the US layout.
+[Hotkey/TriggerKeys]
+0=Control+space
+1=Zenkaku_Hankaku
+
+[Hotkey/ActivateKeys]
+0=Hangul
+
+[Hotkey/DeactivateKeys]
+0=Hangul_Hanja

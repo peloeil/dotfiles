@@ -5,6 +5,11 @@
 README.md
 AGENTS.md
 tests
+.codex/discord-notify/config.json
+.codex/discord-notify/state
+.codex/discord-notify/state/**
+.codex/discord-notify/__pycache__
+.codex/discord-notify/__pycache__/**
 
 {{ if eq $profile "minimal" -}}
 .xinitrc

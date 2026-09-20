@@ -155,6 +155,20 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         "plugin add ponytail@ponytail",
     ]
     log.unlink()
+    notification_script = ".chezmoiscripts/run_onchange_after_31_configure_codex_discord_notify.sh.tmpl"
+    notification = render(notification_script)
+    assert "skipped" in run("/bin/sh", input=notification, env=env)
+    assert not log.exists()
+    notification_dir = test_home / ".codex/discord-notify"
+    notification_dir.mkdir(parents=True)
+    notification_config = notification_dir / "config.json"
+    notification_config.write_text("{}")
+    mock(commands / "python3", 'printf "%s\\n" "$*" >> "$CHECK_LOG"')
+    run("/bin/sh", input=notification, env=env)
+    assert log.read_text().splitlines() == [str(notification_dir / "install.py")]
+    log.unlink()
+    notification_config.unlink()
+    (commands / "python3").unlink()
     (local_bin / "codex").unlink()
     run("/bin/sh", input=plugins, env=env)
     assert not log.exists()
@@ -180,6 +194,18 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     with (changed_source / config).open("a") as stream:
         stream.write("\n# Changed configuration\n")
     assert render(installer, changed_source) != original
+
+    for relative in (
+        Path(notification_script),
+        Path("dot_codex/private_discord-notify/notify.py"),
+        Path("dot_codex/private_discord-notify/install.py"),
+    ):
+        (changed_source / relative).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(SOURCE / relative, changed_source / relative)
+    original_notification = render(notification_script, changed_source)
+    with (changed_source / "dot_codex/private_discord-notify/notify.py").open("a") as stream:
+        stream.write("\n# Changed notification code\n")
+    assert render(notification_script, changed_source) != original_notification
 
     # Use the same .xprofile before and after picom appears; no template re-render.
     xprofile = "fcitx5() { :; }\nxinput() { return 1; }\nsleep() { :; }\n"
@@ -278,6 +304,7 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         assert saved_data["denopsSharedServer"] is True and saved_data["denopsServerPort"] == 32124
         config_path.write_text(original_config)
         managed[profile] = set(run(*cli, "managed").splitlines())
+        assert ".codex/discord-notify/config.json" not in managed[profile]
         run(*cli, "diff")
         run(*cli, "apply", "--dry-run")
 
@@ -336,6 +363,9 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         ".local/bin/claude-sandbox",
         ".chezmoiscripts/25_install_nvim_plugins.sh",
         ".chezmoiscripts/30_install_ai_plugins.sh",
+        ".chezmoiscripts/31_configure_codex_discord_notify.sh",
+        ".codex/discord-notify/notify.py",
+        ".codex/discord-notify/config.example.json",
     } <= managed["minimal"]
 
 print(

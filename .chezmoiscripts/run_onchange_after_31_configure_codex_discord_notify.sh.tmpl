@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+# notifier: {{ include "dot_codex/private_discord-notify/notify.py" | sha256sum }}
+# installer: {{ include "dot_codex/private_discord-notify/install.py" | sha256sum }}
+
+codex_path="{{ .chezmoi.homeDir }}/.local/bin/codex"
+notify_dir="{{ .chezmoi.homeDir }}/.codex/discord-notify"
+export PATH="{{ .chezmoi.homeDir }}/.local/bin:$PATH"
+
+if [ ! -x "$codex_path" ] || [ ! -f "$notify_dir/config.json" ]; then
+    echo "Codex Discord notification skipped: install Codex and prepare local config.json."
+    echo "Then run: python3 $notify_dir/install.py"
+    exit 0
+fi
+
+python3 "$notify_dir/install.py"

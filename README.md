@@ -65,6 +65,7 @@ chezmoi apply
 - Neovim の dpp plugins
 - Denops の systemd user service の有効・無効化（user manager がある場合）
 - Codex / Claude Code の Ponytail（CLI を検出できた場合）
+- Codex の Discord 完了通知（Codex とローカルの通知設定がある場合）
 
 途中で失敗したら、原因を解消して `chezmoi apply` を再実行する。
 `sudo` を使えない場合は OS パッケージの導入をスキップするが、不足パッケージによって後続処理が失敗することはある。スキップした処理の再実行方法は下記を参照する。
@@ -169,8 +170,17 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 | Claude Code からの commit 利用 | `~/.claude/skills/commit` → `~/.agents/skills/commit`（補助資料を含むディレクトリへのシンボリックリンク） |
 | Claude Code の設定・rtk hook | `dot_claude/settings.json` → `~/.claude/settings.json` |
 | Ponytail の既定モード | `dot_config/ponytail/config.json` → `~/.config/ponytail/config.json` |
+| Codex の Discord 完了通知 | `dot_codex/private_discord-notify/` → `~/.codex/discord-notify/` |
 
 plugin 本体・キャッシュ・認証情報はこのリポジトリでは管理しない。
+
+### Codex の Discord 完了通知
+
+既定では 300 秒以上かかった回答の完了時に、指定ユーザーをメンションして投稿する。
+通知にはマシン名、作業場所、セッション名、所要時間、直前のプロンプトを載せる。
+
+コードとトークンが空の設定例を配布し、通知設定は各マシンで用意する。
+導入・再登録の手順と詳しい動作は [通知の README](dot_codex/private_discord-notify/README.md) を参照する。
 
 ## セットアップの構成
 
@@ -191,8 +201,9 @@ plugin 本体・キャッシュ・認証情報はこのリポジトリでは管�
 | after | `run_onchange_after_25_install_nvim_plugins.sh.tmpl` | headless Neovim で dpp plugins を導入する |
 | after | `run_onchange_after_26_configure_denops_server.sh.tmpl` | 選択した Denops の常駐設定を systemd user service に反映する |
 | after | `run_onchange_after_30_install_ai_plugins.sh.tmpl` | CLI の検出後、Ponytail を導入する |
+| after | `run_onchange_after_31_configure_codex_discord_notify.sh.tmpl` | Codex とローカルの通知設定があれば Discord 完了通知を登録する |
 
-`run_once` は展開後の内容ごとに成功を記録し、`run_onchange` は前回成功時から内容が変わると実行する。mise・fish・Neovim のスクリプトには対応する設定・plugin 一覧のハッシュを含めている。
+`run_once` は展開後の内容ごとに成功を記録し、`run_onchange` は前回成功時から内容が変わると実行する。mise・fish・Neovim・Codex 通知のスクリプトには対応する設定やコードのハッシュを含めている。
 スキップも成功として記録されるため、依存を後から揃えただけでは再実行されない。詳細は [chezmoi のスクリプト仕様](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/)を参照する。
 
 ## セットアップを補完する

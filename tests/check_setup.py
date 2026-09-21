@@ -52,6 +52,38 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
             str(source / relative),
         )
 
+    # Both startup paths must expose shims without hiding standalone tools.
+    shutil.copyfile(SOURCE / "dot_bashrc", test_home / ".bashrc")
+    (test_home / ".bash_profile").write_text(render("dot_bash_profile.tmpl"))
+    shims = test_home / ".local/share/mise/shims"
+    shims.mkdir(parents=True)
+    for executable in (shims / "setup-tool", shims / "standalone", local_bin / "standalone"):
+        mock(executable, "exit 0")
+    shell_calls = work / "shell-calls"
+    mock(
+        local_bin / "mise",
+        'printf "%s\\n" "$*" >> "$CHECK_LOG"\n'
+        'if [ "$2" = bash ]; then\n'
+        '  printf \'export PATH="$HOME/.local/share/mise/shims:$PATH"\\n\'\n'
+        'fi',
+    )
+    shell_env = {
+        "HOME": str(test_home), "PATH": os.defpath, "DISPLAY": ":test", "TERM": "xterm",
+        "CHECK_LOG": str(shell_calls),
+    }
+    for startup in (".bashrc", ".bash_profile"):
+        for interactive in (False, True):
+            output = run(
+                "bash", "--noprofile", "--norc", "-ic" if interactive else "-c",
+                '. "$1"; command -v setup-tool; command -v standalone',
+                "check-shell", str(test_home / startup), env=shell_env,
+            )
+            assert output.splitlines() == [str(shims / "setup-tool"), str(local_bin / "standalone")]
+            assert shell_calls.read_text().splitlines() == [
+                "activate bash" if interactive else "activate bash --shims"
+            ]
+            shell_calls.unlink()
+
     containers = tomllib.loads(render("dot_config/containers/containers.conf.tmpl"))
     assert containers["engine"]["compose_providers"] == [
         str(test_home / ".local/share/mise/shims/podman-compose")
@@ -381,5 +413,5 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     } <= managed["minimal"]
 
 print(
-    "OK: home paths, repository email, CLI detection, mise changes, GDB/GEF setup, picom startup, full/minimal setup, shared commit skill"
+    "OK: shell startup, home paths, repository email, CLI detection, mise changes, GDB/GEF setup, picom startup, full/minimal setup, shared commit skill"
 )

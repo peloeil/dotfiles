@@ -12,16 +12,13 @@ export PATH="$HOME/.local/bin:$PATH"
 export EDITOR="nvim"
 export VISUAL="nvim"
 
-# Interactive-only configuration belongs below this point.
-if [[ $- != *i* ]] ; then
-	return
-fi
-
+# Non-interactive shells need shims; interactive shells use prompt hooks.
 if command -v mise >/dev/null 2>&1 ; then
-	eval "$(mise activate bash)"
+	if [[ $- == *i* ]] ; then
+		eval "$(mise activate bash)"
+	else
+		eval "$(mise activate bash --shims)"
+	fi
 fi
 
 export PATH="$HOME/.local/bin:$PATH"
-
-
-# Put your fun stuff here.

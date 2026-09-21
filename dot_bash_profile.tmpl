@@ -1,11 +1,4 @@
-# /etc/skel/.bash_profile
-
-# This file is sourced by bash for login shells.  The following line
-# runs your .bashrc and is recommended by the bash info pages.
-if [[ -x "$HOME/.local/bin/mise" ]] ; then
-	eval "$("$HOME/.local/bin/mise" activate bash --shims)"
-fi
-
+# Login shells share the environment and interactive settings in .bashrc.
 if [[ -f ~/.bashrc ]] ; then
 	. ~/.bashrc
 fi

@@ -400,6 +400,20 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     run(*cli, "apply", str(shared_skill), str(claude_skill))
     assert not run(*cli, "diff", str(shared_skill), str(claude_skill))
 
+    # Retire only the two distributed sandbox files, preserving local siblings.
+    retired = [test_home / relative for relative in (
+        ".local/bin/claude-sandbox", ".local/share/claude-sandbox/Dockerfile",
+    )]
+    for path in retired:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("old sandbox file\n")
+    local_note = retired[1].with_name("local-note")
+    local_note.write_text("keep\n")
+    run(*cli, "apply", "--include", "remove")
+    assert not any(path.exists() for path in retired)
+    assert local_note.read_text() == "keep\n"
+    run(*cli, "apply", "--include", "remove")
+
     invalid = subprocess.run(
         (*cli, "--override-data", '{"profile":"typo"}', "managed"),
         text=True,
@@ -435,7 +449,6 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         ".config/containers/containers.conf",
         ".codex/AGENTS.md",
         ".claude/settings.json",
-        ".local/bin/claude-sandbox",
         ".chezmoiscripts/25_install_nvim_plugins.sh",
         ".chezmoiscripts/30_install_ai_plugins.sh",
         ".chezmoiscripts/31_configure_codex_discord_notify.sh",
@@ -444,5 +457,5 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     } <= managed["minimal"]
 
 print(
-    "OK: shell startup, shellcode cleanup, home paths, repository email, CLI detection, mise changes, GDB/GEF setup, picom startup, full/minimal setup, shared commit skill"
+    "OK: shell startup, shellcode cleanup, sandbox removal, home paths, repository email, CLI detection, mise changes, GDB/GEF setup, picom startup, full/minimal setup, shared commit skill"
 )

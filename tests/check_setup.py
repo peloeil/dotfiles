@@ -84,6 +84,37 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
             ]
             shell_calls.unlink()
 
+    # Assemble concurrently and clean up temporary objects on success and failure.
+    if all(shutil.which(tool) for tool in ("fish", "as", "objcopy", "hexdump")):
+        sc_tmp = work / "shellcode objects"
+        sc_tmp.mkdir()
+        fish_cli = [shutil.which("fish"), "--no-config", "-c"]
+        fish_config = str(SOURCE / "dot_config/private_fish/config.fish")
+        fish_env = {**shell_env, "TMPDIR": str(sc_tmp)}
+        processes = [
+            subprocess.Popen(
+                [*fish_cli, 'source "$argv[1]"; sc "$argv[2]"', fish_config, instruction],
+                text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=fish_env,
+            )
+            for instruction in ("nop", "ret")
+        ]
+        for process, expected in zip(processes, ("\\x90\n", "\\xc3\n")):
+            stdout, stderr = process.communicate(timeout=10)
+            assert process.returncode == 0 and stdout == expected, (stdout, stderr)
+        for command in (
+            "sc invalid_instruction",
+            "function objcopy; return 23; end; sc nop",
+            "function mktemp; return 1; end; sc nop",
+        ):
+            failed = subprocess.run(
+                [*fish_cli, 'source "$argv[1]"; ' + command, fish_config],
+                text=True, capture_output=True, env=fish_env,
+            )
+            assert failed.returncode != 0, failed.stdout + failed.stderr
+            assert not list(sc_tmp.iterdir())
+    else:
+        print("SKIP: shellcode checks need fish, as, objcopy and hexdump")
+
     containers = tomllib.loads(render("dot_config/containers/containers.conf.tmpl"))
     assert containers["engine"]["compose_providers"] == [
         str(test_home / ".local/share/mise/shims/podman-compose")
@@ -413,5 +444,5 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     } <= managed["minimal"]
 
 print(
-    "OK: shell startup, home paths, repository email, CLI detection, mise changes, GDB/GEF setup, picom startup, full/minimal setup, shared commit skill"
+    "OK: shell startup, shellcode cleanup, home paths, repository email, CLI detection, mise changes, GDB/GEF setup, picom startup, full/minimal setup, shared commit skill"
 )

@@ -31,14 +31,19 @@ function sc -d "Assemble x86_64 to shellcode"
         return 1
     end
 
-    echo ".intel_syntax noprefix; $argv" | as --64 -o /tmp/sc.o
-    
-    if test $status -eq 0
-        objcopy -O binary --only-section=.text /tmp/sc.o /dev/stdout | \
+    set -l object_file (mktemp); or return 1
+    printf '%s\n' ".intel_syntax noprefix; $argv" | as --64 -o "$object_file"
+    set -l result $status
+
+    if test $result -eq 0
+        objcopy -O binary --only-section=.text "$object_file" /dev/stdout | \
         hexdump -v -e '"\\\" "x" /1 "%02x"'
+        if test "$pipestatus" != "0 0"
+            set result 1
+        end
         echo "" # 改行
-        rm /tmp/sc.o
-    else
-        return 1
     end
+
+    rm -f -- "$object_file"
+    return $result
 end

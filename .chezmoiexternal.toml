@@ -1,0 +1,8 @@
+[".gef/source"]
+    type = "git-repo"
+    url = "https://github.com/bata24/gef.git"
+    refreshPeriod = "24h"
+    [".gef/source".clone]
+        args = ["--branch", "dev", "--depth", "1"]
+    [".gef/source".pull]
+        args = ["--ff-only"]

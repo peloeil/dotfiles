@@ -10,7 +10,7 @@ if command -v apt-get >/dev/null; then
     sudo apt-get update
 {{- if eq (get . "profile" | default "full") "minimal" }}
     sudo apt-get install -y \
-      bison binutils build-essential curl elfutils file git libncurses-dev procps psmisc unzip
+      bison binutils build-essential curl elfutils file gdb git libncurses-dev procps psmisc unzip
 {{- else }}
     sudo apt-get install -y \
       alacritty \
@@ -31,6 +31,7 @@ if command -v apt-get >/dev/null; then
       fonts-ipaexfont \
       flameshot \
       fontconfig \
+      gdb \
       git \
       i3-wm \
       i3lock \
@@ -64,7 +65,7 @@ if command -v pacman >/dev/null; then
   if command -v sudo >/dev/null 2>&1 && sudo -v; then
 {{- if eq (get . "profile" | default "full") "minimal" }}
     sudo pacman -S --noconfirm --needed \
-      binutils curl elfutils git libarchive procps-ng psmisc unzip
+      binutils curl elfutils gdb git libarchive procps-ng psmisc unzip
 {{- else }}
     sudo pacman -S --noconfirm --needed \
       alacritty \
@@ -78,6 +79,7 @@ if command -v pacman >/dev/null; then
       feh \
       fontconfig \
       flameshot \
+      gdb \
       git \
       i3-wm \
       i3lock \
@@ -114,7 +116,7 @@ if command -v emerge >/dev/null; then
   if command -v sudo >/dev/null 2>&1 && sudo -v; then
 {{- if eq (get . "profile" | default "full") "minimal" }}
     sudo emerge --noreplace \
-      app-arch/libarchive app-arch/unzip dev-libs/elfutils dev-vcs/git \
+      app-arch/libarchive app-arch/unzip dev-debug/gdb dev-libs/elfutils dev-vcs/git \
       net-misc/curl sys-devel/binutils sys-process/procps sys-process/psmisc
 {{- else }}
     sudo emerge --noreplace \
@@ -125,6 +127,7 @@ if command -v emerge >/dev/null; then
       app-i18n/fcitx-gtk \
       app-i18n/fcitx-qt \
       'app-i18n/mozc[fcitx5]' \
+      dev-debug/gdb \
       dev-libs/elfutils \
       sys-devel/binutils \
       dev-vcs/git \

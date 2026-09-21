@@ -60,6 +60,16 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         path.startswith(str(test_home))
         for path in containers["engine"]["helper_binaries_dir"][:2]
     )
+    externals = tomllib.loads((SOURCE / ".chezmoiexternal.toml").read_text())
+    assert externals[".gef/source"] == {
+        "type": "git-repo",
+        "url": "https://github.com/bata24/gef.git",
+        "refreshPeriod": "24h",
+        "clone": {"args": ["--branch", "dev", "--depth", "1"]},
+        "pull": {"args": ["--ff-only"]},
+    }
+    assert (SOURCE / "dot_gef/symlink_gef.py").read_text() == "source/gef.py\n"
+    assert (SOURCE / "dot_gdbinit").read_text() == "source ~/.gef/gef.py\n"
     i3 = render("dot_config/i3/config.tmpl")
     assert "/home/sota" not in i3
     for target in (
@@ -253,7 +263,7 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
             mock(commands / manager, 'printf "%s\\n" "$*" >> "$CHECK_LOG"')
             run("/bin/sh", input=rendered[prereqs], env=env)
             calls = log.read_text()
-            assert "curl" in calls and "git" in calls and "binutils" in calls
+            assert all(package in calls for package in ("curl", "gdb", "git", "binutils"))
             if manager == "pacman":
                 assert calls.startswith("-S --noconfirm --needed ")
             assert (desktop_package in calls) == (profile == "full")
@@ -356,6 +366,8 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     assert all(gui in managed["full"] for gui in gui_targets)
     assert {
         ".config/mise/config.toml",
+        ".gdbinit",
+        ".gef/gef.py",
         ".config/nvim/init.lua",
         ".config/containers/containers.conf",
         ".codex/AGENTS.md",
@@ -369,5 +381,5 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     } <= managed["minimal"]
 
 print(
-    "OK: home paths, repository email, CLI detection, mise changes, picom startup, full/minimal setup, shared commit skill"
+    "OK: home paths, repository email, CLI detection, mise changes, GDB/GEF setup, picom startup, full/minimal setup, shared commit skill"
 )

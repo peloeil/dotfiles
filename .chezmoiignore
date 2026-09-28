@@ -16,6 +16,7 @@ tests
 .xprofile
 .config/alacritty
 .config/fcitx5
+.config/flameshot
 .config/i3
 .config/picom
 .config/polybar

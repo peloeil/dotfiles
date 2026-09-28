@@ -1,1 +1,2 @@
 XDG_MUSIC_DIR="$HOME/media/music"
+XDG_PICTURES_DIR="$HOME/media/pictures"

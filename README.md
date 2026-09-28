@@ -80,7 +80,7 @@ minimal ではデスクトップ関連（壁紙・モニター設定・Sunshine�
 
 | 対象 | 必要な作業 |
 | --- | --- |
-| 壁紙 | `~/pictures/neko.jpg` を配置するか、i3 の指定を変更する |
+| 壁紙 | `~/media/pictures/wallpapers/neko.jpg` を配置するか、i3 の指定を変更する |
 | モニター設定 | `~/.config/i3/monitor-hotplug.sh` を用意するか、i3 の起動処理・キー割り当てを変更する |
 | Sunshine | 本体と systemd user service を用意し、`~/.config/sunshine/sunshine.conf` の GPU・出力指定を合わせる |
 | Podman | 導入される CLI は remote 版。利用先のサービスまたは VM と接続設定を用意する |
@@ -128,7 +128,9 @@ chezmoi apply
 取得済みのソースは `chezmoi cd` で開いて直接編集することもできる。
 テンプレート化していない実ファイル側の変更は `chezmoi re-add <target-path>` で取り込める。`.tmpl` の内容はソース側で編集する。
 
-音楽の標準保存先は `~/media/music`。`dot_config/private_user-dirs.dirs` から `~/.config/user-dirs.dirs` に配布する。
+音楽の標準保存先は `~/media/music`、画像は `~/media/pictures`。`dot_config/private_user-dirs.dirs` から `~/.config/user-dirs.dirs` に配布する。
+Flameshotのスクリーンショット保存先は `~/media/pictures/screenshots`。`dot_config/flameshot/flameshot.ini.tmpl` で管理する。
+壁紙は `~/media/pictures/wallpapers` に置く。`~/.fehbg` はfehが生成する復元用ファイルのため管理しない。
 
 別のマシンでコミット・push した変更は、次で取得して適用する。
 

@@ -136,7 +136,7 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     i3 = render("dot_config/i3/config.tmpl")
     assert "/home/sota" not in i3
     for target in (
-        "pictures/neko.jpg",
+        "media/pictures/wallpapers/neko.jpg",
         ".config/i3/polybar.sh",
         ".config/i3/monitor-hotplug.sh",
     ):
@@ -429,6 +429,7 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         ".xprofile",
         ".config/alacritty",
         ".config/fcitx5",
+        ".config/flameshot",
         ".config/i3",
         ".config/picom",
         ".config/polybar",

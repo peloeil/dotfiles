@@ -128,6 +128,8 @@ chezmoi apply
 取得済みのソースは `chezmoi cd` で開いて直接編集することもできる。
 テンプレート化していない実ファイル側の変更は `chezmoi re-add <target-path>` で取り込める。`.tmpl` の内容はソース側で編集する。
 
+音楽の標準保存先は `~/media/music`。`dot_config/private_user-dirs.dirs` から `~/.config/user-dirs.dirs` に配布する。
+
 別のマシンでコミット・push した変更は、次で取得して適用する。
 
 ```sh

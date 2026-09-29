@@ -22,3 +22,19 @@ if command -v mise >/dev/null 2>&1 ; then
 fi
 
 export PATH="$HOME/.local/bin:$PATH"
+
+# Interactive-only configuration belongs below this point.
+if [[ $- != *i* ]] ; then
+	return
+fi
+
+# Clear mouse reporting left enabled when SSH or a terminal app exits abruptly.
+_reset_mouse_tracking() {
+	local previous_exit_status=$?
+	printf '\e[?1000;1002;1003;1006l'
+	return "$previous_exit_status"
+}
+
+if [[ "${PROMPT_COMMAND[*]}" != *"_reset_mouse_tracking"* ]] ; then
+	PROMPT_COMMAND+=(_reset_mouse_tracking)
+fi

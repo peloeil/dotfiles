@@ -2,7 +2,7 @@
 {{- $denopsSharedServer := promptBoolOnce . "denopsSharedServer" "Start a Denops shared server at login" false -}}
 {{- $email := promptStringOnce . "email" "Enter your Git email address" "peloeil20@gmail.com" -}}
 {{- $researchEmail := promptStringOnce . "researchEmail" "Enter your research Git email address" -}}
-{{- $researchDir := promptStringOnce . "researchDir" "Enter your research directory (absolute path or ~/...)" (joinPath .chezmoi.homeDir "workspace/univ/lab/research") -}}
+{{- $researchDir := promptStringOnce . "researchDir" "Enter your research directory (absolute path or ~/...)" (joinPath .chezmoi.homeDir "workspace/university/laboratory/research") -}}
 {{- $name := promptStringOnce . "name" "Enter your Git full name" "Shun Ota" -}}
 encryption = "age"
 

@@ -156,7 +156,7 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         "GIT_CONFIG_GLOBAL": str(global_git),
         "GIT_CONFIG_NOSYSTEM": "1",
     }
-    repo = test_home / "workspace/univ/lab/research/project"
+    repo = test_home / "workspace/university/laboratory/research/project"
     repo.mkdir(parents=True)
     run("git", "init", "--quiet", str(repo), env=git_env)
     assert (

@@ -3,9 +3,11 @@ unbind C-b
 set-option -g prefix C-j
 bind-key C-j send-prefix
 
-# split panes using | and -
-bind | split-window -h
-bind - split-window -v
+# open panes and windows from these keys in the current pane's directory
+bind | split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
+bind * new-pane -c "#{pane_current_path}"
+bind c new-window -c "#{pane_current_path}"
 unbind '"'
 unbind %
 

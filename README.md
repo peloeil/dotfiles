@@ -17,8 +17,6 @@ Bash / fish、tmux、Neovim、言語環境、AI ツール、コンテナ用ツ�
 - OS パッケージの自動導入には `sudo` が必要。`apt-get`、`pacman`、`emerge` に分岐する。
 - Gentoo でデスクトップを導入する場合は `app-i18n/mozc` の `fcitx5` USE フラグを有効にする。
 
-暗号化ファイルは現在追跡していない。今後追加した暗号化ファイルも復元する場合は、先に下記の「秘密情報を管理する」に従って鍵を配置する。
-
 ### 2. リポジトリを取得する
 
 [chezmoi のインストーラ](https://www.chezmoi.io/install/#one-line-binary-install)を使い、設定を初期化する。
@@ -32,18 +30,10 @@ export PATH="$HOME/.local/bin:$PATH"
 `Start a Denops shared server at login` では [Denops の共有サーバー](#denops-の共有サーバー)を使うか選ぶ。既定は無効。
 入力値は `~/.config/chezmoi/chezmoi.toml` に保存される。研究用ディレクトリ配下のリポジトリでは、研究用メールアドレスへ自動で切り替わる。
 
-最初からデスクトップなしで取得する場合は、上のインストーラのコマンドを次に置き換える。
-
-```sh
-sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b "$HOME/.local/bin" \
-  init peloeil --promptBool 'Install desktop environment=false'
-export PATH="$HOME/.local/bin:$PATH"
-```
+デスクトップなしをあらかじめ指定する場合は、上の `init peloeil` の後ろに `--promptBool 'Install desktop environment=false'` を追加する。
 
 | 導入対象 | `desktop = true` | `desktop = false` |
 | --- | --- | --- |
-| シェル・Git・tmux・mise・Neovim・GDB・GEF・言語環境 | あり | あり |
-| Codex・Claude Code・rtk・Ponytail・コンテナ用ツール | あり | あり |
 | Xorg・i3・Alacritty・fcitx5・デスクトップ用 OS パッケージと設定 | あり | なし |
 | Sunshine の設定・Hack Nerd Font の導入・ログイン時の `startx` | あり | なし |
 
@@ -57,15 +47,8 @@ chezmoi apply --dry-run
 chezmoi apply
 ```
 
-`apply` は OS の前提パッケージと mise を導入し、設定ファイルを配置した後、次をセットアップする。
-
-- mise の開発ツールと uv のデフォルト Python
-- Codex CLI、rtk のグローバル指示
-- fisher / fish plugins、Hack Nerd Font（`desktop = true` の場合）
-- Neovim の dpp plugins
-- Denops の systemd user service の有効・無効化（user manager がある場合）
-- Codex / Claude Code の Ponytail（CLI を検出できた場合）
-- Codex の Discord 完了通知（Codex とローカルの通知設定がある場合）
+`apply` は OS の前提パッケージと mise を導入し、設定ファイルの配置後に各ツールをセットアップする。
+処理の一覧と実行条件は [セットアップの構成](#セットアップの構成) を参照する。
 
 途中で失敗したら、原因を解消して `chezmoi apply` を再実行する。
 `sudo` を使えない場合は OS パッケージの導入をスキップするが、不足パッケージによって後続処理が失敗することはある。スキップした処理の再実行方法は下記を参照する。
@@ -153,7 +136,7 @@ chezmoi apply
 
 導入済みツールの更新は `mise upgrade`、不足ツールの再導入は `mise install --yes`、デフォルト Python の導入は `uv python install --default` で行う。作業中のプロジェクトの mise 設定の影響を避けるには、ホームディレクトリで実行する。
 
-GDB は OS のパッケージで導入する。GEF は `.chezmoiexternal.toml` で `bata24/gef` の `dev` ブランチを管理し、24時間ごとに更新する。直ちに更新する場合は `chezmoi -R apply ~/.gef/source` を実行する。
+GDB は OS のパッケージで導入する。GEF は `.chezmoiexternal.toml` で `bata24/gef` の `dev` ブランチを管理し、chezmoi の適用時に前回の更新から24時間以上経過していれば更新する。直ちに更新する場合は `chezmoi -R apply ~/.gef/source` を実行する。
 
 Codex CLI の更新はインストーラを再実行する。
 
@@ -202,9 +185,9 @@ plugin 本体・キャッシュ・認証情報はこのリポジトリでは管�
 | after | `run_once_after_13_disable_codex_fast_mode.sh` | Codex の Fast 機能を初回設定時に無効化する |
 | after | `run_onchange_after_15_init_rtk.sh` | Codex / Claude Code 向けの rtk 初期化 |
 | after | `run_onchange_after_20_install_fish_tools.sh.tmpl` | fisher を導入し、`fisher update` |
-| after | `run_onchange_after_20_install_hack_nerd_font.sh` | 未導入なら Hack Nerd Font を入れる |
+| after | `run_onchange_after_20_install_hack_nerd_font.sh` | `desktop = true` で未導入なら Hack Nerd Font を入れる |
 | after | `run_onchange_after_25_install_nvim_plugins.sh.tmpl` | headless Neovim で dpp plugins を導入する |
-| after | `run_onchange_after_26_configure_denops_server.sh.tmpl` | 選択した Denops の常駐設定を systemd user service に反映する |
+| after | `run_onchange_after_26_configure_denops_server.sh.tmpl` | user manager があれば、選択した Denops の常駐設定を systemd user service に反映する |
 | after | `run_onchange_after_30_install_ai_plugins.sh.tmpl` | CLI の検出後、Ponytail を導入する |
 | after | `run_onchange_after_31_configure_codex_discord_notify.sh.tmpl` | Codex とローカルの通知設定があれば Discord 完了通知を登録する |
 
@@ -250,12 +233,5 @@ mise doctor
 
 ## 秘密情報を管理する
 
-age の公開鍵は `.chezmoi.toml.tmpl`、秘密鍵の参照先は `~/.config/chezmoi/key.txt`。
-既存の暗号化ファイルを復元するときは、対応する秘密鍵をバックアップから配置する。
-
-```sh
-install -Dm600 /path/to/key.txt ~/.config/chezmoi/key.txt
-```
-
-新しく秘密情報を管理する場合は `chezmoi add --encrypt /path/to/secret` を使う。
+暗号化ファイルは現在追跡していない。age の公開鍵は `.chezmoi.toml.tmpl`、秘密鍵の参照先は `~/.config/chezmoi/key.txt`。
 秘密鍵と暗号化前の内容はコミットしない。鍵のバックアップはリポジトリとは別に保管する。

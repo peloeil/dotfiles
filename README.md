@@ -3,8 +3,8 @@
 自分の Linux x86_64 環境を復元・更新するためのリポジトリ。
 chezmoi で設定ファイルを配布し、mise で開発ツールとランタイムを入れる。Codex CLI は standalone installer、Python 本体は uv で導入する。
 
-`full` は Xorg / i3 デスクトップを含む全構成、`minimal` は GUI を省いた開発環境。
-どちらも Bash / fish、tmux、Neovim、言語環境、AI ツール、コンテナ用ツールを導入する。
+Bash / fish、tmux、Neovim、言語環境、AI ツール、コンテナ用ツールを導入する。
+`desktop = true`（既定）なら、Xorg / i3 デスクトップの導入・設定・起動も含む。`false` なら GUI を省く。
 多くのツールに `latest` を指定しているため、復元時のバージョンは導入時点で変わる。
 
 ## 新しいマシンに復元する
@@ -15,7 +15,7 @@ chezmoi で設定ファイルを配布し、mise で開発ツールとランタ�
 
 - ネットワーク接続と `curl`、`git`、`tar` を用意する。
 - OS パッケージの自動導入には `sudo` が必要。`apt-get`、`pacman`、`emerge` に分岐する。
-- Gentoo の `full` では `app-i18n/mozc` の `fcitx5` USE フラグを有効にする。
+- Gentoo でデスクトップを導入する場合は `app-i18n/mozc` の `fcitx5` USE フラグを有効にする。
 
 暗号化ファイルは現在追跡していない。今後追加した暗号化ファイルも復元する場合は、先に下記の「秘密情報を管理する」に従って鍵を配置する。
 
@@ -28,19 +28,19 @@ sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b "$HOME/.local/bin" init peloe
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-`Install profile` で `full`（既定）か `minimal` を選び、Git の通常用メールアドレス、研究用メールアドレス、研究用ディレクトリ、名前を入力する。
+`Install desktop environment` でデスクトップ環境を導入するか選び（既定は有効）、Git の通常用メールアドレス、研究用メールアドレス、研究用ディレクトリ、名前を入力する。
 `Start a Denops shared server at login` では [Denops の共有サーバー](#denops-の共有サーバー)を使うか選ぶ。既定は無効。
 入力値は `~/.config/chezmoi/chezmoi.toml` に保存される。研究用ディレクトリ配下のリポジトリでは、研究用メールアドレスへ自動で切り替わる。
 
-最初から minimal を指定して取得する場合は、上のインストーラのコマンドを次に置き換える。
+最初からデスクトップなしで取得する場合は、上のインストーラのコマンドを次に置き換える。
 
 ```sh
 sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b "$HOME/.local/bin" \
-  init peloeil --promptChoice 'Install profile=minimal'
+  init peloeil --promptBool 'Install desktop environment=false'
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-| 導入対象 | full | minimal |
+| 導入対象 | `desktop = true` | `desktop = false` |
 | --- | --- | --- |
 | シェル・Git・tmux・mise・Neovim・GDB・GEF・言語環境 | あり | あり |
 | Codex・Claude Code・rtk・Ponytail・コンテナ用ツール | あり | あり |
@@ -61,7 +61,7 @@ chezmoi apply
 
 - mise の開発ツールと uv のデフォルト Python
 - Codex CLI、rtk のグローバル指示
-- fisher / fish plugins、Hack Nerd Font（full のみ）
+- fisher / fish plugins、Hack Nerd Font（`desktop = true` の場合）
 - Neovim の dpp plugins
 - Denops の systemd user service の有効・無効化（user manager がある場合）
 - Codex / Claude Code の Ponytail（CLI を検出できた場合）
@@ -76,7 +76,7 @@ Ponytail の既定モードは `~/.config/ponytail/config.json` で `off` にし
 ### 4. マシン固有の設定を整える
 
 以下はこのリポジトリだけでは揃わない。使うものを別途用意する。
-minimal ではデスクトップ関連（壁紙・モニター設定・Sunshine）の準備は不要。
+`desktop = false` ではデスクトップ関連（壁紙・モニター設定・Sunshine）の準備は不要。
 
 | 対象 | 必要な作業 |
 | --- | --- |
@@ -86,7 +86,7 @@ minimal ではデスクトップ関連（壁紙・モニター設定・Sunshine�
 | Podman | 導入される CLI は remote 版。利用先のサービスまたは VM と接続設定を用意する |
 | AI ツール | Codex / Claude Code の認証を済ませる |
 
-full の Bash のログイン設定は、SSH 接続ではなく、`DISPLAY` がない `tty1` で `startx` を実行する。`.xinitrc` は fcitx5 などを初期化し、Sunshine の再起動と i3 の起動を行う。
+`desktop = true` の Bash のログイン設定は、SSH 接続ではなく、`DISPLAY` がない `tty1` で `startx` を実行する。`.xinitrc` は fcitx5 などを初期化し、Sunshine の再起動と i3 の起動を行う。
 
 ホスト名が `helium` の場合は、i3 の時間経過による画面消灯を無効にし、Alacritty のフォントサイズを変更する。
 
@@ -101,10 +101,10 @@ chezmoi apply --dry-run
 chezmoi apply
 ```
 
-### full / minimal
+### デスクトップ環境
 
-`profile` を `"full"` または `"minimal"` にする。未設定の既存環境は full として扱う。
-minimal から full に切り替えると GUI の設定・導入処理も対象になる。full から minimal に切り替えても、導入済みパッケージや除外した設定ファイルは自動削除しない。ログイン時の `startx` は無効になる。
+`desktop` を `true`（既定）または `false` にする。
+`false` から `true` に切り替えると GUI の設定・導入処理も対象になる。`true` から `false` に切り替えても、導入済みパッケージや除外した設定ファイルは自動削除しない。ログイン時の `startx` は無効になる。
 OS パッケージ導入は `run_once` のため、以前使った構成へ戻しただけでは再実行されない。必要なら下記の「OS パッケージの導入がスキップされた」のコマンドで再実行する。
 
 ### Denops の共有サーバー
@@ -190,7 +190,7 @@ plugin 本体・キャッシュ・認証情報はこのリポジトリでは管�
 
 ## セットアップの構成
 
-初期入力と age の設定は `.chezmoi.toml.tmpl`、full / minimal の配布範囲は `.chezmoiignore`、開発ツールは `dot_config/mise/config.toml` で管理する。
+初期入力と age の設定は `.chezmoi.toml.tmpl`、デスクトップ環境の配布範囲は `.chezmoiignore`、開発ツールは `dot_config/mise/config.toml` で管理する。
 `init` は設定を生成し、`apply` はテンプレート評価後、before scripts、dotfiles、after scripts の順に処理する。
 
 以下はすべて `.chezmoiscripts/` 内のスクリプト。

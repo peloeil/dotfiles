@@ -290,24 +290,23 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     assert log.read_text().strip() == "-b"
     log.unlink()
 
-    # Missing profile data must keep the existing full configuration.
+    # Missing desktop data must keep the existing desktop configuration.
     prereqs = ".chezmoiscripts/run_once_before_00_install_prereqs.sh.tmpl"
-    profile_sources = (
+    desktop_sources = (
         ".chezmoiignore",
         "dot_bash_profile.tmpl",
         prereqs,
     )
-    legacy = {relative: render(relative) for relative in profile_sources}
+    defaults = {relative: render(relative) for relative in desktop_sources}
     managed = {}
     mock(commands / "sudo", 'if [ "$1" != -v ]; then "$@"; fi')
-    for profile in ("full", "minimal"):
-        data["profile"] = profile
-        rendered = {relative: render(relative) for relative in profile_sources}
-        if profile == "full":
-            assert rendered == legacy
-        assert ("exec startx" in rendered["dot_bash_profile.tmpl"]) == (
-            profile == "full"
-        )
+    for desktop in (True, False):
+        data["desktop"] = desktop
+        rendered = {relative: render(relative) for relative in desktop_sources}
+        if desktop:
+            assert rendered == defaults
+        assert ("exec startx" in rendered["dot_bash_profile.tmpl"]) == desktop
+
         run("bash", "-n", input=rendered["dot_bash_profile.tmpl"])
         for script in (SOURCE / ".chezmoiscripts").iterdir():
             content = (
@@ -329,16 +328,16 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
             assert all(package in calls for package in ("curl", "gdb", "git", "binutils"))
             if manager == "pacman":
                 assert calls.startswith("-S --noconfirm --needed ")
-            assert (desktop_package in calls) == (profile == "full")
-            assert ("xclip" in calls) == (profile == "full")
-            assert ("fcitx" in calls) == (profile == "full")
+            assert (desktop_package in calls) == desktop
+            assert ("xclip" in calls) == desktop
+            assert ("fcitx" in calls) == desktop
             log.unlink()
             (commands / manager).unlink()
 
         # Test the documented init flag, persistence, and real target selection.
-        profile_work = work / profile
-        profile_work.mkdir()
-        config_path = profile_work / "chezmoi.toml"
+        desktop_work = work / f"desktop-{desktop}"
+        desktop_work.mkdir()
+        config_path = desktop_work / "chezmoi.toml"
         cli = (
             CHEZMOI,
             "--source",
@@ -348,9 +347,9 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
             "--config",
             str(config_path),
             "--cache",
-            str(profile_work / "cache"),
+            str(desktop_work / "cache"),
             "--persistent-state",
-            str(profile_work / "state.boltdb"),
+            str(desktop_work / "state.boltdb"),
             "--no-tty",
         )
         run(
@@ -358,17 +357,17 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
             "init",
             "--promptDefaults",
             *(
-                ["--promptChoice", "Install profile=minimal"]
-                if profile == "minimal"
+                ["--promptBool", "Install desktop environment=false"]
+                if not desktop
                 else []
             ),
             "--promptString",
             "Enter your research Git email address=research@example.invalid",
         )
-        assert tomllib.loads(config_path.read_text())["data"]["profile"] == profile
+        assert tomllib.loads(config_path.read_text())["data"]["desktop"] is desktop
         assert tomllib.loads(config_path.read_text())["data"]["denopsSharedServer"] is False
         run(*cli, "init", "--promptDefaults")
-        assert tomllib.loads(config_path.read_text())["data"]["profile"] == profile
+        assert tomllib.loads(config_path.read_text())["data"]["desktop"] is desktop
         original_config = config_path.read_text()
         config_path.write_text(original_config.replace("denopsSharedServer = false", "denopsSharedServer = true")
                                .replace("denopsServerPort = 32123", "denopsServerPort = 32124"))
@@ -376,8 +375,9 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         saved_data = tomllib.loads(config_path.read_text())["data"]
         assert saved_data["denopsSharedServer"] is True and saved_data["denopsServerPort"] == 32124
         config_path.write_text(original_config)
-        managed[profile] = set(run(*cli, "managed").splitlines())
-        assert ".codex/discord-notify/config.json" not in managed[profile]
+        managed[desktop] = set(run(*cli, "managed").splitlines())
+        assert ".codex/discord-notify/config.json" not in managed[desktop]
+
         run(*cli, "diff")
         run(*cli, "apply", "--dry-run")
 
@@ -414,15 +414,14 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     assert local_note.read_text() == "keep\n"
     run(*cli, "apply", "--include", "remove")
 
-    invalid = subprocess.run(
-        (*cli, "--override-data", '{"profile":"typo"}', "managed"),
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    assert (
-        invalid.returncode != 0 and "profile must be full or minimal" in invalid.stderr
-    )
+    for invalid_desktop in ("false", 0, None):
+        invalid = subprocess.run(
+            (*cli, "--override-data", json.dumps({"desktop": invalid_desktop}), "managed"),
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        assert invalid.returncode != 0 and "desktop must be true or false" in invalid.stderr
 
     gui_targets = (
         ".xinitrc",
@@ -436,12 +435,12 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         ".config/sunshine",
         ".chezmoiscripts/20_install_hack_nerd_font.sh",
     )
-    assert managed["minimal"] == {
+    assert managed[False] == {
         path
-        for path in managed["full"]
+        for path in managed[True]
         if not any(path == gui or path.startswith(gui + "/") for gui in gui_targets)
     }
-    assert all(gui in managed["full"] for gui in gui_targets)
+    assert all(gui in managed[True] for gui in gui_targets)
     assert {
         ".config/mise/config.toml",
         ".gdbinit",
@@ -455,8 +454,8 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         ".chezmoiscripts/31_configure_codex_discord_notify.sh",
         ".codex/discord-notify/notify.py",
         ".codex/discord-notify/config.example.json",
-    } <= managed["minimal"]
+    } <= managed[False]
 
 print(
-    "OK: shell startup, shellcode cleanup, sandbox removal, home paths, repository email, CLI detection, mise changes, GDB/GEF setup, picom startup, full/minimal setup, shared commit skill"
+    "OK: shell startup, shellcode cleanup, sandbox removal, home paths, repository email, CLI detection, mise changes, GDB/GEF setup, picom startup, desktop setup, shared commit skill"
 )

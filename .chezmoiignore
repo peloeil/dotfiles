@@ -1,6 +1,6 @@
-{{- $profile := get . "profile" | default "full" -}}
-{{- if not (has $profile (list "full" "minimal")) -}}
-{{- fail "profile must be full or minimal" -}}
+{{- $desktop := dig "desktop" true . -}}
+{{- if not (kindIs "bool" $desktop) -}}
+{{- fail "desktop must be true or false" -}}
 {{- end -}}
 README.md
 AGENTS.md
@@ -11,7 +11,7 @@ tests
 .codex/discord-notify/__pycache__
 .codex/discord-notify/__pycache__/**
 
-{{ if eq $profile "minimal" -}}
+{{ if not $desktop -}}
 .xinitrc
 .xprofile
 .config/alacritty

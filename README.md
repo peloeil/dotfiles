@@ -86,6 +86,8 @@ Ponytail の既定モードは `~/.config/ponytail/config.json` で `off` にし
 | Podman | 導入される CLI は remote 版。利用先のサービスまたは VM と接続設定を用意する |
 | AI ツール | Codex / Claude Code の認証を済ませる |
 
+壁紙画像と、feh が生成する `~/.fehbg` は管理しない。
+
 `desktop = true` の Bash のログイン設定は、SSH 接続ではなく、`DISPLAY` がない `tty1` で `startx` を実行する。`.xinitrc` は fcitx5 などを初期化し、Sunshine の再起動と i3 の起動を行う。
 
 ホスト名が `helium` の場合は、i3 の時間経過による画面消灯を無効にし、Alacritty のフォントサイズを変更する。
@@ -127,10 +129,6 @@ chezmoi apply
 
 取得済みのソースは `chezmoi cd` で開いて直接編集することもできる。
 テンプレート化していない実ファイル側の変更は `chezmoi re-add <target-path>` で取り込める。`.tmpl` の内容はソース側で編集する。
-
-音楽の標準保存先は `~/media/music`、画像は `~/media/pictures`、書類は `~/documents`。`dot_config/private_user-dirs.dirs` から `~/.config/user-dirs.dirs` に配布する。
-Flameshotのスクリーンショット保存先は `~/media/pictures/screenshots`。`dot_config/flameshot/flameshot.ini.tmpl` で管理する。
-壁紙は `~/media/pictures/wallpapers` に置く。`~/.fehbg` はfehが生成する復元用ファイルのため管理しない。
 
 別のマシンでコミット・push した変更は、次で取得して適用する。
 

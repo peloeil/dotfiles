@@ -26,6 +26,8 @@ repo = "shun/ddu-source-rg"
 [[plugins]]
 repo = "Shougo/ddu-filter-matcher_substring"
 [[plugins]]
+repo = "Shougo/ddu-filter-matcher_hidden"
+[[plugins]]
 repo = "Shougo/ddu-filter-sorter_alpha"
 [[plugins]]
 repo = "yuki-yano/ddu-filter-fzf"
@@ -43,6 +45,7 @@ local = true
 depends = [
     "ddu.vim",
     "ddu-source-file",
+    "ddu-filter-matcher_hidden",
     "ddu-filter-sorter_alpha",
     "ddu-kind-file",
     "ddu-column-icon_filename"

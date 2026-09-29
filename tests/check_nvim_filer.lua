@@ -10,6 +10,7 @@ for _, repo in ipairs({
     "Shougo/ddu-source-file",
     "Shougo/ddu-kind-file",
     "Shougo/ddu-filter-sorter_alpha",
+    "Shougo/ddu-filter-matcher_hidden",
     "ryota2357/ddu-column-icon_filename",
 }) do
     vim.opt.runtimepath:append(cache .. "/dpp/repos/github.com/" .. repo)
@@ -52,6 +53,28 @@ local ok, err = pcall(function()
         vim.api.nvim_feedkeys("q", "xt", false)
         assert(vim.wait(5000, function() return vim.bo.filetype ~= "ddu-filer" end), "filer did not close")
     end
+
+    -- Exercise the real Lua/Vim/Denops boundary and both toggle directions.
+    vim.fn.mkdir(work .. "/.hidden-dir", "p")
+    vim.fn.writefile({ "hidden" }, work .. "/.hidden-file")
+    vim.fn["ddu#start"]({ name = "filer", sourceOptions = { file = { path = work } } })
+    local function visible(name)
+        return vim.iter(vim.fn["ddu#ui#get_items"]("filer")):any(function(item)
+            return (item.action or {}).path == work .. "/" .. name
+        end)
+    end
+    assert(vim.wait(10000, function()
+        return visible(".hidden-dir") and visible(".hidden-file") and visible("src")
+    end), "Initial hidden entries are missing")
+    vim.fn.maparg("H", "n", false, true).callback()
+    assert(vim.wait(10000, function()
+        return not visible(".hidden-dir") and not visible(".hidden-file") and visible("src")
+    end), "H did not hide dotfiles while retaining normal entries")
+    vim.fn.maparg("H", "n", false, true).callback()
+    assert(vim.wait(10000, function()
+        return visible(".hidden-dir") and visible(".hidden-file") and visible("src")
+    end), "H did not restore hidden entries")
+    vim.fn["ddu#ui#do_action"]("quit", vim.empty_dict(), "filer")
 
     local repo = work .. "/repo"
     local checkout = work .. "/linked worktree"

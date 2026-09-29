@@ -8,6 +8,17 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.keymap.set("n", "q", [[<cmd>call ddu#ui#do_action("quit", {}, "filer")<cr>]], opts)
         vim.keymap.set("n", "o", [[<cmd>call ddu#ui#do_action("expandItem", #{ mode: "toggle" }, "filer")<cr>]], opts)
         vim.keymap.set("n", "r", [[<cmd>call ddu#ui#do_action("redraw", #{method: "refreshItems"}, "filer")<cr>]], opts)
+        -- Toggle dotfiles and hidden directories using the current filer options.
+        vim.keymap.set("n", "H", function()
+            local current = vim.fn["ddu#custom#get_current"]("filer")
+            local matchers = current.sourceOptions.file.matchers or {}
+            vim.fn["ddu#ui#do_action"]("updateOptions", {
+                sourceOptions = {
+                    file = { matchers = #matchers == 0 and { "matcher_hidden" } or {} },
+                },
+            }, "filer")
+            vim.fn["ddu#ui#do_action"]("redraw", { method = "refreshItems" }, "filer")
+        end, opts)
         vim.keymap.set(
             "n",
             "..",

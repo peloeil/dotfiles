@@ -153,6 +153,7 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 | --- | --- |
 | このリポジトリの編集上の制約 | [AGENTS.md](AGENTS.md)（配布対象外） |
 | Codex 共通の応答方針 | `dot_codex/AGENTS.md.tmpl` → `~/.codex/AGENTS.md` |
+| Codex の共通設定 | `.chezmoitemplates/codex-config.toml.tmpl` を `dot_codex/modify_private_config.toml` で `~/.codex/config.toml` に反映する |
 | コミットの分割・メッセージ規約 | `dot_agents/skills/commit/SKILL.md` → `~/.agents/skills/commit/SKILL.md` |
 | Claude Code からの commit 利用 | `~/.claude/skills/commit` → `~/.agents/skills/commit`（補助資料を含むディレクトリへのシンボリックリンク） |
 | Claude Code の設定・rtk hook | `dot_claude/settings.json` → `~/.claude/settings.json` |
@@ -182,7 +183,6 @@ plugin 本体・キャッシュ・認証情報はこのリポジトリでは管�
 | before | `run_once_before_01-install-mise.sh.tmpl` | `~/.local/bin/mise` がなければ導入する |
 | after | `run_onchange_after_10_install_mise_tools.sh.tmpl` | `mise install --yes` と `uv python install --default` |
 | after | `run_once_after_12_install_codex_standalone.sh.tmpl` | `~/.local/bin` に Codex CLI を導入する |
-| after | `run_once_after_13_disable_codex_fast_mode.sh` | Codex の Fast 機能を初回設定時に無効化する |
 | after | `run_onchange_after_15_init_rtk.sh` | Codex / Claude Code 向けの rtk 初期化 |
 | after | `run_onchange_after_20_install_fish_tools.sh.tmpl` | fisher を導入し、`fisher update` |
 | after | `run_onchange_after_20_install_hack_nerd_font.sh` | `desktop = true` で未導入なら Hack Nerd Font を入れる |

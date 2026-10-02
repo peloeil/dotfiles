@@ -381,6 +381,45 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         run(*cli, "diff")
         run(*cli, "apply", "--dry-run")
 
+    # Shared defaults must preserve local state, including integer-valued UI records.
+    codex_config = test_home / ".codex/config.toml"
+    codex_cli = (*cli, "--override-data", json.dumps(data))
+    codex_config.write_text('[tui]\nfullscreen_transcript = true\n')
+    run(*codex_cli, "apply", str(codex_config))
+    codex = tomllib.loads(codex_config.read_text())
+    assert "fast_mode" not in codex["features"] and "service_tier" not in codex
+    assert codex["approval_policy"] == "never" and codex["sandbox_mode"] == "danger-full-access"
+    assert codex["tui"]["fullscreen_transcript"] is False
+    assert codex["notify"] == ["python3", str(test_home / ".codex/discord-notify/notify.py"), "complete"]
+    assert "/home/sota" not in codex_config.read_text()
+    assert codex_config.stat().st_mode & 0o777 == 0o600
+    assert not run(*codex_cli, "diff", str(codex_config))
+
+    codex_config.write_text(
+        'service_tier = "fast"\n'
+        '[features]\nfast_mode = true\nhooks = false\n'
+        '[projects."/local/project"]\ntrust_level = "untrusted"\n'
+        '[hooks.state.local]\ntrusted_hash = "sha256:test"\n'
+        '[plugins."local@example"]\nenabled = false\n'
+        '[tui]\nfullscreen_transcript = true\nscreen_reader_detection_done = true\n'
+        '[tui.model_availability_nux]\n"example-model" = 4\n'
+    )
+    run(*codex_cli, "apply", str(codex_config))
+    codex = tomllib.loads(codex_config.read_text())
+    assert codex["features"] == {"fast_mode": True, "hooks": True}
+    assert codex["service_tier"] == "fast"
+    assert codex["projects"]["/local/project"]["trust_level"] == "untrusted"
+    assert codex["hooks"]["state"]["local"]["trusted_hash"] == "sha256:test"
+    assert codex["plugins"]["local@example"]["enabled"] is False
+    assert codex["tui"]["fullscreen_transcript"] is False
+    assert codex["tui"]["screen_reader_detection_done"] is True
+    hint = codex["tui"]["model_availability_nux"]["example-model"]
+    assert type(hint) is int and hint == 4
+    applied = codex_config.read_bytes()
+    run(*codex_cli, "apply", str(codex_config))
+    assert codex_config.read_bytes() == applied
+    assert not run(*codex_cli, "diff", str(codex_config))
+
     # Migrate the old file-only link and keep supporting documents reachable.
     shared_skill = test_home / ".agents/skills/commit"
     claude_skill = test_home / ".claude/skills/commit"

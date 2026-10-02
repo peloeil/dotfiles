@@ -1,0 +1,3 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $managed := includeTemplate "codex-config.toml.tmpl" . | fromToml -}}
+{{- mergeOverwrite (fromToml .chezmoi.stdin) $managed | toToml -}}

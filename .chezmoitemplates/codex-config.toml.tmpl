@@ -1,0 +1,26 @@
+approval_policy = "never"
+model = "gpt-6-astra"
+model_reasoning_effort = "xhigh"
+notify = ["python3", "{{ .chezmoi.homeDir }}/.codex/discord-notify/notify.py", "complete"]
+personality = "pragmatic"
+sandbox_mode = "danger-full-access"
+
+[features]
+  hooks = true
+
+[marketplaces]
+  [marketplaces.ponytail]
+    source = "https://github.com/DietrichGebert/ponytail.git"
+    source_type = "git"
+
+[notice]
+  hide_rate_limit_model_nudge = true
+
+[plugins]
+  [plugins."github@openai-curated"]
+    enabled = true
+  [plugins."ponytail@ponytail"]
+    enabled = true
+
+[tui]
+  fullscreen_transcript = false

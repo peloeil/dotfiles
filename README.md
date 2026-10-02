@@ -28,6 +28,7 @@ export PATH="$HOME/.local/bin:$PATH"
 
 `Install desktop environment` でデスクトップ環境を導入するか選び（既定は有効）、Git の通常用メールアドレス、研究用メールアドレス、研究用ディレクトリ、名前を入力する。
 `Start a Denops shared server at login` では [Denops の共有サーバー](#denops-の共有サーバー)を使うか選ぶ。既定は無効。
+`Start Zenn preview on Tailscale at login` では [Zenn のプレビュー](#zenn-のプレビュー)を使うか選ぶ。既定は無効。
 入力値は `~/.config/chezmoi/chezmoi.toml` に保存される。研究用ディレクトリ配下のリポジトリでは、研究用メールアドレスへ自動で切り替わる。
 
 デスクトップなしをあらかじめ指定する場合は、上の `init peloeil` の後ろに `--promptBool 'Install desktop environment=false'` を追加する。
@@ -68,6 +69,7 @@ Ponytail の既定モードは `~/.config/ponytail/config.json` で `off` にし
 | Sunshine | 本体と systemd user service を用意し、`~/.config/sunshine/sunshine.conf` の GPU・出力指定を合わせる |
 | Podman | 導入される CLI は remote 版。利用先のサービスまたは VM と接続設定を用意する |
 | AI ツール | Codex / Claude Code の認証を済ませる |
+| Zenn のプレビュー | [記事リポジトリと Tailscale](#zenn-のプレビュー)を用意する |
 
 壁紙画像と、feh が生成する `~/.fehbg` は管理しない。
 
@@ -99,6 +101,13 @@ OS パッケージ導入は `run_once` のため、以前使った構成へ戻�
 
 接続先は `127.0.0.1:32123`。競合時は `denopsServerPort` でポートを変更できる。
 共有サーバーは認証を行わないため、複数人で使うマシンでは無効のまま使う。
+
+### Zenn のプレビュー
+
+`zennPreview = true` にすると、`zenn-preview.service` を有効化・起動し、ログイン時にも起動する。`false`（既定）に戻して適用すると無効化・停止する。
+利用前に `~/workspace/zenn` を用意してその中で `npm ci` を実行し、Tailscale を導入・接続しておく。systemd user manager が必要。
+Tailscale 内から `http://<Tailscale IPv4>:8000` で `~/workspace/zenn/articles/` の記事を閲覧できる。IP は `tailscale ip -4` で確認する。
+下書きも表示され、保存すると自動反映される。ログアウト中も動かす場合は `sudo loginctl enable-linger "$USER"` を実行する。
 
 ## 設定とツールを更新する
 
@@ -188,10 +197,11 @@ plugin 本体・キャッシュ・認証情報はこのリポジトリでは管�
 | after | `run_onchange_after_20_install_hack_nerd_font.sh` | `desktop = true` で未導入なら Hack Nerd Font を入れる |
 | after | `run_onchange_after_25_install_nvim_plugins.sh.tmpl` | headless Neovim で dpp plugins を導入する |
 | after | `run_onchange_after_26_configure_denops_server.sh.tmpl` | user manager があれば、選択した Denops の常駐設定を systemd user service に反映する |
+| after | `run_onchange_after_27_configure_zenn_preview.sh.tmpl` | user manager があれば、選択した Zenn の公開設定を systemd user service に反映する |
 | after | `run_onchange_after_30_install_ai_plugins.sh.tmpl` | CLI の検出後、Ponytail を導入する |
 | after | `run_onchange_after_31_configure_codex_discord_notify.sh.tmpl` | Codex とローカルの通知設定があれば Discord 完了通知を登録する |
 
-`run_once` は展開後の内容ごとに成功を記録し、`run_onchange` は前回成功時から内容が変わると実行する。mise・fish・Neovim・Codex 通知のスクリプトには対応する設定やコードのハッシュを含めている。
+`run_once` は展開後の内容ごとに成功を記録し、`run_onchange` は前回成功時から内容が変わると実行する。mise・fish・Neovim・Denops・Zenn・Codex 通知のスクリプトには対応する設定やコードのハッシュを含めている。
 スキップも成功として記録されるため、依存を後から揃えただけでは再実行されない。詳細は [chezmoi のスクリプト仕様](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/)を参照する。
 
 ## セットアップを補完する
@@ -206,13 +216,15 @@ chezmoi execute-template --file \
 chezmoi apply
 ```
 
-### Denops の共有サーバー設定がスキップされた
+### user service の設定がスキップされた
 
-systemd user manager が利用可能になってから、設定処理を再実行する。
+systemd user manager が利用可能になってから、該当する設定処理を再実行する。
 
 ```sh
 chezmoi execute-template --file \
   "$(chezmoi source-path)/.chezmoiscripts/run_onchange_after_26_configure_denops_server.sh.tmpl" | sh
+chezmoi execute-template --file \
+  "$(chezmoi source-path)/.chezmoiscripts/run_onchange_after_27_configure_zenn_preview.sh.tmpl" | sh
 ```
 
 ### Ponytail の導入がスキップされた

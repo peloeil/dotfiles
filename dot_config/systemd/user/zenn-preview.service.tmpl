@@ -1,0 +1,11 @@
+[Unit]
+Description=Zenn article preview on Tailscale
+
+[Service]
+WorkingDirectory=%h/workspace/zenn
+ExecStart=/bin/sh -ec 'tailnet_ip=$$(tailscale ip -4); test -n "$$tailnet_ip"; exec "{{ .chezmoi.homeDir }}/.local/bin/mise" exec -- node node_modules/zenn-cli/dist/server/zenn.js preview --host "$$tailnet_ip" --port 8000'
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

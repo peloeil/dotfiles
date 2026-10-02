@@ -2,6 +2,7 @@
 
 import json
 import os
+import shlex
 import shutil
 import subprocess
 import tempfile
@@ -214,6 +215,50 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         assert invalid.returncode != 0 and "denopsServerPort must be" in invalid.stderr
     del data["denopsSharedServer"], data["denopsServerPort"]
 
+    zenn_script = ".chezmoiscripts/run_onchange_after_27_configure_zenn_preview.sh.tmpl"
+    default_zenn_script = render(zenn_script)
+    mock(service_bin / "systemctl", 'printf "%s\\n" "$*" >> "$CHECK_LOG"')
+    for enabled in (True, False):
+        data["zennPreview"] = enabled
+        script = render(zenn_script)
+        assert (script == default_zenn_script) != enabled
+        run("/bin/sh", "-n", input=script)
+        run("/bin/sh", input=script, env=service_env)
+        assert service_calls.read_text().splitlines() == [
+            "--user show-environment", "--user daemon-reload",
+            *(["--user enable zenn-preview.service", "--user restart zenn-preview.service"]
+              if enabled else ["--user disable --now zenn-preview.service"]),
+        ]
+        service_calls.unlink()
+    data["zennPreview"] = True
+    mock(service_bin / "systemctl", 'exit 1')
+    assert 'Skipping Zenn preview service' in run("/bin/sh", input=render(zenn_script), env=service_env)
+    (service_bin / "systemctl").unlink()
+    assert 'Skipping Zenn preview service' in run("/bin/sh", input=render(zenn_script), env=service_env)
+    del data["zennPreview"]
+
+    # A missing Tailscale IP must never turn into a wildcard preview listener.
+    zenn_unit = render("dot_config/systemd/user/zenn-preview.service.tmpl")
+    zenn_start = next(line.removeprefix("ExecStart=") for line in zenn_unit.splitlines()
+                      if line.startswith("ExecStart="))
+    zenn_command = shlex.split(zenn_start.replace("$$", "$"))
+    run("/bin/sh", "-n", "-c", zenn_command[-1])
+    mock(local_bin / "mise", 'printf "%s\\n" "$@" >> "$CHECK_LOG"')
+    mock(service_bin / "tailscale", 'printf "100.64.0.1\\n"')
+    run(*zenn_command, env=service_env)
+    assert service_calls.read_text().splitlines() == [
+        "exec", "--", "node", "node_modules/zenn-cli/dist/server/zenn.js",
+        "preview", "--host", "100.64.0.1", "--port", "8000",
+    ]
+    service_calls.unlink()
+    for unavailable in ("exit 1", "exit 0"):
+        mock(service_bin / "tailscale", unavailable)
+        failed = subprocess.run(zenn_command, env=service_env, capture_output=True)
+        assert failed.returncode != 0 and not service_calls.exists()
+    (service_bin / "tailscale").unlink()
+    failed = subprocess.run(zenn_command, env=service_env, capture_output=True)
+    assert failed.returncode != 0 and not service_calls.exists()
+
     commands = work / "commands"
     commands.mkdir()
     (commands / "sh").symlink_to("/bin/sh")
@@ -279,6 +324,15 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     with (changed_source / "dot_codex/private_discord-notify/notify.py").open("a") as stream:
         stream.write("\n# Changed notification code\n")
     assert render(notification_script, changed_source) != original_notification
+
+    zenn_unit_source = Path("dot_config/systemd/user/zenn-preview.service.tmpl")
+    for relative in (Path(zenn_script), zenn_unit_source):
+        (changed_source / relative).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(SOURCE / relative, changed_source / relative)
+    original_zenn = render(zenn_script, changed_source)
+    with (changed_source / zenn_unit_source).open("a") as stream:
+        stream.write("\n# Changed service definition\n")
+    assert render(zenn_script, changed_source) != original_zenn
 
     # Use the same .xprofile before and after picom appears; no template re-render.
     xprofile = "fcitx5() { :; }\nxinput() { return 1; }\nsleep() { :; }\n"
@@ -366,14 +420,17 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         )
         assert tomllib.loads(config_path.read_text())["data"]["desktop"] is desktop
         assert tomllib.loads(config_path.read_text())["data"]["denopsSharedServer"] is False
+        assert tomllib.loads(config_path.read_text())["data"]["zennPreview"] is False
         run(*cli, "init", "--promptDefaults")
         assert tomllib.loads(config_path.read_text())["data"]["desktop"] is desktop
         original_config = config_path.read_text()
         config_path.write_text(original_config.replace("denopsSharedServer = false", "denopsSharedServer = true")
-                               .replace("denopsServerPort = 32123", "denopsServerPort = 32124"))
+                               .replace("denopsServerPort = 32123", "denopsServerPort = 32124")
+                               .replace("zennPreview = false", "zennPreview = true"))
         run(*cli, "init", "--promptDefaults")
         saved_data = tomllib.loads(config_path.read_text())["data"]
         assert saved_data["denopsSharedServer"] is True and saved_data["denopsServerPort"] == 32124
+        assert saved_data["zennPreview"] is True
         config_path.write_text(original_config)
         managed[desktop] = set(run(*cli, "managed").splitlines())
         assert ".codex/discord-notify/config.json" not in managed[desktop]

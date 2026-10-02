@@ -1,5 +1,6 @@
 {{- $desktop := promptBoolOnce . "desktop" "Install desktop environment" true -}}
 {{- $denopsSharedServer := promptBoolOnce . "denopsSharedServer" "Start a Denops shared server at login" false -}}
+{{- $zennPreview := promptBoolOnce . "zennPreview" "Start Zenn preview on Tailscale at login" false -}}
 {{- $email := promptStringOnce . "email" "Enter your Git email address" "peloeil20@gmail.com" -}}
 {{- $researchEmail := promptStringOnce . "researchEmail" "Enter your research Git email address" -}}
 {{- $researchDir := promptStringOnce . "researchDir" "Enter your research directory (absolute path or ~/...)" (joinPath .chezmoi.homeDir "workspace/university/laboratory/research") -}}
@@ -10,6 +11,7 @@ encryption = "age"
   desktop = {{ $desktop }}
   denopsSharedServer = {{ $denopsSharedServer }}
   denopsServerPort = {{ get . "denopsServerPort" | default 32123 | int }}
+  zennPreview = {{ $zennPreview }}
   email = "{{ $email }}"
   researchEmail = "{{ $researchEmail }}"
   researchDir = {{ $researchDir | quote }}

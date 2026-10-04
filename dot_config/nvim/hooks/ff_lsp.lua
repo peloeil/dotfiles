@@ -26,12 +26,10 @@ vim.fn["ddu#custom#patch_global"]({
 })
 vim.fn["ddu#custom#patch_local"]("lsp_definition", {
     ui = "ff",
-    uiOptions = {
-        ff = { persist = true },
-    },
     uiParams = {
         ff = {
             floatingTitle = "definition",
+            immediateAction = "open",
         },
     },
     sources = { "lsp_definition" },

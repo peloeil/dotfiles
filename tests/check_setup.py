@@ -444,7 +444,7 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     codex_config.write_text('[tui]\nfullscreen_transcript = true\n')
     run(*codex_cli, "apply", str(codex_config))
     codex = tomllib.loads(codex_config.read_text())
-    assert "fast_mode" not in codex["features"] and "service_tier" not in codex
+    assert codex["features"]["fast_mode"] is False and "service_tier" not in codex
     assert codex["approval_policy"] == "never" and codex["sandbox_mode"] == "danger-full-access"
     assert codex["tui"]["fullscreen_transcript"] is False
     assert codex["notify"] == ["python3", str(test_home / ".codex/discord-notify/notify.py"), "complete"]
@@ -463,7 +463,7 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     )
     run(*codex_cli, "apply", str(codex_config))
     codex = tomllib.loads(codex_config.read_text())
-    assert codex["features"] == {"fast_mode": True, "hooks": True}
+    assert codex["features"] == {"fast_mode": False, "hooks": True}
     assert codex["service_tier"] == "fast"
     assert codex["projects"]["/local/project"]["trust_level"] == "untrusted"
     assert codex["hooks"]["state"]["local"]["trusted_hash"] == "sha256:test"

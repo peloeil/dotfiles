@@ -5,6 +5,7 @@
     "sessionUrl": false
   },
   "permissions": {
+    "defaultMode": "bypassPermissions",
     "allow": [
       "Bash(git status*)",
       "Bash(git log*)",

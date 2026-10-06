@@ -2,6 +2,7 @@
 set -eu
 
 # unit_sha256={{ include "dot_config/systemd/user/zenn-preview.service.tmpl" | sha256sum }}
+# notes_unit_sha256={{ include "dot_config/systemd/user/zenn-notes.service.tmpl" | sha256sum }}
 if ! command -v systemctl >/dev/null 2>&1 || ! systemctl --user show-environment >/dev/null 2>&1; then
     printf '%s\n' 'Skipping Zenn preview service: systemd user manager is unavailable.'
     exit 0
@@ -10,7 +11,10 @@ fi
 systemctl --user daemon-reload
 {{ if get . "zennPreview" -}}
 systemctl --user enable zenn-preview.service
+systemctl --user enable zenn-notes.service
 systemctl --user restart zenn-preview.service
+systemctl --user restart zenn-notes.service
 {{ else -}}
 systemctl --user disable --now zenn-preview.service
+systemctl --user disable --now zenn-notes.service
 {{ end -}}

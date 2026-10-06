@@ -226,8 +226,10 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         run("/bin/sh", input=script, env=service_env)
         assert service_calls.read_text().splitlines() == [
             "--user show-environment", "--user daemon-reload",
-            *(["--user enable zenn-preview.service", "--user restart zenn-preview.service"]
-              if enabled else ["--user disable --now zenn-preview.service"]),
+            *(["--user enable zenn-preview.service", "--user enable zenn-notes.service",
+               "--user restart zenn-preview.service", "--user restart zenn-notes.service"]
+              if enabled else ["--user disable --now zenn-preview.service",
+                               "--user disable --now zenn-notes.service"]),
         ]
         service_calls.unlink()
     data["zennPreview"] = True
@@ -237,27 +239,29 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     assert 'Skipping Zenn preview service' in run("/bin/sh", input=render(zenn_script), env=service_env)
     del data["zennPreview"]
 
-    # A missing Tailscale IP must never turn into a wildcard preview listener.
-    zenn_unit = render("dot_config/systemd/user/zenn-preview.service.tmpl")
-    zenn_start = next(line.removeprefix("ExecStart=") for line in zenn_unit.splitlines()
-                      if line.startswith("ExecStart="))
-    zenn_command = shlex.split(zenn_start.replace("$$", "$"))
-    run("/bin/sh", "-n", "-c", zenn_command[-1])
+    # A missing Tailscale IP must never turn into a wildcard listener.
     mock(local_bin / "mise", 'printf "%s\\n" "$@" >> "$CHECK_LOG"')
-    mock(service_bin / "tailscale", 'printf "100.64.0.1\\n"')
-    run(*zenn_command, env=service_env)
-    assert service_calls.read_text().splitlines() == [
-        "exec", "--", "node", "node_modules/zenn-cli/dist/server/zenn.js",
-        "preview", "--host", "100.64.0.1", "--port", "8000",
-    ]
-    service_calls.unlink()
-    for unavailable in ("exit 1", "exit 0"):
-        mock(service_bin / "tailscale", unavailable)
-        failed = subprocess.run(zenn_command, env=service_env, capture_output=True)
+    for unit, expected in (
+        ("zenn-preview", ["node", "node_modules/zenn-cli/dist/server/zenn.js",
+                          "preview", "--host", "100.64.0.1", "--port", "8000"]),
+        ("zenn-notes", ["node", "scripts/serve-notes.mjs", "100.64.0.1", "8001"]),
+    ):
+        rendered_unit = render(f"dot_config/systemd/user/{unit}.service.tmpl")
+        start = next(line.removeprefix("ExecStart=") for line in rendered_unit.splitlines()
+                     if line.startswith("ExecStart="))
+        command = shlex.split(start.replace("$$", "$"))
+        run("/bin/sh", "-n", "-c", command[-1])
+        mock(service_bin / "tailscale", 'printf "100.64.0.1\\n"')
+        run(*command, env=service_env)
+        assert service_calls.read_text().splitlines() == ["exec", "--", *expected]
+        service_calls.unlink()
+        for unavailable in ("exit 1", "exit 0"):
+            mock(service_bin / "tailscale", unavailable)
+            failed = subprocess.run(command, env=service_env, capture_output=True)
+            assert failed.returncode != 0 and not service_calls.exists()
+        (service_bin / "tailscale").unlink()
+        failed = subprocess.run(command, env=service_env, capture_output=True)
         assert failed.returncode != 0 and not service_calls.exists()
-    (service_bin / "tailscale").unlink()
-    failed = subprocess.run(zenn_command, env=service_env, capture_output=True)
-    assert failed.returncode != 0 and not service_calls.exists()
 
     commands = work / "commands"
     commands.mkdir()
@@ -326,12 +330,17 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     assert render(notification_script, changed_source) != original_notification
 
     zenn_unit_source = Path("dot_config/systemd/user/zenn-preview.service.tmpl")
-    for relative in (Path(zenn_script), zenn_unit_source):
+    notes_unit_source = Path("dot_config/systemd/user/zenn-notes.service.tmpl")
+    for relative in (Path(zenn_script), zenn_unit_source, notes_unit_source):
         (changed_source / relative).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(SOURCE / relative, changed_source / relative)
     original_zenn = render(zenn_script, changed_source)
     with (changed_source / zenn_unit_source).open("a") as stream:
         stream.write("\n# Changed service definition\n")
+    assert render(zenn_script, changed_source) != original_zenn
+    (changed_source / zenn_unit_source).write_text((SOURCE / zenn_unit_source).read_text())
+    with (changed_source / notes_unit_source).open("a") as stream:
+        stream.write("\n# Changed notes service definition\n")
     assert render(zenn_script, changed_source) != original_zenn
 
     # Use the same .xprofile before and after picom appears; no template re-render.

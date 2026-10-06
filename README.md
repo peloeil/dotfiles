@@ -104,9 +104,9 @@ OS パッケージ導入は `run_once` のため、以前使った構成へ戻�
 
 ### Zenn のプレビュー
 
-`zennPreview = true` にすると、`zenn-preview.service` を有効化・起動し、ログイン時にも起動する。`false`（既定）に戻して適用すると無効化・停止する。
+`zennPreview = true` にすると、`zenn-preview.service` と `zenn-notes.service` を有効化・起動し、ログイン時にも起動する。`false`（既定）に戻して適用すると両方を無効化・停止する。
 利用前に `~/workspace/zenn` を用意してその中で `npm ci` を実行し、Tailscale を導入・接続しておく。systemd user manager が必要。
-Tailscale 内から `http://<Tailscale IPv4>:8000` で `~/workspace/zenn/articles/` の記事を閲覧できる。IP は `tailscale ip -4` で確認する。
+Tailscale 内から `http://<Tailscale IPv4>:8000` で `articles/` の記事、`:8001` で `notes/` の Markdown を閲覧できる。IP は `tailscale ip -4` で確認する。
 下書きも表示され、保存すると自動反映される。ログアウト中も動かす場合は `sudo loginctl enable-linger "$USER"` を実行する。
 
 ## 設定とツールを更新する

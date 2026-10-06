@@ -3,7 +3,7 @@ Description=Markdown notes on Tailscale
 
 [Service]
 WorkingDirectory=%h/workspace/zenn
-ExecStart=/bin/sh -ec 'tailnet_ip=$$(tailscale ip -4); test -n "$$tailnet_ip"; exec "{{ .chezmoi.homeDir }}/.local/bin/mise" exec -- node scripts/serve-notes.mjs "$$tailnet_ip" 8001'
+ExecStart=/bin/sh -ec 'tailnet_ip=$$(tailscale ip -4); test -n "$$tailnet_ip"; exec "{{ .chezmoi.homeDir }}/.local/bin/mise" exec -- node scripts/preview-notes.mjs "$$tailnet_ip" 8001'
 Restart=on-failure
 RestartSec=5
 

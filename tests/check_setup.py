@@ -244,7 +244,7 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     for unit, expected in (
         ("zenn-preview", ["node", "node_modules/zenn-cli/dist/server/zenn.js",
                           "preview", "--host", "100.64.0.1", "--port", "8000"]),
-        ("zenn-notes", ["node", "scripts/serve-notes.mjs", "100.64.0.1", "8001"]),
+        ("zenn-notes", ["node", "scripts/preview-notes.mjs", "100.64.0.1", "8001"]),
     ):
         rendered_unit = render(f"dot_config/systemd/user/{unit}.service.tmpl")
         start = next(line.removeprefix("ExecStart=") for line in rendered_unit.splitlines()

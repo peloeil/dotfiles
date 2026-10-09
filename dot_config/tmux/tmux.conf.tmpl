@@ -12,6 +12,9 @@ bind g new-session -c "#{pane_current_path}"
 unbind '"'
 unbind %
 
+# switch to another session instead of detaching when the current one ends
+set-option -g detach-on-destroy off
+
 # reload config file
 bind r source-file ~/.config/tmux/tmux.conf
 

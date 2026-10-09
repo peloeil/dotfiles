@@ -86,6 +86,9 @@ set-option -g message-style 'fg=yellow bg=red bold'
 set-option -g default-terminal "tmux-256color"
 set-option -ga terminal-overrides ",*:Tc"
 
+# Pass SIXEL graphics from image tools through to the outer terminal over SSH.
+set-option -g allow-passthrough on
+
 # set vi-keybinds for copy mode
 set-window-option -g mode-keys vi
 bind-key -T copy-mode-vi v send-keys -X begin-selection

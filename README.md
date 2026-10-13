@@ -145,8 +145,6 @@ chezmoi apply
 
 導入済みツールの更新は `mise upgrade`、不足ツールの再導入は `mise install --yes`、デフォルト Python の導入は `uv python install --default` で行う。作業中のプロジェクトの mise 設定の影響を避けるには、ホームディレクトリで実行する。
 
-GDB は OS のパッケージで導入する。GEF は `.chezmoiexternal.toml` で `bata24/gef` の `dev` ブランチを管理し、chezmoi の適用時に前回の更新から24時間以上経過していれば更新する。直ちに更新する場合は `chezmoi -R apply ~/.gef/source` を実行する。
-
 Codex CLI の更新はインストーラを再実行する。
 
 ```sh

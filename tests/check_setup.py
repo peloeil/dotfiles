@@ -125,14 +125,11 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         for path in containers["engine"]["helper_binaries_dir"][:2]
     )
     externals = tomllib.loads((SOURCE / ".chezmoiexternal.toml").read_text())
-    assert externals[".gef/source"] == {
-        "type": "git-repo",
-        "url": "https://github.com/bata24/gef.git",
-        "refreshPeriod": "24h",
-        "clone": {"args": ["--branch", "dev", "--depth", "1"]},
-        "pull": {"args": ["--ff-only"]},
+    assert externals[".gef/gef.py"] == {
+        "type": "file",
+        "url": "https://raw.githubusercontent.com/bata24/gef/dev/gef.py",
+        "refreshPeriod": "1s",
     }
-    assert (SOURCE / "dot_gef/symlink_gef.py").read_text() == "source/gef.py\n"
     assert (SOURCE / "dot_gdbinit").read_text() == "source ~/.gef/gef.py\n"
     i3 = render("dot_config/i3/config.tmpl")
     assert "/home/sota" not in i3

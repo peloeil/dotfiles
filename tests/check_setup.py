@@ -266,6 +266,11 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     (commands / "sh").symlink_to("/bin/sh")
     log = work / "calls"
     env = {**os.environ, "PATH": str(commands), "CHECK_LOG": str(log)}
+    # Ponytail reaches Codex and Claude Code through marketplaces and OpenCode
+    # through the managed plugin list.
+    assert '"@dietrichgebert/ponytail"' in (
+        SOURCE / "dot_config/opencode/opencode.jsonc"
+    ).read_text()
     mock(local_bin / "mise", "exit 1")  # No mise-managed Codex or Claude.
     mock(local_bin / "codex", 'printf "%s\\n" "$*" >> "$CHECK_LOG"')
     plugins = render(".chezmoiscripts/run_onchange_after_30_install_ai_plugins.sh.tmpl")
@@ -494,6 +499,26 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     assert f"@{shared_instructions}" in claude_instructions.read_text()
     assert "本質を捉え" in shared_instructions.read_text()
     assert codex_instructions.read_bytes() == shared_instructions.read_bytes()
+
+    # rtk appends its @RTK.md reference through that Codex symlink, so the init
+    # script must leave the shared instructions as the source defines them.
+    mock(local_bin / "mise", f'printf "%s\\n" "{local_bin / "rtk"}"')
+    mock(
+        local_bin / "rtk",
+        'if [ "${3:-}" = --codex ]; then\n'
+        '  printf "\\n@%s/.codex/RTK.md\\n" "$HOME" >> "$HOME/.codex/AGENTS.md"\n'
+        '  chmod 600 "$HOME/.codex/AGENTS.md"\n'
+        "fi",
+    )
+    rtk_init = (SOURCE / ".chezmoiscripts/run_onchange_after_15_init_rtk.sh").read_text()
+    rtk_env = {**os.environ, "HOME": str(test_home)}
+    for _ in range(2):  # The reference must also not survive a repeated run.
+        run("/bin/sh", input=rtk_init, env=rtk_env)
+    assert codex_instructions.is_symlink()
+    assert codex_instructions.read_bytes() == shared_instructions.read_bytes()
+    assert not run(*cli, "diff", str(shared_instructions))
+    (local_bin / "rtk").unlink()
+    (local_bin / "mise").unlink()
 
     # Shared skills are managed in OpenCode; other clients link directly to them.
     shared_skill = test_home / ".config/opencode/skills/commit"

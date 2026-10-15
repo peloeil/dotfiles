@@ -164,7 +164,7 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 | 共通スキルの正本（commit、write-peloeil-article） | `dot_config/opencode/skills/` → `~/.config/opencode/skills/` |
 | yomiyasu の最新版 | `.chezmoiexternal.toml` → `~/.config/opencode/skills/yomiyasu/` |
 | Claude Code の設定・rtk hook | `dot_claude/settings.json` → `~/.claude/settings.json` |
-| OpenCode のモデル・接続設定、承認省略 | `dot_config/opencode/opencode.jsonc` → `~/.config/opencode/opencode.jsonc` |
+| OpenCode のモデル・接続設定、プラグイン、承認省略 | `dot_config/opencode/opencode.jsonc` → `~/.config/opencode/opencode.jsonc` |
 | OpenCode の暗色テーマ・承認の自動受諾・デスクトップ通知 | `dot_config/opencode/cli.json` → `~/.config/opencode/cli.json` |
 | Ponytail の既定モード | `dot_config/ponytail/config.json` → `~/.config/ponytail/config.json` |
 | Codex の Discord 完了通知 | `dot_codex/private_discord-notify/` → `~/.codex/discord-notify/` |
@@ -194,13 +194,13 @@ yomiyasu は [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) の最新�
 | before | `run_once_before_01-install-mise.sh.tmpl` | `~/.local/bin/mise` がなければ導入する |
 | after | `run_onchange_after_10_install_mise_tools.sh.tmpl` | `mise install --yes` と `uv python install --default` |
 | after | `run_once_after_12_install_codex_standalone.sh.tmpl` | `~/.local/bin` に Codex CLI を導入する |
-| after | `run_onchange_after_15_init_rtk.sh` | Codex / Claude Code 向けの rtk 初期化 |
+| after | `run_onchange_after_15_init_rtk.sh` | Codex / Claude Code / OpenCode 向けの rtk 初期化 |
 | after | `run_onchange_after_20_install_fish_tools.sh.tmpl` | fisher を導入し、`fisher update` |
 | after | `run_onchange_after_20_install_hack_nerd_font.sh` | `desktop = true` で未導入なら Hack Nerd Font を入れる |
 | after | `run_onchange_after_25_install_nvim_plugins.sh.tmpl` | headless Neovim で dpp plugins を導入する |
 | after | `run_onchange_after_26_configure_denops_server.sh.tmpl` | user manager があれば、選択した Denops の常駐設定を systemd user service に反映する |
 | after | `run_onchange_after_27_configure_zenn_preview.sh.tmpl` | user manager があれば、選択した Zenn の公開設定を systemd user service に反映する |
-| after | `run_onchange_after_30_install_ai_plugins.sh.tmpl` | CLI の検出後、Ponytail を導入する |
+| after | `run_onchange_after_30_install_ai_plugins.sh.tmpl` | CLI の検出後、Codex と Claude Code に Ponytail を導入する。OpenCode は `opencode.jsonc` の `plugins` から導入する |
 | after | `run_onchange_after_31_configure_codex_discord_notify.sh.tmpl` | Codex とローカルの通知設定があれば Discord 完了通知を登録する |
 
 `run_once` は展開後の内容ごとに成功を記録し、`run_onchange` は前回成功時から内容が変わると実行する。mise・fish・Neovim・Denops・Zenn・Codex 通知のスクリプトには対応する設定やコードのハッシュを含めている。

@@ -31,5 +31,9 @@
         }
       }
     }
-  }
+  },
+  "plugins": [
+    "@khalilgharbaoui/opencode-claude-code-plugin",
+    "@dietrichgebert/ponytail"
+  ]
 }

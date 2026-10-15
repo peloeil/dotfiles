@@ -1,0 +1,36 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "openai/gpt-6-sol",
+  "permissions": [
+    { "action": "*", "resource": "*", "effect": "allow" }
+  ],
+  "skills": ["~/.codex/skills"],
+  "providers": {
+    "sakura": {
+      "name": "さくらの AI Engine",
+      "env": ["SAKURA_AI_ENGINE_API_KEY"],
+      "package": "@opencode/ai/providers/openai-compatible",
+      "settings": {
+        "baseURL": "https://api.ai.sakura.ad.jp/v1"
+      },
+      "models": {
+        "gpt-oss-120b": { "name": "GPT OSS 120B" },
+        "llm-jp-3.1-8x13b-instruct4": { "name": "LLM-jp 3.1 8x13B" },
+        "preview/Qwen3-0.6B-cpu": { "name": "Qwen3 0.6B (CPU)" },
+        "preview/Phi-4-mini-instruct-cpu": { "name": "Phi-4 mini (CPU)" },
+        "preview/Qwen3-VL-30B-A3B-Instruct": { "name": "Qwen3 VL 30B" },
+        "preview/Kimi-K2.6": { "name": "Kimi K2.6" },
+        "preview/Qwen3.6-35B-A3B": { "name": "Qwen3.6 35B" },
+        "preview/gemma-4-31B-it": { "name": "Gemma 4 31B" },
+        "preview/Kimi-K2.7-Code": {
+          "name": "Kimi K2.7 Code",
+          "capabilities": {
+            "tools": true,
+            "input": ["text"],
+            "output": ["text"]
+          }
+        }
+      }
+    }
+  }
+}

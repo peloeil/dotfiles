@@ -28,6 +28,7 @@ lsd = "latest"
 lua-language-server = "latest"
 neovim = "latest"
 node = "latest"
+"npm:@opencode/cli" = { version = "latest", allow_builds = ["@opencode/cli"] }
 "npm:@anthropic-ai/claude-code" = { version = "latest", allow_builds = ["@anthropic-ai/claude-code"] }
 "npm:pyright" = "latest"
 "pipx:podman-compose" = "latest"

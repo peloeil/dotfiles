@@ -68,7 +68,7 @@ Ponytail の既定モードは `~/.config/ponytail/config.json` で `off` にし
 | モニター設定 | `~/.config/i3/monitor-hotplug.sh` を用意するか、i3 の起動処理・キー割り当てを変更する |
 | Sunshine | 本体と systemd user service を用意し、`~/.config/sunshine/sunshine.conf` の GPU・出力指定を合わせる |
 | Podman | 導入される CLI は remote 版。利用先のサービスまたは VM と接続設定を用意する |
-| AI ツール | Codex / Claude Code の認証を済ませる |
+| AI ツール | Codex / Claude Code の認証を済ませる。OpenCode は `opencode auth login openai` で認証し、さくらも使う場合は AI Engine のアカウントトークンを `opencode auth login sakura --method key` で登録する |
 | Zenn のプレビュー | [記事リポジトリと Tailscale](#zenn-のプレビュー)を用意する |
 
 壁紙画像と、feh が生成する `~/.fehbg` は管理しない。
@@ -164,10 +164,14 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 | コミットの分割・メッセージ規約 | `dot_agents/skills/commit/SKILL.md` → `~/.agents/skills/commit/SKILL.md` |
 | Claude Code からの commit 利用 | `~/.claude/skills/commit` → `~/.agents/skills/commit`（補助資料を含むディレクトリへのシンボリックリンク） |
 | Claude Code の設定・rtk hook | `dot_claude/settings.json` → `~/.claude/settings.json` |
+| OpenCode のモデル・接続設定、承認省略、Codex スキルの参照 | `dot_config/opencode/opencode.jsonc` → `~/.config/opencode/opencode.jsonc` |
+| OpenCode 共通の応答方針 | `dot_config/opencode/AGENTS.md` → `~/.config/opencode/AGENTS.md` |
+| OpenCode の暗色テーマ・承認の自動受諾・デスクトップ通知 | `dot_config/opencode/cli.json` → `~/.config/opencode/cli.json` |
 | Ponytail の既定モード | `dot_config/ponytail/config.json` → `~/.config/ponytail/config.json` |
 | Codex の Discord 完了通知 | `dot_codex/private_discord-notify/` → `~/.codex/discord-notify/` |
 
 plugin 本体・キャッシュ・認証情報はこのリポジトリでは管理しない。
+OpenCode は `~/.codex/skills` のスキルを参照する（`~/.agents/skills` と `~/.claude/skills` は自動検出）。Claude Code の rtk hook、Codex の Ponytail・Discord 通知は OpenCode にそのまま移植できないため、対象外とする。OpenCode の承認省略は Claude Code の `bypassPermissions` と Codex の `approval_policy = "never"` に合わせた設定であり、信頼できないプロジェクトでは個別に見直す。
 
 ### Codex の Discord 完了通知
 

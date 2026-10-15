@@ -1,0 +1,12 @@
+{
+  "$schema": "https://opencode.ai/v2/cli.json",
+  "theme": {
+    "mode": "dark"
+  },
+  "session": {
+    "permissions": "autoaccept"
+  },
+  "attention": {
+    "notifications": true
+  }
+}

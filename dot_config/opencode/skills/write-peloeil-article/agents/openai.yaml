@@ -1,0 +1,4 @@
+interface:
+  display_name: "peloeil の技術記事を書く"
+  short_description: "公開4記事の文体と構成判断を踏まえ、技術記事を執筆・推敲する"
+  default_prompt: "$write-peloeil-article を使って、著者の文体と構成の指針に沿って技術記事を執筆・推敲して。"

@@ -1,6 +1,7 @@
 approval_policy = "never"
-model = "gpt-6-astra"
-model_reasoning_effort = "xhigh"
+developer_instructions = "シェルコマンドには rtk を優先する。rtk が扱えないコマンドは直接実行する。"
+model = "gpt-6-sol"
+model_reasoning_effort = "high"
 notify = ["python3", "{{ .chezmoi.homeDir }}/.codex/discord-notify/notify.py", "complete"]
 personality = "pragmatic"
 sandbox_mode = "danger-full-access"

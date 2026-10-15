@@ -4,7 +4,6 @@
   "permissions": [
     { "action": "*", "resource": "*", "effect": "allow" }
   ],
-  "skills": ["~/.codex/skills"],
   "providers": {
     "sakura": {
       "name": "さくらの AI Engine",

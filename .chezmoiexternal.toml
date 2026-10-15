@@ -2,3 +2,9 @@
     type = "file"
     url = "https://raw.githubusercontent.com/bata24/gef/dev/gef.py"
     refreshPeriod = "1s"
+
+[".config/opencode/skills/yomiyasu"]
+    type = "archive"
+    url = "https://github.com/nanaism/yomiyasu/releases/latest/download/yomiyasu.zip"
+    exact = true
+    refreshPeriod = "1h"

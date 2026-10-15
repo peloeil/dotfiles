@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import tempfile
 import tomllib
+import zipfile
 from pathlib import Path
 
 SOURCE = Path(__file__).resolve().parents[1]
@@ -452,6 +453,7 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     codex = tomllib.loads(codex_config.read_text())
     assert codex["features"]["fast_mode"] is False and "service_tier" not in codex
     assert codex["approval_policy"] == "never" and codex["sandbox_mode"] == "danger-full-access"
+    assert "rtk" in codex["developer_instructions"]
     assert codex["tui"]["fullscreen_transcript"] is False
     assert codex["notify"] == ["python3", str(test_home / ".codex/discord-notify/notify.py"), "complete"]
     assert "/home/sota" not in codex_config.read_text()
@@ -483,11 +485,19 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     assert codex_config.read_bytes() == applied
     assert not run(*codex_cli, "diff", str(codex_config))
 
-    # Migrate the old file-only link and keep supporting documents reachable.
-    shared_skill = test_home / ".agents/skills/commit"
+    shared_instructions = test_home / ".config/opencode/AGENTS.md"
+    codex_instructions = test_home / ".codex/AGENTS.md"
+    claude_instructions = test_home / ".claude/CLAUDE.md"
+    run(*codex_cli, "apply", "--parent-dirs", str(shared_instructions),
+        str(codex_instructions), str(claude_instructions))
+    assert codex_instructions.is_symlink() and codex_instructions.resolve() == shared_instructions
+    assert f"@{shared_instructions}" in claude_instructions.read_text()
+    assert "本質を捉え" in shared_instructions.read_text()
+    assert codex_instructions.read_bytes() == shared_instructions.read_bytes()
+
+    # Shared skills are managed in OpenCode; other clients link directly to them.
+    shared_skill = test_home / ".config/opencode/skills/commit"
     claude_skill = test_home / ".claude/skills/commit"
-    claude_skill.mkdir(parents=True)
-    (claude_skill / "SKILL.md").symlink_to("../../../.agents/skills/commit/SKILL.md")
     run(*cli, "apply", "--parent-dirs", str(shared_skill), str(claude_skill))
     assert claude_skill.is_symlink() and claude_skill.resolve() == shared_skill
     for relative in (
@@ -497,8 +507,48 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         "evals/cases.md",
     ):
         assert (claude_skill / relative).read_bytes() == (
-            SOURCE / "dot_agents/skills/commit" / relative
+            SOURCE / "dot_config/opencode/skills/commit" / relative
         ).read_bytes()
+    source = SOURCE / "dot_config/opencode/skills/write-peloeil-article"
+    codex_skill = test_home / ".codex/skills/write-peloeil-article"
+    shutil.copytree(source, codex_skill)
+    target = test_home / ".config/opencode/skills/write-peloeil-article"
+    run(*cli, "apply", "--parent-dirs", str(target), str(codex_skill))
+    assert codex_skill.is_symlink() and codex_skill.resolve() == target
+    assert (codex_skill / "SKILL.md").read_bytes() == (source / "SKILL.md").read_bytes()
+    external = tomllib.loads((SOURCE / ".chezmoiexternal.toml").read_text())[
+        ".config/opencode/skills/yomiyasu"
+    ]
+    assert external == {
+        "type": "archive",
+        "url": "https://github.com/nanaism/yomiyasu/releases/latest/download/yomiyasu.zip",
+        "exact": True,
+        "refreshPeriod": "1h",
+    }
+    archive = work / "yomiyasu.zip"
+    with zipfile.ZipFile(archive, "w") as package:
+        package.writestr("SKILL.md", "---\nname: yomiyasu\ndescription: test\n---\n")
+        package.writestr("scripts/yomiyasu_lint.py", "# test\n")
+    external_source = work / "external-source"
+    external_source.mkdir()
+    (external_source / ".chezmoiexternal.toml").write_text(
+        '[".config/opencode/skills/yomiyasu"]\n'
+        'type = "archive"\n'
+        f'url = "{archive.as_uri()}"\n'
+        'exact = true\n'
+    )
+    yomiyasu = test_home / ".config/opencode/skills/yomiyasu"
+    yomiyasu.mkdir(parents=True, exist_ok=True)
+    (yomiyasu / "obsolete.md").write_text("old copy\n")
+    external_cli = (*cli[:2], str(external_source), *cli[3:])
+    run(*external_cli, "apply", str(yomiyasu))
+    assert (yomiyasu / "SKILL.md").is_file()
+    assert (yomiyasu / "scripts/yomiyasu_lint.py").is_file()
+    assert not (yomiyasu / "obsolete.md").exists()
+    for client in (".codex", ".claude"):
+        link = test_home / client / "skills/yomiyasu"
+        run(*cli, "apply", "--parent-dirs", str(link))
+        assert link.is_symlink() and link.resolve() == yomiyasu
     run(*cli, "apply", str(shared_skill), str(claude_skill))
     assert not run(*cli, "diff", str(shared_skill), str(claude_skill))
 

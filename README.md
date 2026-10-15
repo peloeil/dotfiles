@@ -159,19 +159,19 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 | 用途 | ソース・配置先 |
 | --- | --- |
 | このリポジトリの編集上の制約 | [AGENTS.md](AGENTS.md)（配布対象外） |
-| Codex 共通の応答方針 | `dot_codex/AGENTS.md.tmpl` → `~/.codex/AGENTS.md` |
+| 共通の応答方針（正本） | `dot_config/opencode/AGENTS.md` → `~/.config/opencode/AGENTS.md` |
 | Codex の共通設定 | `.chezmoitemplates/codex-config.toml.tmpl` を `dot_codex/modify_private_config.toml` で `~/.codex/config.toml` に反映する |
-| コミットの分割・メッセージ規約 | `dot_agents/skills/commit/SKILL.md` → `~/.agents/skills/commit/SKILL.md` |
-| Claude Code からの commit 利用 | `~/.claude/skills/commit` → `~/.agents/skills/commit`（補助資料を含むディレクトリへのシンボリックリンク） |
+| 共通スキルの正本（commit、write-peloeil-article） | `dot_config/opencode/skills/` → `~/.config/opencode/skills/` |
+| yomiyasu の最新版 | `.chezmoiexternal.toml` → `~/.config/opencode/skills/yomiyasu/` |
 | Claude Code の設定・rtk hook | `dot_claude/settings.json` → `~/.claude/settings.json` |
-| OpenCode のモデル・接続設定、承認省略、Codex スキルの参照 | `dot_config/opencode/opencode.jsonc` → `~/.config/opencode/opencode.jsonc` |
-| OpenCode 共通の応答方針 | `dot_config/opencode/AGENTS.md` → `~/.config/opencode/AGENTS.md` |
+| OpenCode のモデル・接続設定、承認省略 | `dot_config/opencode/opencode.jsonc` → `~/.config/opencode/opencode.jsonc` |
 | OpenCode の暗色テーマ・承認の自動受諾・デスクトップ通知 | `dot_config/opencode/cli.json` → `~/.config/opencode/cli.json` |
 | Ponytail の既定モード | `dot_config/ponytail/config.json` → `~/.config/ponytail/config.json` |
 | Codex の Discord 完了通知 | `dot_codex/private_discord-notify/` → `~/.codex/discord-notify/` |
 
 plugin 本体・キャッシュ・認証情報はこのリポジトリでは管理しない。
-OpenCode は `~/.codex/skills` のスキルを参照する（`~/.agents/skills` と `~/.claude/skills` は自動検出）。Claude Code の rtk hook、Codex の Ponytail・Discord 通知は OpenCode にそのまま移植できないため、対象外とする。OpenCode の承認省略は Claude Code の `bypassPermissions` と Codex の `approval_policy = "never"` に合わせた設定であり、信頼できないプロジェクトでは個別に見直す。
+共通指示・自作スキルは OpenCode 側だけを編集する。Codex と Claude Code は同じ配置先を参照し、各ツール固有の設定はそれぞれに残す。OpenCode の承認省略は Claude Code の `bypassPermissions` と Codex の `approval_policy = "never"` に合わせた設定であり、信頼できないプロジェクトでは個別に見直す。
+yomiyasu は [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) の最新版 ZIP を `.chezmoiexternal.toml` で取得する。`chezmoi apply` 時に、前回の取得から1時間以上経っていれば更新を確認する。すぐに更新する場合は `chezmoi -R apply ~/.config/opencode/skills/yomiyasu` を実行する。常駐更新はしない。Codex と Claude Code は同じ配置先へのリンクを使う。
 
 ### Codex の Discord 完了通知
 

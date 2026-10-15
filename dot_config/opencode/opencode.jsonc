@@ -1,6 +1,5 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "openai/gpt-6-sol",
   "permissions": [
     { "action": "*", "resource": "*", "effect": "allow" }
   ],

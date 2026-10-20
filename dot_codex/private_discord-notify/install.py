@@ -9,7 +9,7 @@ import sys
 import tomllib
 from pathlib import Path
 
-from notify import ROOT, load_settings
+import notify
 
 
 def write_with_backup(path: Path, content: str) -> None:
@@ -25,13 +25,13 @@ def write_with_backup(path: Path, content: str) -> None:
     temporary.replace(path)
 
 
-def install(codex_dir: Path, root: Path = ROOT) -> None:
-    load_settings(root)
+def install(codex_dir: Path, root: Path = notify.ROOT) -> None:
+    notify.load_settings()
     config_path = codex_dir / "config.toml"
     text = config_path.read_text(encoding="utf-8") if config_path.exists() else ""
     config = tomllib.loads(text)
-    notify = ["python3", str(root / "notify.py"), "complete"]
-    if "notify" in config and config["notify"] != notify:
+    notify_command = ["python3", str(root / "notify.py"), "complete"]
+    if "notify" in config and config["notify"] != notify_command:
         raise ValueError("An existing notify command is configured; keep it intact.")
     hooks_config = config.get("hooks", {})
     if any(key != "state" for key in hooks_config):
@@ -59,11 +59,11 @@ def install(codex_dir: Path, root: Path = ROOT) -> None:
         if handler not in handlers:
             handlers.append(handler)
     if "notify" not in config:
-        text = f"notify = {json.dumps(notify)}\n\n{text}"
+        text = f"notify = {json.dumps(notify_command)}\n\n{text}"
     tomllib.loads(text)
     codex_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
     root.chmod(0o700)
-    (root / "config.json").chmod(0o600)
+    notify.CONFIG_PATH.chmod(0o600)
     write_with_backup(hooks_path, json.dumps(hooks, indent=2) + "\n")
     write_with_backup(config_path, text)
 

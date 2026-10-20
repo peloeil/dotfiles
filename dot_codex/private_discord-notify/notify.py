@@ -14,6 +14,10 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parent
+# Shared with the OpenCode notifier, which owns the only copy of the settings.
+CONFIG_PATH = Path(
+    "~/.config/opencode/plugins/discord-notify/config.json"
+).expanduser()
 
 
 @dataclass(frozen=True, slots=True)
@@ -31,8 +35,8 @@ def required_string(data: Mapping[str, object], key: str) -> str:
     return value
 
 
-def load_settings(root: Path) -> Settings:
-    data = json.loads((root / "config.json").read_text(encoding="utf-8"))
+def load_settings() -> Settings:
+    data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         raise ValueError("config.json must contain an object")
     token = required_string(data, "bot_token")
@@ -138,7 +142,7 @@ def handle(mode: str, event: Mapping[str, object], root: Path = ROOT) -> None:
     except FileNotFoundError:
         return
     elapsed = (time.monotonic_ns() - started) / 1_000_000_000
-    settings = load_settings(root)
+    settings = load_settings()
     if elapsed >= settings.threshold_seconds:
         messages = event.get("input-messages")
         prompt = messages[-1] if isinstance(messages, list) and messages else None

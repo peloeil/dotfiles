@@ -8,26 +8,15 @@ Codex CLI が必要。追加の Python パッケージは不要。
 
 ## 設定する
 
-chezmoi でコードと `config.example.json` を配置した後、各マシンで設定する。
-Bot には対象チャンネルの閲覧・送信権限が必要。
-
-初回は設定例をコピーして編集する。既存の `config.json` がある場合はコピーせず、
-そのファイルを編集する。
-
-```sh
-install -m600 "$HOME/.codex/discord-notify/config.example.json" "$HOME/.codex/discord-notify/config.json"
-$EDITOR "$HOME/.codex/discord-notify/config.json"
-```
-
-`config.json` に次を設定する。
-
-- `bot_token`: 投稿する Bot のトークン。
-- `channel_id`: 投稿先チャンネル ID。
-- `mention_user_id`: メンションするユーザー ID。
-- `threshold_seconds`: 通知のしきい値。初期値は 600 秒。
+通知の設定は OpenCode 側の
+`~/.config/opencode/plugins/discord-notify/config.json` に1か所だけ置き、
+Codex も同じファイルを読む。Codex 側に `config.json` は置かない。
+設定項目と作成手順は
+[OpenCode の通知 README](../../dot_config/opencode/plugins/discord-notify/README.md)
+を参照する。
 
 Bot トークンを含む `config.json` は暗号化しても chezmoi の管理対象に加えない。
-`.chezmoiignore` でこの設定・実行状態・キャッシュを除外している。
+`.chezmoiignore` で除外している。
 トークンは各マシンで設定するか、既存の設定ファイルを別途安全に転送する。
 
 設定後、インストーラーで Codex に登録する。
@@ -51,11 +40,12 @@ Codex は新しいフックを信頼済みにするまで実行しない。
 chezmoi の after script は `run_onchange` で、初回または前回成功時から
 スクリプトの展開内容が変わったときに実行される。`notify.py` と `install.py` の
 ハッシュを含むため、これらのコード更新時も再登録する。
-`~/.local/bin/codex` が実行できないか、ローカルの `config.json` がなければスキップする。
+`~/.local/bin/codex` が実行できないか、共有の `config.json` がなければスキップする。
 スキップ後に不足分を用意した場合は、上の `install.py` を直接実行する。
 
 ## 動作と検証
 
+設定は OpenCode 側の `config.json` から読む。
 `UserPromptSubmit` で会話 ID とターン ID ごとに開始時刻を記録し、
 `notify` の `agent-turn-complete` で経過時間を判定して Discord REST API に投稿する。
 同じターンへの追加入力で開始時刻をリセットしない。

@@ -285,8 +285,10 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     assert "skipped" in run("/bin/sh", input=notification, env=env)
     assert not log.exists()
     notification_dir = test_home / ".codex/discord-notify"
-    notification_dir.mkdir(parents=True)
-    notification_config = notification_dir / "config.json"
+    notification_config = (
+        test_home / ".config/opencode/plugins/discord-notify/config.json"
+    )
+    notification_config.parent.mkdir(parents=True)
     notification_config.write_text("{}")
     mock(commands / "python3", 'printf "%s\\n" "$*" >> "$CHECK_LOG"')
     run("/bin/sh", input=notification, env=env)
@@ -446,6 +448,8 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         config_path.write_text(original_config)
         managed[desktop] = set(run(*cli, "managed").splitlines())
         assert ".codex/discord-notify/config.json" not in managed[desktop]
+        assert ".config/opencode/plugins/discord-notify/index.ts" in managed[desktop]
+        assert ".config/opencode/plugins/discord-notify/config.json" not in managed[desktop]
 
         run(*cli, "diff")
         run(*cli, "apply", "--dry-run")
@@ -453,6 +457,7 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     # Shared defaults must preserve local state, including integer-valued UI records.
     codex_config = test_home / ".codex/config.toml"
     codex_cli = (*cli, "--override-data", json.dumps(data))
+    codex_config.parent.mkdir(parents=True, exist_ok=True)
     codex_config.write_text('[tui]\nfullscreen_transcript = true\n')
     run(*codex_cli, "apply", str(codex_config))
     codex = tomllib.loads(codex_config.read_text())
@@ -630,7 +635,8 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
         ".chezmoiscripts/30_install_ai_plugins.sh",
         ".chezmoiscripts/31_configure_codex_discord_notify.sh",
         ".codex/discord-notify/notify.py",
-        ".codex/discord-notify/config.example.json",
+        ".config/opencode/plugins/discord-notify/index.ts",
+        ".config/opencode/plugins/discord-notify/config.example.json",
     } <= managed[False]
 
 print(

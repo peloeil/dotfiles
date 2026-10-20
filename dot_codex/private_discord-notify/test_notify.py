@@ -20,6 +20,10 @@ class NotificationTests(unittest.TestCase):
         codex_home = patch.dict(os.environ, {"CODEX_HOME": str(self.root)})
         codex_home.start()
         self.addCleanup(codex_home.stop)
+        self.default_config_path = notify.CONFIG_PATH
+        shared_config = patch.object(notify, "CONFIG_PATH", self.root / "config.json")
+        shared_config.start()
+        self.addCleanup(shared_config.stop)
         self.config = {
             "bot_token": "test-secret",
             "channel_id": "123",
@@ -136,6 +140,12 @@ class NotificationTests(unittest.TestCase):
         notify.handle("complete", self.complete, self.root)
         self.network.assert_not_called()
 
+    def test_shared_config_path_is_the_opencode_notify_config(self) -> None:
+        self.assertEqual(
+            self.default_config_path,
+            Path("~/.config/opencode/plugins/discord-notify/config.json").expanduser(),
+        )
+
     def test_config_rejects_invalid_ids_threshold_and_token(self) -> None:
         for key, value in (
             ("channel_id", "../123"),
@@ -150,7 +160,7 @@ class NotificationTests(unittest.TestCase):
                     json.dumps(self.config | {key: value})
                 )
                 with self.assertRaises(ValueError):
-                    notify.load_settings(self.root)
+                    notify.load_settings()
 
     def test_delivery_failure_does_not_block_codex_or_retry(self) -> None:
         notify.handle("start", self.start, self.root)

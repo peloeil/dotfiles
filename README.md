@@ -168,8 +168,9 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 | OpenCode の暗色テーマ・承認の自動受諾・デスクトップ通知 | `dot_config/opencode/cli.json` → `~/.config/opencode/cli.json` |
 | Ponytail の既定モード | `dot_config/ponytail/config.json` → `~/.config/ponytail/config.json` |
 | Codex の Discord 完了通知 | `dot_codex/private_discord-notify/` → `~/.codex/discord-notify/` |
+| OpenCode の Discord 完了通知と通知設定の正本 | `dot_config/opencode/plugins/discord-notify/` → `~/.config/opencode/plugins/discord-notify/` |
 
-plugin 本体・キャッシュ・認証情報はこのリポジトリでは管理しない。
+外部から導入する plugin 本体・キャッシュ・認証情報はこのリポジトリでは管理しない。
 共通指示・自作スキルは OpenCode 側だけを編集する。Codex と Claude Code は同じ配置先を参照し、各ツール固有の設定はそれぞれに残す。OpenCode の承認省略は Claude Code の `bypassPermissions` と Codex の `approval_policy = "never"` に合わせた設定であり、信頼できないプロジェクトでは個別に見直す。
 yomiyasu は [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) の最新版 ZIP を `.chezmoiexternal.toml` で取得する。`chezmoi apply` 時に、前回の取得から1時間以上経っていれば更新を確認する。すぐに更新する場合は `chezmoi -R apply ~/.config/opencode/skills/yomiyasu` を実行する。常駐更新はしない。Codex と Claude Code は同じ配置先へのリンクを使う。
 
@@ -178,8 +179,18 @@ yomiyasu は [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) の最新�
 既定では 600 秒以上かかった回答の完了時に、指定ユーザーをメンションして投稿する。
 通知にはマシン名、作業場所、セッション名、所要時間、直前のプロンプトを載せる。
 
-コードとトークンが空の設定例を配布し、通知設定は各マシンで用意する。
+通知設定は OpenCode 側の `config.json` を共有し、Codex 側には置かない。
 導入・再登録の手順と詳しい動作は [通知の README](dot_codex/private_discord-notify/README.md) を参照する。
+
+### OpenCode の Discord 完了通知
+
+既定では 600 秒以上かかった回答の完了時に、指定ユーザーをメンションして投稿する。
+通知にはマシン名、作業場所、セッション名、所要時間、直前のプロンプトを載せる。
+
+`~/.config/opencode/plugins/` に置く自作 plugin として動く。
+`config.json` は Codex 版も読む唯一の設定で、コードとトークンが空の設定例を配布する。
+通知設定は各マシンで用意する。
+設定手順と詳しい動作は [通知の README](dot_config/opencode/plugins/discord-notify/README.md) を参照する。
 
 ## セットアップの構成
 

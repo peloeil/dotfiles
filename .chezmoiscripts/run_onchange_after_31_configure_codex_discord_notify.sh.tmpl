@@ -6,10 +6,11 @@ set -eu
 
 codex_path="{{ .chezmoi.homeDir }}/.local/bin/codex"
 notify_dir="{{ .chezmoi.homeDir }}/.codex/discord-notify"
+config_path="{{ .chezmoi.homeDir }}/.config/opencode/plugins/discord-notify/config.json"
 export PATH="{{ .chezmoi.homeDir }}/.local/bin:$PATH"
 
-if [ ! -x "$codex_path" ] || [ ! -f "$notify_dir/config.json" ]; then
-    echo "Codex Discord notification skipped: install Codex and prepare local config.json."
+if [ ! -x "$codex_path" ] || [ ! -f "$config_path" ]; then
+    echo "Codex Discord notification skipped: install Codex and prepare the shared config.json."
     echo "Then run: python3 $notify_dir/install.py"
     exit 0
 fi

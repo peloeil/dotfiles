@@ -137,6 +137,9 @@ export default Plugin.define({
                 const session = await ctx.session.get({ sessionID })
                 // Subagent sessions are part of the parent answer; only the session the user drives notifies.
                 if (session.parentID) return
+                // Every location runs this plugin and sees every event, and session.execution.* has no
+                // location. The session's location picks the one notifier; dedupe would need shared state.
+                if (session.location.directory !== ctx.location.directory) return
                 const messages = await ctx.session.context({ sessionID })
                 await send(settings, session.location.directory, session.title ?? sessionID, elapsed, lastPrompt(messages))
               })().catch((error) => {

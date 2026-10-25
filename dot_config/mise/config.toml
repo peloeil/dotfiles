@@ -18,7 +18,6 @@ fastfetch = "latest"
 fd = "latest"
 fzf = "latest"
 gh = "latest"
-"github:containers/gvisor-tap-vsock" = { version = "latest", asset_pattern = "gvproxy-linux-amd64", rename_exe = "gvproxy" }
 "github:io12/pwninit" = { version = "latest", asset_pattern = "pwninit" }
 "github:llvm/llvm-project" = { version = "latest", version_prefix = "llvmorg-", asset_pattern = "LLVM-*-Linux-X64.tar.xz", bin_path = "LLVM-{{ version }}-Linux-X64/bin" }
 "github:NixOS/patchelf" = "latest"
@@ -30,7 +29,6 @@ node = "latest"
 "npm:@anthropic-ai/claude-code" = { version = "latest", allow_builds = ["@anthropic-ai/claude-code"] }
 "npm:pyright" = "latest"
 "pipx:podman-compose" = "latest"
-podman = { version = "latest", asset_pattern = "podman-remote-static-linux_amd64.tar.gz", rename_exe = "podman" }
 ripgrep = "latest"
 rtk = "latest"
 ruff = "latest"
@@ -42,15 +40,3 @@ tree-sitter = "latest"
 uv = "latest"
 zig = "latest"
 zls = "latest"
-
-# The prebuilt static binary avoids a Rust toolchain and host dev packages.
-# Upstream publishes no release binaries, so the URL always serves the newest
-# successful main pipeline; the pipeline id is only the version label.
-[tools."http:virtiofsd"]
-version = "latest"
-url = "https://gitlab.com/virtio-fs/virtiofsd/-/jobs/artifacts/main/download?job=publish"
-version_list_url = "https://gitlab.com/api/v4/projects/virtio-fs%2Fvirtiofsd/pipelines?ref=main&status=success&per_page=20"
-version_expr = 'sortVersions(map(fromJSON(body), { string(#.id) }))'
-version_date_expr = 'map(fromJSON(body), { [string(#.id), #.updated_at] })'
-format = "zip"
-bin_path = "target/x86_64-unknown-linux-musl/release"

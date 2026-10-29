@@ -33,8 +33,6 @@ $EDITOR "$HOME/.config/opencode/plugins/discord-notify/config.json"
 Bot トークンを含む `config.json` は暗号化しても chezmoi の管理対象に加えない。
 `.chezmoiignore` で除外している。トークンは各マシンで設定するか、
 既存の設定ファイルを別途安全に転送する。
-以前の Codex 版の `~/.codex/discord-notify/config.json` がある場合は、
-この場所へ移動してから元のファイルを削除する。
 設定は通知のたびに読み直すため、変更に OpenCode の再起動は要らない。
 
 ## 動作と検証

@@ -542,39 +542,52 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     run(*cli, "apply", "--parent-dirs", str(target), str(codex_skill))
     assert codex_skill.is_symlink() and codex_skill.resolve() == target
     assert (codex_skill / "SKILL.md").read_bytes() == (source / "SKILL.md").read_bytes()
-    external = tomllib.loads((SOURCE / ".chezmoiexternal.toml").read_text())[
-        ".config/opencode/skills/yomiyasu"
-    ]
-    assert external == {
-        "type": "archive",
-        "url": "https://github.com/nanaism/yomiyasu/releases/latest/download/yomiyasu.zip",
-        "exact": True,
-        "refreshPeriod": "1h",
-    }
-    archive = work / "yomiyasu.zip"
-    with zipfile.ZipFile(archive, "w") as package:
-        package.writestr("SKILL.md", "---\nname: yomiyasu\ndescription: test\n---\n")
-        package.writestr("scripts/yomiyasu_lint.py", "# test\n")
-    external_source = work / "external-source"
-    external_source.mkdir()
-    (external_source / ".chezmoiexternal.toml").write_text(
-        '[".config/opencode/skills/yomiyasu"]\n'
-        'type = "archive"\n'
-        f'url = "{archive.as_uri()}"\n'
-        'exact = true\n'
-    )
-    yomiyasu = test_home / ".config/opencode/skills/yomiyasu"
-    yomiyasu.mkdir(parents=True, exist_ok=True)
-    (yomiyasu / "obsolete.md").write_text("old copy\n")
-    external_cli = (*cli[:2], str(external_source), *cli[3:])
-    run(*external_cli, "apply", str(yomiyasu))
-    assert (yomiyasu / "SKILL.md").is_file()
-    assert (yomiyasu / "scripts/yomiyasu_lint.py").is_file()
-    assert not (yomiyasu / "obsolete.md").exists()
-    for client in (".codex", ".claude"):
-        link = test_home / client / "skills/yomiyasu"
-        run(*cli, "apply", "--parent-dirs", str(link))
-        assert link.is_symlink() and link.resolve() == yomiyasu
+    # Upstream skills are installed from release archives and replaced wholesale.
+    for name, url, contents in (
+        (
+            "natural-japanese",
+            "https://github.com/coji/natural-japanese/releases/latest/download/natural-japanese.skill",
+            {"SKILL.md": "skill", "references/doctypes/report.md": "reference"},
+        ),
+        (
+            "yomiyasu",
+            "https://github.com/nanaism/yomiyasu/releases/latest/download/yomiyasu.zip",
+            {"SKILL.md": "skill", "scripts/yomiyasu_lint.py": "# test\n"},
+        ),
+    ):
+        external = tomllib.loads((SOURCE / ".chezmoiexternal.toml").read_text())[
+            f".config/opencode/skills/{name}"
+        ]
+        assert external == {
+            "type": "archive",
+            "url": url,
+            "exact": True,
+            "refreshPeriod": "1h",
+        }
+        archive = work / f"{name}.zip"
+        with zipfile.ZipFile(archive, "w") as package:
+            for path, text in contents.items():
+                package.writestr(path, text)
+        external_source = work / f"external-{name}"
+        external_source.mkdir()
+        (external_source / ".chezmoiexternal.toml").write_text(
+            f'[".config/opencode/skills/{name}"]\n'
+            'type = "archive"\n'
+            f'url = "{archive.as_uri()}"\n'
+            'exact = true\n'
+        )
+        skill = test_home / f".config/opencode/skills/{name}"
+        skill.mkdir(parents=True, exist_ok=True)
+        (skill / "obsolete.md").write_text("old copy\n")
+        external_cli = (*cli[:2], str(external_source), *cli[3:])
+        run(*external_cli, "apply", str(skill))
+        for path in contents:
+            assert (skill / path).is_file()
+        assert not (skill / "obsolete.md").exists()
+        for client in (".codex", ".claude"):
+            link = test_home / f"{client}/skills/{name}"
+            run(*cli, "apply", "--parent-dirs", str(link))
+            assert link.is_symlink() and link.resolve() == skill
     run(*cli, "apply", str(shared_skill), str(claude_skill))
     assert not run(*cli, "diff", str(shared_skill), str(claude_skill))
 

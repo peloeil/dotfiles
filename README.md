@@ -162,7 +162,7 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 | 共通の応答方針（正本） | `dot_config/opencode/AGENTS.md` → `~/.config/opencode/AGENTS.md` |
 | Codex の共通設定 | `.chezmoitemplates/codex-config.toml.tmpl` を `dot_codex/modify_private_config.toml` で `~/.codex/config.toml` に反映する |
 | 共通スキルの正本（commit、write-peloeil-article） | `dot_config/opencode/skills/` → `~/.config/opencode/skills/` |
-| yomiyasu の最新版 | `.chezmoiexternal.toml` → `~/.config/opencode/skills/yomiyasu/` |
+| 外部スキルの最新版（natural-japanese、yomiyasu） | `.chezmoiexternal.toml` → `~/.config/opencode/skills/<スキル名>/` |
 | Claude Code の設定・rtk hook | `dot_claude/settings.json` → `~/.claude/settings.json` |
 | OpenCode のモデル・接続設定、プラグイン、承認省略 | `dot_config/opencode/opencode.jsonc` → `~/.config/opencode/opencode.jsonc` |
 | OpenCode の暗色テーマ・承認の自動受諾・デスクトップ通知 | `dot_config/opencode/cli.json` → `~/.config/opencode/cli.json` |
@@ -171,8 +171,9 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 | OpenCode の Discord 完了通知と通知設定の正本 | `dot_config/opencode/plugins/discord-notify/` → `~/.config/opencode/plugins/discord-notify/` |
 
 外部から導入する plugin 本体・キャッシュ・認証情報はこのリポジトリでは管理しない。
+plugin の更新は各ツールに任せる。OpenCode は `opencode.jsonc` の未固定 npm 指定を起動時に解決し、Claude Code は marketplace の `autoUpdate` で追従する。Codex は自動では更新しないため、必要なら `codex plugin marketplace upgrade` を実行する。
 共通指示・自作スキルは OpenCode 側だけを編集する。Codex と Claude Code は同じ配置先を参照し、各ツール固有の設定はそれぞれに残す。OpenCode の承認省略は Claude Code の `bypassPermissions` と Codex の `approval_policy = "never"` に合わせた設定であり、信頼できないプロジェクトでは個別に見直す。
-yomiyasu は [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) の最新版 ZIP を `.chezmoiexternal.toml` で取得する。`chezmoi apply` 時に、前回の取得から1時間以上経っていれば更新を確認する。すぐに更新する場合は `chezmoi -R apply ~/.config/opencode/skills/yomiyasu` を実行する。常駐更新はしない。Codex と Claude Code は同じ配置先へのリンクを使う。
+natural-japanese と yomiyasu は上流の最新版を `.chezmoiexternal.toml` で取得する。配布元は natural-japanese が [coji/natural-japanese](https://github.com/coji/natural-japanese)、yomiyasu が [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) のリリース ZIP。`chezmoi apply` 時に、前回の取得から1時間以上経っていれば更新を確認する。すぐに更新する場合は `chezmoi -R apply ~/.config/opencode/skills` を実行する。常駐更新はしない。Codex と Claude Code は同じ配置先へのリンクを使う。
 
 ### Codex の Discord 完了通知
 

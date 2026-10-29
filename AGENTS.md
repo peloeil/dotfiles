@@ -6,7 +6,7 @@
 ## 編集する場所と制約
 
 - このリポジトリ内のソースを編集する。配置先から調べるには `chezmoi source-path <target-path>` を使う。`dot_`、`private_`、`executable_`、`symlink_`、`.tmpl` は [chezmoi の属性](https://www.chezmoi.io/reference/source-state-attributes/)。`private_` は権限指定であり、暗号化ではない。
-- ルートの `AGENTS.md`、`README.md`、`tests/` は配布対象外。共通の AI 指示と自作スキルの正本は `dot_config/opencode/AGENTS.md` と `dot_config/opencode/skills/`。yomiyasu は `.chezmoiexternal.toml` で上流の最新版を配置する。Codex の指示はシンボリックリンク、Claude Code の指示はテンプレートから正本を参照し、共通スキルはそれぞれのリンクで参照する。
+- ルートの `AGENTS.md`、`README.md`、`tests/` は配布対象外。共通の AI 指示と自作スキルの正本は `dot_config/opencode/AGENTS.md` と `dot_config/opencode/skills/`。natural-japanese と yomiyasu は `.chezmoiexternal.toml` で上流の最新版を配置する。plugin 本体と更新は各ツールに任せ、導入元と一覧だけを管理する。Codex の指示はシンボリックリンク、Claude Code の指示はテンプレートから正本を参照し、共通スキルはそれぞれのリンクで参照する。
 - ホームのパスはテンプレートでは `.chezmoi.homeDir`、シェルでは `$HOME` を使う。
 - `desktop` はデスクトップ環境の有無を表す真偽値（未設定時も既定は `true`）。配布範囲は `.chezmoiignore`、OS パッケージは前提パッケージのスクリプト、`startx` は Bash のテンプレートに分岐がある。
 - ツールの追加先は原則 `dot_config/mise/config.toml`。Codex CLI は standalone installer、Python 本体は uv で導入する。Codex の検出・実行には `~/.local/bin/codex` を使う。

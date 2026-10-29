@@ -55,7 +55,6 @@ chezmoi apply
 `sudo` を使えない場合は OS パッケージの導入をスキップするが、不足パッケージによって後続処理が失敗することはある。スキップした処理の再実行方法は下記を参照する。
 
 完了後は新しい端末を開く。fish を使う場合は `~/.local/bin/mise exec -- fish` で起動できる。ログインシェルの変更は自動では行わない。
-Ponytail の既定モードは `~/.config/ponytail/config.json` で `off` にしている。
 
 ### 4. マシン固有の設定を整える
 
@@ -67,7 +66,7 @@ Ponytail の既定モードは `~/.config/ponytail/config.json` で `off` にし
 | 壁紙 | `~/media/pictures/wallpapers/neko.jpg` を配置するか、i3 の指定を変更する |
 | モニター設定 | `~/.config/i3/monitor-hotplug.sh` を用意するか、i3 の起動処理・キー割り当てを変更する |
 | Sunshine | 本体と systemd user service を用意し、`~/.config/sunshine/sunshine.conf` の GPU・出力指定を合わせる |
-| Podman | 導入される CLI は remote 版。利用先のサービスまたは VM と接続設定を用意する |
+| Podman | 本体は OS のパッケージで導入する（自動導入しない）。podman-compose は mise で入る |
 | AI ツール | Codex / Claude Code の認証を済ませる。OpenCode は `opencode auth login openai` で認証し、さくらも使う場合は AI Engine のアカウントトークンを `opencode auth login sakura --method key` で登録する |
 | Zenn のプレビュー | [記事リポジトリと Tailscale](#zenn-のプレビュー)を用意する |
 
@@ -165,33 +164,17 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 | 外部スキルの最新版（natural-japanese、yomiyasu） | `.chezmoiexternal.toml` → `~/.config/opencode/skills/<スキル名>/` |
 | Claude Code の設定・rtk hook | `dot_claude/settings.json` → `~/.claude/settings.json` |
 | OpenCode のモデル・接続設定、プラグイン、承認省略 | `dot_config/opencode/opencode.jsonc` → `~/.config/opencode/opencode.jsonc` |
-| OpenCode の暗色テーマ・承認の自動受諾・デスクトップ通知 | `dot_config/opencode/cli.json` → `~/.config/opencode/cli.json` |
+| OpenCode の TUI 設定 | `dot_config/opencode/cli.json` → `~/.config/opencode/cli.json` |
 | Ponytail の既定モード | `dot_config/ponytail/config.json` → `~/.config/ponytail/config.json` |
-| Codex の Discord 完了通知 | `dot_codex/private_discord-notify/` → `~/.codex/discord-notify/` |
-| OpenCode の Discord 完了通知と通知設定の正本 | `dot_config/opencode/plugins/discord-notify/` → `~/.config/opencode/plugins/discord-notify/` |
+| Codex の Discord 完了通知 | [通知の README](dot_codex/private_discord-notify/README.md) → `~/.codex/discord-notify/` |
+| OpenCode の Discord 完了通知 | [通知の README](dot_config/opencode/plugins/discord-notify/README.md) → `~/.config/opencode/plugins/discord-notify/` |
 
 外部から導入する plugin 本体・キャッシュ・認証情報はこのリポジトリでは管理しない。
 plugin の更新は各ツールに任せる。OpenCode は `opencode.jsonc` の未固定 npm 指定を起動時に解決し、Claude Code は marketplace の `autoUpdate` で追従する。Codex は自動では更新しないため、必要なら `codex plugin marketplace upgrade` を実行する。
 共通指示・自作スキルは OpenCode 側だけを編集する。Codex と Claude Code は同じ配置先を参照し、各ツール固有の設定はそれぞれに残す。OpenCode の承認省略は Claude Code の `bypassPermissions` と Codex の `approval_policy = "never"` に合わせた設定であり、信頼できないプロジェクトでは個別に見直す。
 natural-japanese と yomiyasu は上流の最新版を `.chezmoiexternal.toml` で取得する。配布元は natural-japanese が [coji/natural-japanese](https://github.com/coji/natural-japanese)、yomiyasu が [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) のリリース ZIP。`chezmoi apply` 時に、前回の取得から1時間以上経っていれば更新を確認する。すぐに更新する場合は `chezmoi -R apply ~/.config/opencode/skills` を実行する。常駐更新はしない。Codex と Claude Code は同じ配置先へのリンクを使う。
 
-### Codex の Discord 完了通知
-
-既定では 600 秒以上かかった回答の完了時に、指定ユーザーをメンションして投稿する。
-通知にはマシン名、作業場所、セッション名、所要時間、直前のプロンプトを載せる。
-
-通知設定は OpenCode 側の `config.json` を共有し、Codex 側には置かない。
-導入・再登録の手順と詳しい動作は [通知の README](dot_codex/private_discord-notify/README.md) を参照する。
-
-### OpenCode の Discord 完了通知
-
-既定では 600 秒以上かかった回答の完了時に、指定ユーザーをメンションして投稿する。
-通知にはマシン名、作業場所、セッション名、所要時間、直前のプロンプトを載せる。
-
-`~/.config/opencode/plugins/` に置く自作 plugin として動く。
-`config.json` は Codex 版も読む唯一の設定で、コードとトークンが空の設定例を配布する。
-通知設定は各マシンで用意する。
-設定手順と詳しい動作は [通知の README](dot_config/opencode/plugins/discord-notify/README.md) を参照する。
+Discord 通知の設定は `~/.config/opencode/plugins/discord-notify/config.json` に1か所だけ置き、Codex 版もこれを読む。トークンを含むため配布せず、各マシンで用意する。
 
 ## セットアップの構成
 

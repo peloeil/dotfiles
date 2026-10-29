@@ -1,7 +1,7 @@
 [".gef/gef.py"]
     type = "file"
     url = "https://raw.githubusercontent.com/bata24/gef/dev/gef.py"
-    refreshPeriod = "1s"
+    refreshPeriod = "1h"
 
 [".config/opencode/skills/natural-japanese"]
     type = "archive"

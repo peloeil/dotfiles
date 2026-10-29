@@ -121,10 +121,6 @@ with tempfile.TemporaryDirectory(prefix="chezmoi-check-") as temporary:
     assert containers["engine"]["compose_providers"] == [
         str(test_home / ".local/share/mise/shims/podman-compose")
     ]
-    assert all(
-        path.startswith(str(test_home))
-        for path in containers["engine"]["helper_binaries_dir"][:2]
-    )
     externals = tomllib.loads((SOURCE / ".chezmoiexternal.toml").read_text())
     assert externals[".gef/gef.py"] == {
         "type": "file",

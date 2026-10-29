@@ -30,4 +30,5 @@ if [ -n "$codex_mode" ] && grep -qxF "$rtk_reference" "$codex_agents"; then
 	chmod "$codex_mode" "$codex_agents"
 fi
 
+"$rtk_path" init -g --no-patch
 "$rtk_path" init -g --opencode --no-patch

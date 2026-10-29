@@ -9,7 +9,7 @@ if ! command -v systemctl >/dev/null 2>&1 || ! systemctl --user show-environment
 fi
 
 systemctl --user daemon-reload
-{{ if get . "zennPreview" -}}
+{{ if .zennPreview -}}
 systemctl --user enable zenn-preview.service
 systemctl --user enable zenn-notes.service
 systemctl --user restart zenn-preview.service

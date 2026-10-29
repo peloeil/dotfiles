@@ -1,4 +1,4 @@
-{{- $desktop := dig "desktop" true . -}}
+{{- $desktop := .desktop -}}
 {{- if not (kindIs "bool" $desktop) -}}
 {{- fail "desktop must be true or false" -}}
 {{- end -}}

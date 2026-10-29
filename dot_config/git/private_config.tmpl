@@ -22,6 +22,6 @@
 [merge]
     conflictStyle = zdiff3
 
-{{ $researchDir := get . "researchDir" | default (joinPath .chezmoi.homeDir "workspace/university/laboratory/research") | trimSuffix "/" -}}
+{{ $researchDir := .researchDir | trimSuffix "/" -}}
 [includeIf "gitdir:{{ $researchDir }}/"]
     path = "{{ .chezmoi.homeDir }}/.config/git/research.config"

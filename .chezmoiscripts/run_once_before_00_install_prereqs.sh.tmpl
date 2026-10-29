@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-{{ $desktop := dig "desktop" true . -}}
+{{ $desktop := .desktop -}}
 {{ if eq .chezmoi.os "linux" -}}
 # Debian/Ubuntuベースのシステム向け
 if command -v apt-get >/dev/null; then

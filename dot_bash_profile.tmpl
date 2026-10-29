@@ -3,7 +3,7 @@ if [[ -f ~/.bashrc ]] ; then
 	. ~/.bashrc
 fi
 
-{{ if dig "desktop" true . -}}
+{{ if .desktop -}}
 if [ -z "$DISPLAY" ] && [ -z "$SSH_CONNECTION" ] && [ "$(tty)" = "/dev/tty1" ]; then
 	exec startx
 fi

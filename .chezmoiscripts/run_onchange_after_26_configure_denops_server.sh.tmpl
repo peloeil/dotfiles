@@ -9,7 +9,7 @@ if ! command -v systemctl >/dev/null 2>&1 || ! systemctl --user show-environment
 fi
 
 systemctl --user daemon-reload
-{{ if get . "denopsSharedServer" -}}
+{{ if .denopsSharedServer -}}
 systemctl --user enable denops-shared-server.service
 systemctl --user restart denops-shared-server.service
 {{ else -}}

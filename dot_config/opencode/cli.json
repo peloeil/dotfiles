@@ -3,8 +3,20 @@
   "theme": {
     "mode": "dark"
   },
+  "cursor": {
+    "blinking": false
+  },
+  "prompt": {
+    "paste": "full"
+  },
   "session": {
+    "thinking": "show",
+    "grouping": "none",
+    "image_preview": true,
     "permissions": "autoaccept"
+  },
+  "tabs": {
+    "layout": "vertical"
   },
   "attention": {
     "notifications": true

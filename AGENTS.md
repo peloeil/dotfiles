@@ -35,6 +35,7 @@
 | 文書・スキル | `git diff --check` と差分確認。記載したパス・コマンド・挙動を実装と照合する |
 | 配置する設定・削除対象 | `chezmoi diff`、`chezmoi apply --dry-run` で対象と展開結果を確認する |
 | テンプレート・導入処理 | `python3 tests/check_setup.py`。スクリプトは展開後の構文と再実行条件も確認する |
+| Discord 通知のコード | `python3 -m unittest discover -s dot_codex/private_discord-notify -p 'test_*.py'` |
 | 環境の診断が必要なとき | `chezmoi doctor`。mise 関連は `mise doctor` |
 
 `tests/check_setup.py` は一時環境とモックを使い、実際のインストールやデスクトップの起動は行わない。変更に必要な検証と、その変更に起因する失敗の修正・再検証まで進める。

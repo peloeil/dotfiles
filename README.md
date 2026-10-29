@@ -163,7 +163,7 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 | 共通スキルの正本（commit、write-peloeil-article） | `dot_config/opencode/skills/` → `~/.config/opencode/skills/` |
 | 外部スキルの最新版（natural-japanese、yomiyasu） | `.chezmoiexternal.toml` → `~/.config/opencode/skills/<スキル名>/` |
 | Claude Code の設定・rtk hook | `dot_claude/settings.json` → `~/.claude/settings.json` |
-| OpenCode のモデル・接続設定、プラグイン、承認省略 | `dot_config/opencode/opencode.jsonc` → `~/.config/opencode/opencode.jsonc` |
+| OpenCode のモデル・接続設定（Claude Code CLI の場所を含む）、プラグイン、承認省略 | `dot_config/opencode/opencode.jsonc.tmpl` → `~/.config/opencode/opencode.jsonc` |
 | OpenCode の TUI 設定 | `dot_config/opencode/cli.json` → `~/.config/opencode/cli.json` |
 | Ponytail の既定モード | `dot_config/ponytail/config.json` → `~/.config/ponytail/config.json` |
 | Codex の Discord 完了通知 | [通知の README](dot_codex/private_discord-notify/README.md) → `~/.codex/discord-notify/` |

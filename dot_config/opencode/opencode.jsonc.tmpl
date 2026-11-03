@@ -4,11 +4,6 @@
     { "action": "*", "resource": "*", "effect": "allow" }
   ],
   "providers": {
-    "claude-code": {
-      "settings": {
-        "cliPath": "{{ .chezmoi.homeDir }}/.local/share/mise/installs/node/latest/bin/claude"
-      }
-    },
     "sakura": {
       "name": "さくらの AI Engine",
       "env": ["SAKURA_AI_ENGINE_API_KEY"],
@@ -37,7 +32,6 @@
     }
   },
   "plugins": [
-    "@khalilgharbaoui/opencode-claude-code-plugin",
     "@dietrichgebert/ponytail"
   ]
 }

@@ -68,6 +68,7 @@ chezmoi apply
 | Sunshine | 本体と systemd user service を用意し、`~/.config/sunshine/sunshine.conf` の GPU・出力指定を合わせる |
 | Podman | 本体は OS のパッケージで導入する（自動導入しない）。podman-compose は mise で入る |
 | AI ツール | Codex / Claude Code / Antigravity CLI の認証を済ませる。OpenCode は `opencode auth login openai` で認証し、さくらも使う場合は AI Engine のアカウントトークンを `opencode auth login sakura --method key` で登録する |
+| Antigravity の学習オプトアウト | `agy` の `/config` で `Enable Telemetry` を切る。値は Google アカウント側に保存され、`settings.json` では管理できないため、アカウントごとに一度だけ行う |
 | Zenn のプレビュー | [記事リポジトリと Tailscale](#zenn-のプレビュー)を用意する |
 
 壁紙画像と、feh が生成する `~/.fehbg` は管理しない。
@@ -160,6 +161,8 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 | このリポジトリの編集上の制約 | [AGENTS.md](AGENTS.md)（配布対象外） |
 | 共通の応答方針（正本） | `dot_config/opencode/AGENTS.md` → `~/.config/opencode/AGENTS.md` |
 | Codex の共通設定 | `.chezmoitemplates/codex-config.toml.tmpl` を `dot_codex/modify_private_config.toml` で `~/.codex/config.toml` に反映する |
+| Antigravity CLI の共通スキル | `dot_gemini/config/skills.json.tmpl` → `~/.gemini/config/skills.json` が `~/.config/opencode/skills` を指す |
+| Antigravity CLI の設定（承認省略、通知） | `dot_gemini/antigravity-cli/modify_private_settings.json` を `~/.gemini/antigravity-cli/settings.json` に反映する |
 | 共通スキルの正本（commit、write-peloeil-article） | `dot_config/opencode/skills/` → `~/.config/opencode/skills/` |
 | 外部スキルの最新版（natural-japanese、yomiyasu、academic-pptx） | `.chezmoiexternal.toml` → `~/.config/opencode/skills/<スキル名>/` |
 | Claude Code の設定・rtk hook | `dot_claude/settings.json` → `~/.claude/settings.json` |
@@ -171,8 +174,8 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 
 外部から導入する plugin 本体・キャッシュ・認証情報はこのリポジトリでは管理しない。
 plugin の更新は各ツールに任せる。OpenCode は `opencode.jsonc` の未固定 npm 指定を起動時に解決し、Claude Code は marketplace の `autoUpdate` で追従する。Codex は自動では更新しないため、必要なら `codex plugin marketplace upgrade` を実行する。
-共通指示・自作スキルは OpenCode 側だけを編集する。Codex と Claude Code は同じ配置先を参照し、各ツール固有の設定はそれぞれに残す。OpenCode の承認省略は Claude Code の `bypassPermissions` と Codex の `approval_policy = "never"` に合わせた設定であり、信頼できないプロジェクトでは個別に見直す。
-natural-japanese、yomiyasu、academic-pptx は上流の最新版を `.chezmoiexternal.toml` で取得する。配布元は natural-japanese が [coji/natural-japanese](https://github.com/coji/natural-japanese)、yomiyasu が [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) のリリース ZIP。academic-pptx は [Gabberflast/academic-pptx-skill](https://github.com/Gabberflast/academic-pptx-skill) にリリースがないため `main` ブランチの tarball から取得する。`chezmoi apply` 時に、前回の取得から1時間以上経っていれば更新を確認する。すぐに更新する場合は `chezmoi -R apply ~/.config/opencode/skills` を実行する。常駐更新はしない。Codex と Claude Code は同じ配置先へのリンクを使う。
+共通指示・自作スキルは OpenCode 側だけを編集する。Codex、Claude Code、Antigravity CLI は同じ配置先を参照し、各ツール固有の設定はそれぞれに残す。OpenCode の承認省略は Claude Code の `bypassPermissions`、Codex の `approval_policy = "never"`、Antigravity CLI の `toolPermission = "always-proceed"` に合わせた設定であり、信頼できないプロジェクトでは個別に見直す。
+natural-japanese、yomiyasu、academic-pptx は上流の最新版を `.chezmoiexternal.toml` で取得する。配布元は natural-japanese が [coji/natural-japanese](https://github.com/coji/natural-japanese)、yomiyasu が [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) のリリース ZIP。academic-pptx は [Gabberflast/academic-pptx-skill](https://github.com/Gabberflast/academic-pptx-skill) にリリースがないため `main` ブランチの tarball から取得する。`chezmoi apply` 時に、前回の取得から1時間以上経っていれば更新を確認する。すぐに更新する場合は `chezmoi -R apply ~/.config/opencode/skills` を実行する。常駐更新はしない。Codex と Claude Code は同じ配置先へのリンクを使う。Antigravity CLI は `skills.json` で同じディレクトリを指す。natural-japanese と yomiyasu は日本語が弱いモデルを補うスキルで Gemini では要らないため、`exclude` で外す。
 
 Discord 通知の設定は `~/.config/opencode/plugins/discord-notify/config.json` に1か所だけ置き、Codex 版もこれを読む。トークンを含むため配布せず、各マシンで用意する。
 

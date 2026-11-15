@@ -1,0 +1,8 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $managed := dict "notifications" true "toolPermission" "always-proceed" -}}
+{{- $current := trim .chezmoi.stdin -}}
+{{- $existing := dict -}}
+{{- if ne $current "" -}}
+{{- $existing = fromJson $current -}}
+{{- end -}}
+{{- mergeOverwrite $existing $managed | toPrettyJson -}}

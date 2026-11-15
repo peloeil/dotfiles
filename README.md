@@ -67,7 +67,7 @@ chezmoi apply
 | モニター設定 | `~/.config/i3/monitor-hotplug.sh` を用意するか、i3 の起動処理・キー割り当てを変更する |
 | Sunshine | 本体と systemd user service を用意し、`~/.config/sunshine/sunshine.conf` の GPU・出力指定を合わせる |
 | Podman | 本体は OS のパッケージで導入する（自動導入しない）。podman-compose は mise で入る |
-| AI ツール | Codex / Claude Code の認証を済ませる。OpenCode は `opencode auth login openai` で認証し、さくらも使う場合は AI Engine のアカウントトークンを `opencode auth login sakura --method key` で登録する |
+| AI ツール | Codex / Claude Code / Antigravity CLI の認証を済ませる。OpenCode は `opencode auth login openai` で認証し、さくらも使う場合は AI Engine のアカウントトークンを `opencode auth login sakura --method key` で登録する |
 | Zenn のプレビュー | [記事リポジトリと Tailscale](#zenn-のプレビュー)を用意する |
 
 壁紙画像と、feh が生成する `~/.fehbg` は管理しない。

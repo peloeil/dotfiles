@@ -7,6 +7,7 @@ lockfile = true
 
 [tools]
 age = "latest"
+agy = "latest"
 "aqua:fish-shell/fish-shell" = "latest"
 "aqua:tmux/tmux-builds" = "latest"
 bat = "latest"

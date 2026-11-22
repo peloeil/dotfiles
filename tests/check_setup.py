@@ -161,8 +161,7 @@ class SetupTests(unittest.TestCase):
         mock(self.local_bin / "mise", 'printf "%s\\n" "$@" >> "$CHECK_LOG"')
         env = {**os.environ, "PATH": str(service_bin), "CHECK_LOG": str(log)}
         for unit, expected in (
-            ("zenn-preview", ["node", "node_modules/zenn-cli/dist/server/zenn.js",
-                              "preview", "--host", "100.64.0.1", "--port", "8000"]),
+            ("zenn-preview", ["zenn", "preview", "--host", "100.64.0.1", "--port", "8000"]),
             ("zenn-notes", ["node", "scripts/preview-notes.mjs", "100.64.0.1", "8001"]),
         ):
             rendered = self.render(f"dot_config/systemd/user/{unit}.service.tmpl")

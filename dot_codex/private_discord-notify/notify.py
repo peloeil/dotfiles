@@ -158,7 +158,7 @@ def handle(mode: str, event: Mapping[str, object], root: Path = ROOT) -> None:
         )
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: list[str] | None = None, root: Path = ROOT) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("mode", choices=("start", "complete", "interrupt"))
     parser.add_argument("event", nargs="?")
@@ -167,7 +167,7 @@ def main(argv: list[str] | None = None) -> int:
         event = json.loads(args.event if args.event is not None else sys.stdin.read())
         if not isinstance(event, dict):
             raise ValueError("event must be a JSON object")
-        handle(args.mode, event)
+        handle(args.mode, event, root)
     except (OSError, ValueError) as error:
         print(f"Codex Discord notification failed: {error}", file=sys.stderr)
     return 0

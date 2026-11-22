@@ -11,6 +11,7 @@
   },
   "session": {
     "thinking": "show",
+    "verbosity": "high",
     "grouping": "none",
     "image_preview": true,
     "permissions": "autoaccept"

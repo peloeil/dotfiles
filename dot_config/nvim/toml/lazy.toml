@@ -144,7 +144,7 @@ lua_source = '''
     require("tree-sitter-manager").setup({
         highlight = false,
         ensure_installed = {
-            "bash", "cpp", "dockerfile", "git_config", "git_rebase",
+            "bash", "cpp", "diff", "dockerfile", "git_config", "git_rebase",
             "gitignore", "json", "json5", "make", "python", "rust",
             "ssh_config", "tmux", "typescript", "zig",
         },

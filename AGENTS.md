@@ -35,6 +35,7 @@
 | 文書・スキル | `git diff --check` と差分確認。記載したパス・コマンド・挙動を実装と照合する |
 | 配置する設定・削除対象 | `chezmoi diff`、`chezmoi apply --dry-run` で対象と展開結果を確認する |
 | テンプレート・導入処理 | `python3 tests/check_setup.py`。スクリプトは展開後の構文と再実行条件も確認する |
+| Neovim の設定 | `python3 tests/nvim_bench.py`。起動時の出力（エラー）がないことと、`nvim-next`・`nvim`・`--clean` の起動時間を比べる |
 | Discord 通知のコード | `python3 -m unittest discover -s dot_codex/private_discord-notify -p 'test_*.py'` |
 | 環境の診断が必要なとき | `chezmoi doctor`。mise 関連は `mise doctor` |
 

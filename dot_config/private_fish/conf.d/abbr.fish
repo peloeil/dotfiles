@@ -16,4 +16,5 @@ abbr --add sw --command git switch
 abbr --add swc --command git "switch -c"
 abbr --add ll --command git "log --graph --oneline --all"
 abbr --add ls lsd
+abbr --add nvn "NVIM_APPNAME=nvim-next nvim"
 abbr --add objdump "objdump -S -M intel -d"

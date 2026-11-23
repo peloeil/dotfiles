@@ -5,6 +5,8 @@
 README.md
 AGENTS.md
 tests
+# Under development; ~/.config/nvim-next links to the source directory so edits apply without chezmoi apply.
+.config/nvim-next
 .codex/discord-notify/state
 .codex/discord-notify/state/**
 .codex/discord-notify/__pycache__

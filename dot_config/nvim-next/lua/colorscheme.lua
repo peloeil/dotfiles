@@ -1,7 +1,8 @@
 vim.g.everforest_background = "hard"
 vim.g.everforest_transparent_background = 2
 
--- transparent_background = 2 still paints floats and the cursor line, so drop their backgrounds.
+-- transparent_background = 2 でもフロートとカーソル行には背景色が残る。
+-- :colorscheme の直後に1回消すだけでは、読み直したときに戻るので autocmd にする
 local function clear_backgrounds()
     for _, name in ipairs({ "NormalFloat", "FloatBorder", "FloatTitle", "CursorLine", "CursorLineNr" }) do
         local hl = vim.api.nvim_get_hl(0, { name = name, link = false })

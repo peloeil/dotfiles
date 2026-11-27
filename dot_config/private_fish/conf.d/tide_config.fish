@@ -73,7 +73,7 @@ set -g tide_kubectl_bg_color '444444'
 set -g tide_kubectl_color '326CE5'
 set -g tide_kubectl_icon '󱃾'
 set -g tide_left_prompt_frame_enabled 'false'
-set -g tide_left_prompt_items 'context' 'os' 'pwd' 'git' 'newline' 'character'
+set -g tide_left_prompt_items 'context' 'os_divided' 'pwd' 'git' 'newline' 'character'
 set -g tide_left_prompt_prefix ''
 set -g tide_left_prompt_separator_diff_color ''
 set -g tide_left_prompt_separator_same_color ''
@@ -159,7 +159,7 @@ set -g tide_zig_color 'F7A41D'
 set -g tide_zig_icon ''
 
 if type -q _tide_detect_os
-    if contains os $tide_left_prompt_items $tide_right_prompt_items
+    if contains os_divided $tide_left_prompt_items $tide_right_prompt_items
         _tide_detect_os | read -g --line tide_os_icon tide_os_color tide_os_bg_color
     end
 end

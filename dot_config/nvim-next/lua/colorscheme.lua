@@ -19,7 +19,7 @@ local function clear_backgrounds()
         "TabLine",
     }
     for _, name in ipairs(groups) do
-        local hl = vim.api.nvim_get_hl(0, { name = name, link = false })
+        local hl = vim.api.nvim_get_hl(0, { name = name, link = false }) --[[@as vim.api.keyset.highlight]]
         hl.bg, hl.ctermbg = nil, nil
         vim.api.nvim_set_hl(0, name, hl)
     end
@@ -27,7 +27,7 @@ local function clear_backgrounds()
     -- 選択中の項目は明るい背景に暗い文字で示されるので、背景を消すだけでは文字が見えなくなる。
     -- 背景色を文字色に移して、選択中であることを色で残す
     for _, name in ipairs({ "PmenuSel", "PmenuExtraSel", "PmenuKindSel", "TabLineSel" }) do
-        local hl = vim.api.nvim_get_hl(0, { name = name, link = false })
+        local hl = vim.api.nvim_get_hl(0, { name = name, link = false }) --[[@as vim.api.keyset.highlight]]
         if hl.bg then
             hl.fg, hl.ctermfg = hl.bg, hl.ctermbg
             hl.bg, hl.ctermbg = nil, nil

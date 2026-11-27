@@ -17,7 +17,8 @@ REPO = Path(__file__).resolve().parent.parent
 
 def command(config: str, file: Path, *extra: str) -> tuple[list[str], dict[str, str]]:
     env = dict(os.environ)
-    args = ["nvim", "--headless", *extra]
+    # -n: a swap file from an editor that has the file open would print W325 and count as an error.
+    args = ["nvim", "--headless", "-n", *extra]
     if config == "clean":
         args.insert(1, "--clean")
     else:

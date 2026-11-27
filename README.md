@@ -1,46 +1,24 @@
 # dotfiles
 
 自分の Linux x86_64 環境を復元・更新するためのリポジトリ。
-chezmoi で設定ファイルを配布し、mise で開発ツールとランタイムを入れる。Codex CLI は standalone installer、Python 本体は uv で導入する。
-
-Bash / fish、tmux、Neovim、言語環境、AI ツール、コンテナ用ツールを導入する。
-`desktop = true`（既定）なら、Xorg / i3 デスクトップの導入・設定・起動も含む。`false` なら GUI を省く。
-多くのツールに `latest` を指定しているため、復元時のバージョンは導入時点で変わる。
+chezmoi で設定を配布し、mise・uv・Codex standalone installer でツールを入れる。`desktop = true`（既定）なら Xorg / i3 環境も含む。
 
 ## 新しいマシンに復元する
 
-### 1. 準備する
+一般ユーザーで作業する。
 
-一般ユーザーで作業する。以下のコマンドは Bash 用。
-
-- ネットワーク接続と `curl`、`git`、`tar` を用意する。
-- OS パッケージの自動導入には `sudo` が必要。`apt-get`、`pacman`、`emerge` に分岐する。
-- Gentoo でデスクトップを導入する場合は `app-i18n/mozc` の `fcitx5` USE フラグを有効にする。
-
-### 2. リポジトリを取得する
-
-[chezmoi のインストーラ](https://www.chezmoi.io/install/#one-line-binary-install)を使い、設定を初期化する。
+- 前提: ネットワーク、`curl`、`git`、`tar`、`sudo`（`apt-get` / `pacman` / `emerge`）。
+- Gentoo でデスクトップを入れる場合は `app-i18n/mozc` の `fcitx5` USE フラグを有効にする。
+- SSH 先で使う場合、Nerd Font は接続元の端末で設定する。
 
 ```sh
 sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b "$HOME/.local/bin" init peloeil
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-`Install desktop environment` でデスクトップ環境を導入するか選び（既定は有効）、Git の通常用メールアドレス、研究用メールアドレス、研究用ディレクトリ、名前を入力する。
-`Start a Denops shared server at login` では [Denops の共有サーバー](#denops-の共有サーバー)を使うか選ぶ。既定は無効。
-`Start Zenn preview on Tailscale at login` では [Zenn のプレビュー](#zenn-のプレビュー)を使うか選ぶ。既定は無効。
-入力値は `~/.config/chezmoi/chezmoi.toml` に保存される。研究用ディレクトリ配下のリポジトリでは、研究用メールアドレスへ自動で切り替わる。
+初期質問では `desktop`（既定 `true`）、`denopsSharedServer`（既定 `false`）、`zennPreview`（既定 `false`）、Git の通常/研究用メール、研究用ディレクトリ（既定 `~/workspace/university/laboratory/research/`）、名前を `~/.config/chezmoi/chezmoi.toml` に保存する。研究用ディレクトリ配下では研究用メールへ自動で切り替わる。
 
-デスクトップなしをあらかじめ指定する場合は、上の `init peloeil` の後ろに `--promptBool 'Install desktop environment=false'` を追加する。
-
-| 導入対象 | `desktop = true` | `desktop = false` |
-| --- | --- | --- |
-| Xorg・i3・Alacritty・fcitx5・デスクトップ用 OS パッケージと設定 | あり | なし |
-| Sunshine の設定・Hack Nerd Font の導入・ログイン時の `startx` | あり | なし |
-
-SSH 先で使う場合、Tide などのアイコン表示に必要な Nerd Font は接続元の端末で設定する。
-
-### 3. 確認して適用する
+デスクトップなしで始める場合は `init peloeil` の後ろに `--promptBool 'Install desktop environment=false'` を付ける。
 
 ```sh
 chezmoi diff
@@ -48,195 +26,34 @@ chezmoi apply --dry-run
 chezmoi apply
 ```
 
-`apply` は OS の前提パッケージと mise を導入し、設定ファイルの配置後に各ツールをセットアップする。
-処理の一覧と実行条件は [セットアップの構成](#セットアップの構成) を参照する。
+完了後は新しい端末を開く。fish は `~/.local/bin/mise exec -- fish` で起動できる（ログインシェルは自動では変えない）。
 
-途中で失敗したら、原因を解消して `chezmoi apply` を再実行する。
-`sudo` を使えない場合は OS パッケージの導入をスキップするため、必要なパッケージが足りずに後続処理が失敗することがある。スキップした処理の再実行方法は下記を参照する。
+### リポジトリ外で用意するもの
 
-完了後は新しい端末を開く。fish を使う場合は `~/.local/bin/mise exec -- fish` で起動できる。ログインシェルは自動で変えない。
-
-### 4. マシン固有の設定を整える
-
-以下はこのリポジトリだけでは揃わない。使うものを別に用意する。
-`desktop = false` ではデスクトップ関連（壁紙・モニター設定・Sunshine）の準備は不要。
+`desktop = false` では壁紙・モニター設定・Sunshine は不要。
 
 | 対象 | 必要な作業 |
 | --- | --- |
-| 壁紙 | `~/media/pictures/wallpapers/neko.jpg` を配置するか、i3 の指定を変更する |
-| モニター設定 | `~/.config/i3/monitor-hotplug.sh` を用意するか、i3 の起動処理・キー割り当てを変更する |
+| 壁紙 | `~/media/pictures/wallpapers/neko.jpg` を置くか i3 の指定を変える |
+| モニター設定 | `~/.config/i3/monitor-hotplug.sh` を用意するか i3 の起動処理・キー割り当てを変える |
 | Sunshine | 本体と systemd user service を用意し、`~/.config/sunshine/sunshine.conf` の GPU・出力指定を合わせる |
-| Podman | 本体は OS のパッケージで導入する（自動導入しない）。podman-compose は mise で入る |
-| AI ツール | Codex / Claude Code / Antigravity CLI の認証を済ませる。OpenCode は `opencode auth login openai` で認証し、さくらも使う場合は AI Engine のアカウントトークンを `opencode auth login sakura --method key` で登録する |
-| Antigravity の学習オプトアウト | `agy` の `/config` で `Enable Telemetry` を切る。値は Google アカウント側に保存され、`settings.json` では管理できないため、アカウントごとに一度だけ行う |
-| Zenn のプレビュー | [記事リポジトリと Tailscale](#zenn-のプレビュー)を用意する |
-
-壁紙画像と、feh が生成する `~/.fehbg` は管理しない。
-
-`desktop = true` のとき、Bash は SSH 接続以外の `tty1`（`DISPLAY` 未設定時）で `startx` を実行する。`.xinitrc` で fcitx5 などを初期化し、Sunshine を再起動してから i3 を起動する。
-
-ホスト名が `helium` の場合は、i3 の時間経過での画面消灯を無効にし、Alacritty のフォントサイズを変える。
+| Podman | 本体を OS パッケージで入れる（自動導入しない）。`podman-compose` は mise で入る |
+| AI ツール | Codex / Claude Code / Antigravity CLI を認証する。OpenCode は `opencode auth login openai`（さくら併用時は `opencode auth login sakura --method key`） |
+| Antigravity | `agy` の `/config` で `Enable Telemetry` を切る（アカウントごとの設定のため毎回1度行う） |
+| Discord 通知 | `~/.config/opencode/plugins/discord-notify/config.json` を用意する（Codex 版も共用） |
+| Zenn プレビュー | 下記の手順で記事リポジトリと Tailscale を用意する |
 
 ## 構成を切り替える
 
-`chezmoi edit-config` で `[data]` の設定を変更し、差分を確認して適用する。
+`chezmoi edit-config` の `[data]` を変えて `chezmoi apply` する。
 
-```sh
-chezmoi edit-config
-chezmoi diff
-chezmoi apply --dry-run
-chezmoi apply
-```
+- **`desktop`**: `true` → `false` に変えても、導入済みパッケージや除外した設定ファイルは自動では消さない。
+- **`denopsSharedServer`**: `true` で `denops-shared-server.service` を起動し、Neovim 間で Denops を使い回す（systemd user manager が必要）。接続先は `127.0.0.1:32123`（`denopsServerPort` で変更可）。認証がないため共有マシンでは無効のまま使う。
+- **`zennPreview`**: `true` で `zenn-preview.service`（`:8000` で `articles/`）と `zenn-notes.service`（`:8001` で `notes/`）を Tailscale IPv4 で待ち受ける（systemd user manager が必要）。事前に `~/workspace/zenn` で `npm ci` と Tailscale 接続を済ませる。ログアウト中も動かす場合は `sudo loginctl enable-linger "$USER"` を実行する。
 
-### デスクトップ環境
+## AI 設定の運用メモ
 
-`desktop` を `true`（既定）または `false` にする。
-`false` から `true` に切り替えると GUI の設定・導入処理も対象になる。`true` から `false` に切り替えても、導入済みパッケージや除外した設定ファイルは自動では消さない。ログイン時の `startx` は無効になる。
-OS パッケージ導入は `run_once` のため、以前使った構成へ戻しただけでは再実行されない。必要なら下記の「OS パッケージの導入がスキップされた」のコマンドで再実行する。
-
-### Denops の共有サーバー
-
-`denopsSharedServer = true` にすると、`denops-shared-server.service` がログイン時に起動し、Neovim 間で Denops を使い回してファイラーなどの初回応答を早める。systemd user manager が必要。
-`false`（既定）に戻して適用すると常駐を停止し、Neovim ごとに Denops を起動する。
-
-接続先は `127.0.0.1:32123`。競合時は `denopsServerPort` でポートを変更できる。
-共有サーバーは認証がないため、複数人で使うマシンでは無効のまま使う。
-
-### Zenn のプレビュー
-
-`zennPreview = true` にすると、`zenn-preview.service` と `zenn-notes.service` を有効化・起動し、ログイン時にも起動する。`false`（既定）に戻して適用すると両方を無効化・停止する。
-使う前に `~/workspace/zenn` を用意してその中で `npm ci` を実行し、Tailscale を導入・接続しておく。systemd user manager が必要。
-Tailscale 内から `http://<Tailscale IPv4>:8000` で `articles/`、`:8001` で `notes/` のプレビューを閲覧できる。IP は `tailscale ip -4` で確認する。
-下書きも表示され、保存すると自動で反映される。ログアウト中も動かす場合は `sudo loginctl enable-linger "$USER"` を実行する。
-
-## 設定とツールを更新する
-
-管理対象を編集するときは、ホームディレクトリ側のパスを指定する。
-
-```sh
-chezmoi edit ~/.config/fish/config.fish
-chezmoi diff
-chezmoi apply
-```
-
-取得済みのソースは `chezmoi cd` で開いて直接編集することもできる。
-テンプレート化していない実ファイル側の変更は `chezmoi re-add <target-path>` で取り込める。`.tmpl` の内容はソース側で編集する。
-
-別のマシンでコミット・push した変更は、次で取得して適用する。
-
-```sh
-chezmoi update
-```
-
-研究用メールは [Git の条件付き include](https://git-scm.com/docs/git-config#_conditional_includes) で自動で切り替える。対象の既定値は `~/workspace/university/laboratory/research/`。場所を変える場合は `chezmoi edit-config` で `[data]` の `researchDir` を絶対パスまたは `~/...` に設定し、`chezmoi apply` する。
-
-リポジトリで実際に使われるメールは次で確認できる。個別の `git config --local user.email` があれば、そちらが優先される。
-
-```sh
-git config --show-origin --get user.email
-```
-
-ツールを追加・変更するときは mise の設定を編集して適用する。設定が変わるとインストール処理が再実行される。
-
-```sh
-chezmoi edit ~/.config/mise/config.toml
-chezmoi apply
-```
-
-導入済みツールは `mise upgrade` で更新し、不足ツールは `mise install --yes` で入れ直し、デフォルト Python は `uv python install --default` で入れる。作業中のプロジェクトの mise 設定の影響を避けるには、ホームディレクトリで実行する。
-
-Codex CLI の更新はインストーラを再実行する。
-
-```sh
-curl -fsSL https://chatgpt.com/codex/install.sh |
-  env CODEX_INSTALL_DIR="$HOME/.local/bin" \
-      CODEX_NON_INTERACTIVE=1 \
-      PATH="$HOME/.local/bin:/usr/bin:/bin" sh
-```
-
-## AI の指示とスキル
-
-| 用途 | ソース・配置先 |
-| --- | --- |
-| このリポジトリの編集上の制約 | [AGENTS.md](AGENTS.md)（配布対象外） |
-| 共通の応答方針（Codex / Claude Code / Antigravity CLI もここを参照） | `dot_config/opencode/AGENTS.md` → `~/.config/opencode/AGENTS.md` |
-| Codex の共通設定 | `.chezmoitemplates/codex-config.toml.tmpl` を `dot_codex/modify_private_config.toml` で `~/.codex/config.toml` に反映する |
-| Antigravity CLI の共通スキル | `dot_gemini/config/skills.json.tmpl` → `~/.gemini/config/skills.json` が `~/.config/opencode/skills` を指す |
-| Antigravity CLI の設定（承認省略、通知） | `dot_gemini/antigravity-cli/modify_private_settings.json` を `~/.gemini/antigravity-cli/settings.json` に反映する |
-| 共通の自作スキル（commit、write-peloeil-article） | `dot_config/opencode/skills/` → `~/.config/opencode/skills/` |
-| 外部スキルの最新版（natural-japanese、yomiyasu、academic-pptx、imozuru） | `.chezmoiexternal.toml` → `~/.config/opencode/skills/<スキル名>/` |
-| Claude Code の設定・rtk hook | `dot_claude/settings.json` → `~/.claude/settings.json` |
-| OpenCode のモデル・接続設定、プラグイン、承認省略 | `dot_config/opencode/opencode.jsonc.tmpl` → `~/.config/opencode/opencode.jsonc` |
-| OpenCode の TUI 設定 | `dot_config/opencode/cli.json` → `~/.config/opencode/cli.json` |
-| Ponytail の既定モード | `dot_config/ponytail/config.json` → `~/.config/ponytail/config.json` |
-| Codex の Discord 完了通知 | [通知の README](dot_codex/private_discord-notify/README.md) → `~/.codex/discord-notify/` |
-| OpenCode の Discord 完了通知 | [通知の README](dot_config/opencode/plugins/discord-notify/README.md) → `~/.config/opencode/plugins/discord-notify/` |
-
-外部から導入する plugin 本体・キャッシュ・認証情報はこのリポジトリでは管理しない。更新は各ツールに任せる（OpenCode は起動時、Claude Code は `autoUpdate`、Codex は手動で `codex plugin marketplace upgrade`）。
-共通指示・自作スキルは OpenCode 側だけを編集し、他ツールは同じ配置先を参照する。承認省略は各ツールで揃えており、信頼できないプロジェクトでは個別に見直す。
-外部スキル（`natural-japanese`、`yomiyasu`、`academic-pptx`、`imozuru`）は `.chezmoiexternal.toml` で取得し、`chezmoi apply` 時に前回から 1 時間以上経っていれば更新を確認する（即時更新は `chezmoi -R apply ~/.config/opencode/skills`）。`natural-japanese` と `yomiyasu` は Gemini では不要なため、`dot_gemini/config/skills.json.tmpl` の `exclude` で外している。
-
-Discord 通知の設定は `~/.config/opencode/plugins/discord-notify/config.json` に 1 か所だけ置き、各マシンで用意する。
-
-## セットアップの構成
-
-初期入力と age の設定は `.chezmoi.toml.tmpl`、デスクトップ環境の配布範囲は `.chezmoiignore`、開発ツールは `dot_config/mise/config.toml` で管理する。
-`init` は設定を作り、`apply` はテンプレート評価後、before scripts、dotfiles、after scripts の順に処理する。
-
-以下はすべて `.chezmoiscripts/` 内のスクリプト。
-
-| 段階 | ソース | 処理 |
-| --- | --- | --- |
-| before | `run_once_before_00_install_prereqs.sh.tmpl` | Linux の OS パッケージ |
-| before | `run_once_before_01-install-mise.sh.tmpl` | `~/.local/bin/mise` がなければ導入する |
-| after | `run_onchange_after_10_install_mise_tools.sh.tmpl` | `mise install --yes` と `uv python install --default` |
-| after | `run_once_after_12_install_codex_standalone.sh.tmpl` | `~/.local/bin` に Codex CLI を導入する |
-| after | `run_onchange_after_15_init_rtk.sh` | Codex / Claude Code / OpenCode 向けの rtk 初期化 |
-| after | `run_onchange_after_20_install_fish_tools.sh.tmpl` | fisher を導入し、`fisher update` |
-| after | `run_onchange_after_20_install_hack_nerd_font.sh` | `desktop = true` で未導入なら Hack Nerd Font を入れる |
-| after | `run_onchange_after_25_install_nvim_plugins.sh.tmpl` | headless Neovim で dpp plugins を導入する |
-| after | `run_onchange_after_26_configure_denops_server.sh.tmpl` | user manager があれば、Denops の共有サーバー設定を systemd user service に反映する |
-| after | `run_onchange_after_27_configure_zenn_preview.sh.tmpl` | user manager があれば、Zenn のプレビュー設定を systemd user service に反映する |
-| after | `run_onchange_after_30_install_ai_plugins.sh.tmpl` | CLI が見つかれば、Codex と Claude Code に Ponytail を導入する。OpenCode は `opencode.jsonc` の `plugins` から導入する |
-| after | `run_onchange_after_31_configure_codex_discord_notify.sh.tmpl` | Codex とローカルの通知設定があれば Discord 完了通知を登録する |
-
-スキップも成功として記録されるため、必要なツールを後から揃えただけでは再実行されない。詳細は [chezmoi のスクリプト仕様](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/)を参照する。
-
-## スキップされた処理を手動で実行する
-
-### OS パッケージの導入がスキップされた
-
-`sudo` が使える状態にして前提パッケージの処理を再実行し、そのあと `chezmoi apply` をやり直す。
-
-```sh
-chezmoi execute-template --file \
-  "$(chezmoi source-path)/.chezmoiscripts/run_once_before_00_install_prereqs.sh.tmpl" | sh
-chezmoi apply
-```
-
-### user service の設定がスキップされた
-
-systemd user manager が使えるようになってから、対象のスクリプトを再実行する。
-
-```sh
-chezmoi execute-template --file \
-  "$(chezmoi source-path)/.chezmoiscripts/run_onchange_after_26_configure_denops_server.sh.tmpl" | sh
-chezmoi execute-template --file \
-  "$(chezmoi source-path)/.chezmoiscripts/run_onchange_after_27_configure_zenn_preview.sh.tmpl" | sh
-```
-
-### Ponytail の導入がスキップされた
-
-Codex / Claude Code を導入した後、Ponytail の導入処理だけを再実行する。Codex は `~/.local/bin/codex`、Claude Code は `~/.local/bin/mise which claude` で見つかる状態にしておく。
-
-```sh
-chezmoi execute-template --file \
-  "$(chezmoi source-path)/.chezmoiscripts/run_onchange_after_30_install_ai_plugins.sh.tmpl" | sh
-```
-
-### 状態を確認する
-
-```sh
-chezmoi doctor
-mise doctor
-```
+- 共通の応答方針と自作スキルは `dot_config/opencode/` 側だけを編集する（Codex / Claude Code / Antigravity CLI も同じ配置先を参照する）。
+- 外部から導入する plugin 本体・キャッシュ・認証情報は管理しない。更新は各ツールに任せる（OpenCode は起動時、Claude Code は `autoUpdate`、Codex は `codex plugin marketplace upgrade`）。
+- 外部スキルは `.chezmoiexternal.toml` で取得し、`chezmoi apply` 時に前回から 1 時間以上経っていれば更新を確認する（即時更新は `chezmoi -R apply ~/.config/opencode/skills`）。`natural-japanese` と `yomiyasu` は Gemini には不要なため `dot_gemini/config/skills.json.tmpl` の `exclude` で外している。
+- 承認省略は各ツールで揃えており、信頼できないプロジェクトでは個別に見直す。

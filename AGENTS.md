@@ -6,12 +6,12 @@
 ## 編集する場所と制約
 
 - このリポジトリ内のソースを編集する。配置先から調べるには `chezmoi source-path <target-path>` を使う。`dot_`、`private_`、`executable_`、`symlink_`、`.tmpl` は [chezmoi の属性](https://www.chezmoi.io/reference/source-state-attributes/)。`private_` は権限指定であり、暗号化ではない。
-- ルートの `AGENTS.md`、`README.md`、`tests/` は配布対象外。共通の AI 指示と自作スキルの正本は `dot_config/opencode/AGENTS.md` と `dot_config/opencode/skills/`。natural-japanese、yomiyasu、academic-pptx、imozuru は `.chezmoiexternal.toml` で上流の最新版を配置する。plugin 本体と更新は各ツールに任せ、導入元と一覧だけを管理する。Codex の指示はシンボリックリンク、Claude Code の指示はテンプレートから正本を参照し、Antigravity CLI は指示のシンボリックリンクとスキルディレクトリを指す `skills.json` で正本を参照する。共通スキルはそれぞれのリンクで参照する。
+- ルートの `AGENTS.md`、`README.md`、`tests/` は配布対象外。共通の AI 指示と自作スキルは `dot_config/opencode/AGENTS.md` と `dot_config/opencode/skills/` に置く。natural-japanese、yomiyasu、academic-pptx、imozuru は `.chezmoiexternal.toml` で上流の最新版を配置する。plugin 本体と更新は各ツールに任せ、導入元と一覧だけを管理する。Codex の指示はシンボリックリンク、Claude Code の指示はテンプレートから同じファイルを指し、Antigravity CLI は指示のシンボリックリンクとスキルディレクトリを指す `skills.json` でここを参照する。共通スキルはそれぞれのリンクで参照する。
 - ホームのパスはテンプレートでは `.chezmoi.homeDir`、シェルでは `$HOME` を使う。
 - `desktop` はデスクトップ環境の有無を表す真偽値。配布範囲は `.chezmoiignore`、OS パッケージは前提パッケージのスクリプト、`startx` は Bash のテンプレートに分岐がある。
 - ツールの追加先は原則 `dot_config/mise/config.toml`。Codex CLI は standalone installer、Python 本体は uv で導入する。Codex の検出・実行には `~/.local/bin/codex` を使う。
 - 壁紙、`monitor-hotplug.sh`、Sunshine 本体・user service は管理外。起動処理の変更では [マシン固有の設定](README.md#4-マシン固有の設定を整える) も確認する。
-- rtk の Claude Code hook は `dot_claude/settings.json` が管理し、`~/.claude/RTK.md` は `rtk init -g --no-patch` が生成する。OpenCode 用プラグインは `rtk init -g --opencode` が生成するため管理対象に加えない。`--codex` が共通指示のリンク先へ追記する `@RTK.md` 参照は初期化時に除去し、`--no-patch` を維持する。
+- rtk の Claude Code hook は `dot_claude/settings.json` が管理し、`~/.claude/RTK.md` は `rtk init -g --no-patch` が生成する。OpenCode 用プラグインは `rtk init -g --opencode` が生成するため管理対象に加えない。`--codex` が共通指示のリンク先へ追記する `@RTK.md` 参照は初期化時に消し、`--no-patch` を維持する。
 - plugin 本体・キャッシュ・認証情報は管理対象に加えない。秘密情報は `chezmoi add --encrypt <target-path>` で追加し、秘密鍵や復号結果をソース・ログに残さない（age の設定は `.chezmoi.toml.tmpl`）。
 - Discord 通知の設定は `~/.config/opencode/plugins/discord-notify/config.json` に1か所だけ置き、Codex の notifier もこれを読む。Bot トークンを含むため暗号化しても追加せず、各マシンで用意する。Codex と OpenCode のコードと設定例だけを管理し、実行状態とキャッシュは管理外とする。
 
@@ -21,10 +21,10 @@
 導入済みかどうかはスクリプト実行時に判定する。テンプレート内の `lookPath` では before scripts の導入結果を参照できない。
 
 - `run_once` は展開後の内容ごと、`run_onchange` は前回成功時からの内容変更で再実行される。既存環境でも再実行できる処理にする。
-- 別ファイルへの依存は自動追跡されない。設定・コード・plugin 一覧への依存を増やす場合は、スクリプト内のハッシュ対象も更新する。
-- `sudo` 不可や CLI 未検出によるスキップも正常終了として記録される。後から依存を揃えるだけでは再実行されない。
+- 別ファイルへの依存は自動では追跡されない。設定・コード・plugin 一覧への依存を増やす場合は、スクリプト内のハッシュ対象も更新する。
+- `sudo` が使えないときや CLI が見つからないときのスキップも正常終了として記録される。後から必要なツールを揃えるだけでは再実行されない。
 
-復元手順や自動導入の範囲を変えた結果、README の記載が不正確または不足する場合は更新する。
+復元手順や自動導入の範囲を変えた結果、README の説明が実態と合わなくなったり足りなくなったりしたら更新する。
 
 ## 検証と完了条件
 
@@ -37,8 +37,8 @@
 | テンプレート・導入処理 | `python3 tests/check_setup.py`。スクリプトは展開後の構文と再実行条件も確認する |
 | Neovim の設定 | `python3 tests/nvim_bench.py`。起動時の出力（エラー）がないことと、`nvim-next`・`nvim`・`--clean` の起動時間を比べる |
 | Discord 通知のコード | `python3 -m unittest discover -s dot_codex/private_discord-notify -p 'test_*.py'` |
-| 環境の診断が必要なとき | `chezmoi doctor`。mise 関連は `mise doctor` |
+| 環境を調べたいとき | `chezmoi doctor`。mise 関連は `mise doctor` |
 
-`tests/check_setup.py` は一時環境とモックを使い、実際のインストールやデスクトップの起動は行わない。変更に必要な検証と、その変更に起因する失敗の修正・再検証まで進める。
+`tests/check_setup.py` は一時環境とモックを使い、実際のインストールやデスクトップの起動はしない。変更に必要な検証と、その変更に起因する失敗の修正・再検証まで進める。
 `--dry-run` はスクリプトを実行しないため、実際の導入成功を保証しない。
-実環境への適用・インストールは依頼の範囲に含まれる場合に行う。完了時は検証結果と未検証事項を示し、既存環境の問題を今回の変更による問題と区別する。
+実環境への適用・インストールは、依頼に含まれているときだけ進める。完了時は検証結果と未検証事項を示し、既存環境の問題を今回の変更による問題と区別する。

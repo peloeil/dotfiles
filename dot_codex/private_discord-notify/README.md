@@ -11,13 +11,9 @@ Codex CLI が必要。追加の Python パッケージは不要。
 通知の設定は OpenCode 側の
 `~/.config/opencode/plugins/discord-notify/config.json` に1か所だけ置き、
 Codex も同じファイルを読む。Codex 側に `config.json` は置かない。
-設定項目と作成手順は
+設定項目と作成手順、共通の通知仕様（しきい値・送信制限・タイムアウト等）は
 [OpenCode の通知 README](../../dot_config/opencode/plugins/discord-notify/README.md)
-を参照する。
-
-Bot トークンを含む `config.json` は暗号化しても chezmoi の管理対象に加えない。
-`.chezmoiignore` で除外している。
-トークンは各マシンで設定するか、既存の設定ファイルを別途安全に転送する。
+（配布先: `~/.config/opencode/plugins/discord-notify/README.md`）を参照する。
 
 設定後、インストーラーで Codex に登録する。
 
@@ -45,7 +41,6 @@ chezmoi の after script は `run_onchange` で、初回または前回成功時
 
 ## 動作と検証
 
-設定は OpenCode 側の `config.json` から読む。
 `UserPromptSubmit` で会話 ID とターン ID ごとに開始時刻を記録し、
 `notify` の `agent-turn-complete` で経過時間を判定して Discord REST API に投稿する。
 同じターンへの追加入力で開始時刻をリセットしない。
@@ -53,17 +48,10 @@ chezmoi の after script は `run_onchange` で、初回または前回成功時
 設定前から実行中だった回答は、開始時刻がないため通知しない。
 プロセス間で共通の単調増加時計を使うため、時計の時刻調整に影響されない。
 
-通知にはマシン名・作業場所・セッション名・所要時間・直前のプロンプトを載せる。
-プロンプトは完了イベントの `input-messages` の最後の項目を使い、通知全体が
-Discord の 2,000 文字制限に収まるよう末尾を省略する。
-セッション名は Codex 内部のキャッシュ `$CODEX_HOME/session_index.jsonl`
-（既定は `~/.codex/session_index.jsonl`）から読み、取得できない場合はセッション ID を表示する。
-メンションは `mention_user_id` のユーザーだけ許可する。
-
-通知は 1 回だけ送信を試み、失敗は標準エラーへ記録する。
-自動再送はしない。送信失敗で Codex の処理を止めない。
-通常の送信タイムアウトは 10 秒。強制終了で残った `state/` 内のファイルは、
-実行中の回答がないときに削除できる。
+直前のプロンプトは完了イベントの `input-messages` の最後の項目を使う。
+セッション名は `$CODEX_HOME/session_index.jsonl`（既定は `~/.codex/session_index.jsonl`）から読み、取得できない場合はセッション ID を表示する。
+送信失敗時は標準エラーへ記録し、Codex の処理は止めない。
+強制終了で残った `state/` 内のファイルは、実行中の回答がないときに削除できる。
 
 実際の Discord へ送らずに検証する:
 

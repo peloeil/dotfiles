@@ -106,7 +106,7 @@ OS パッケージ導入は `run_once` のため、以前使った構成へ戻�
 
 `zennPreview = true` にすると、`zenn-preview.service` と `zenn-notes.service` を有効化・起動し、ログイン時にも起動する。`false`（既定）に戻して適用すると両方を無効化・停止する。
 利用前に `~/workspace/zenn` を用意してその中で `npm ci` を実行し、Tailscale を導入・接続しておく。systemd user manager が必要。
-Tailscale 内から `http://<Tailscale IPv4>:8000` で `articles/` の記事、`:8001` で `notes/` の記事を別の Zenn CLI で閲覧できる。IP は `tailscale ip -4` で確認する。
+Tailscale 内から `http://<Tailscale IPv4>:8000` で `articles/`、`:8001` で `notes/` のプレビューを閲覧できる。IP は `tailscale ip -4` で確認する。
 下書きも表示され、保存すると自動反映される。ログアウト中も動かす場合は `sudo loginctl enable-linger "$USER"` を実行する。
 
 ## 設定とツールを更新する
@@ -159,25 +159,24 @@ curl -fsSL https://chatgpt.com/codex/install.sh |
 | 用途 | ソース・配置先 |
 | --- | --- |
 | このリポジトリの編集上の制約 | [AGENTS.md](AGENTS.md)（配布対象外） |
-| 共通の応答方針（正本） | `dot_config/opencode/AGENTS.md` → `~/.config/opencode/AGENTS.md` |
+| 共通の応答方針（正本。Codex / Claude Code / Antigravity CLI も参照） | `dot_config/opencode/AGENTS.md` → `~/.config/opencode/AGENTS.md` |
 | Codex の共通設定 | `.chezmoitemplates/codex-config.toml.tmpl` を `dot_codex/modify_private_config.toml` で `~/.codex/config.toml` に反映する |
 | Antigravity CLI の共通スキル | `dot_gemini/config/skills.json.tmpl` → `~/.gemini/config/skills.json` が `~/.config/opencode/skills` を指す |
 | Antigravity CLI の設定（承認省略、通知） | `dot_gemini/antigravity-cli/modify_private_settings.json` を `~/.gemini/antigravity-cli/settings.json` に反映する |
 | 共通スキルの正本（commit、write-peloeil-article） | `dot_config/opencode/skills/` → `~/.config/opencode/skills/` |
 | 外部スキルの最新版（natural-japanese、yomiyasu、academic-pptx、imozuru） | `.chezmoiexternal.toml` → `~/.config/opencode/skills/<スキル名>/` |
 | Claude Code の設定・rtk hook | `dot_claude/settings.json` → `~/.claude/settings.json` |
-| OpenCode のモデル・接続設定（Claude Code CLI の場所を含む）、プラグイン、承認省略 | `dot_config/opencode/opencode.jsonc.tmpl` → `~/.config/opencode/opencode.jsonc` |
+| OpenCode のモデル・接続設定、プラグイン、承認省略 | `dot_config/opencode/opencode.jsonc.tmpl` → `~/.config/opencode/opencode.jsonc` |
 | OpenCode の TUI 設定 | `dot_config/opencode/cli.json` → `~/.config/opencode/cli.json` |
 | Ponytail の既定モード | `dot_config/ponytail/config.json` → `~/.config/ponytail/config.json` |
 | Codex の Discord 完了通知 | [通知の README](dot_codex/private_discord-notify/README.md) → `~/.codex/discord-notify/` |
 | OpenCode の Discord 完了通知 | [通知の README](dot_config/opencode/plugins/discord-notify/README.md) → `~/.config/opencode/plugins/discord-notify/` |
 
-外部から導入する plugin 本体・キャッシュ・認証情報はこのリポジトリでは管理しない。
-plugin の更新は各ツールに任せる。OpenCode は `opencode.jsonc` の未固定 npm 指定を起動時に解決し、Claude Code は marketplace の `autoUpdate` で追従する。Codex は自動では更新しないため、必要なら `codex plugin marketplace upgrade` を実行する。
-共通指示・自作スキルは OpenCode 側だけを編集する。Codex、Claude Code、Antigravity CLI は同じ配置先を参照し、各ツール固有の設定はそれぞれに残す。OpenCode の承認省略は Claude Code の `bypassPermissions`、Codex の `approval_policy = "never"`、Antigravity CLI の `toolPermission = "always-proceed"` に合わせた設定であり、信頼できないプロジェクトでは個別に見直す。
-natural-japanese、yomiyasu、academic-pptx、imozuru は上流の最新版を `.chezmoiexternal.toml` で取得する。配布元は natural-japanese が [coji/natural-japanese](https://github.com/coji/natural-japanese)、yomiyasu が [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) のリリース ZIP。academic-pptx は [Gabberflast/academic-pptx-skill](https://github.com/Gabberflast/academic-pptx-skill) にリリースがないため `main` ブランチの tarball から取得する。imozuru は [MaryCache/imozuru](https://github.com/MaryCache/imozuru) のリリースに配布物がないため、`main` ブランチの tarball から `skills/imozuru/` だけを取り出す。`chezmoi apply` 時に、前回の取得から1時間以上経っていれば更新を確認する。すぐに更新する場合は `chezmoi -R apply ~/.config/opencode/skills` を実行する。常駐更新はしない。Codex と Claude Code は同じ配置先へのリンクを使う。Antigravity CLI は `skills.json` で同じディレクトリを指す。natural-japanese と yomiyasu は日本語が弱いモデルを補うスキルで Gemini では要らないため、`exclude` で外す。
+外部から導入する plugin 本体・キャッシュ・認証情報はこのリポジトリでは管理しない。更新は各ツールに任せる（OpenCode は起動時、Claude Code は `autoUpdate`、Codex は手動で `codex plugin marketplace upgrade`）。
+共通指示・自作スキルは OpenCode 側だけを編集し、他ツールは同じ配置先を参照する。承認省略は各ツールで揃えており、信頼できないプロジェクトでは個別に見直す。
+外部スキル（`natural-japanese`、`yomiyasu`、`academic-pptx`、`imozuru`）は `.chezmoiexternal.toml` で取得し、`chezmoi apply` 時に前回から 1 時間以上経っていれば更新を確認する（即時更新は `chezmoi -R apply ~/.config/opencode/skills`）。`natural-japanese` と `yomiyasu` は Gemini では不要なため、`dot_gemini/config/skills.json.tmpl` の `exclude` で外している。
 
-Discord 通知の設定は `~/.config/opencode/plugins/discord-notify/config.json` に1か所だけ置き、Codex 版もこれを読む。トークンを含むため配布せず、各マシンで用意する。
+Discord 通知の設定は `~/.config/opencode/plugins/discord-notify/config.json` に 1 か所だけ置き、各マシンで用意する。
 
 ## セットアップの構成
 
@@ -201,7 +200,6 @@ Discord 通知の設定は `~/.config/opencode/plugins/discord-notify/config.jso
 | after | `run_onchange_after_30_install_ai_plugins.sh.tmpl` | CLI の検出後、Codex と Claude Code に Ponytail を導入する。OpenCode は `opencode.jsonc` の `plugins` から導入する |
 | after | `run_onchange_after_31_configure_codex_discord_notify.sh.tmpl` | Codex とローカルの通知設定があれば Discord 完了通知を登録する |
 
-`run_once` は展開後の内容ごとに成功を記録し、`run_onchange` は前回成功時から内容が変わると実行する。mise・fish・Neovim・Denops・Zenn・Codex 通知のスクリプトには対応する設定やコードのハッシュを含めている。
 スキップも成功として記録されるため、依存を後から揃えただけでは再実行されない。詳細は [chezmoi のスクリプト仕様](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/)を参照する。
 
 ## セットアップを補完する
@@ -242,8 +240,3 @@ chezmoi execute-template --file \
 chezmoi doctor
 mise doctor
 ```
-
-## 秘密情報を管理する
-
-暗号化ファイルは現在追跡していない。age の公開鍵は `.chezmoi.toml.tmpl`、秘密鍵の参照先は `~/.config/chezmoi/key.txt`。
-秘密鍵と暗号化前の内容はコミットしない。鍵のバックアップはリポジトリとは別に保管する。

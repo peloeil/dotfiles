@@ -1,5 +1,6 @@
 vim.g.everforest_background = "hard"
 vim.g.everforest_transparent_background = 2
+vim.g.everforest_better_performance = 1
 
 -- transparent_background = 2 でもフロートとカーソル行には背景色が残る。
 -- :colorscheme の直後に1回消すだけでは、読み直したときに戻るので autocmd にする

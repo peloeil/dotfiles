@@ -54,7 +54,7 @@
       "base": "transparent",
       "raised": {
         "base": "transparent",
-        "high": "transparent",
+        "high": "$hue.neutral.600",
         "max": "transparent"
       },
       "action": {
@@ -151,7 +151,7 @@
         "base": "$background.raised.base",
         "action": {
           "primary": {
-            "$hovered": "$hue.neutral.600"
+            "$hovered": "$background.raised.high"
           }
         }
       }

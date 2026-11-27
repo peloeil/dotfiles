@@ -2,7 +2,7 @@
 set -eu
 
 # Re-run when the managed tool configuration changes.
-# mise_config_sha256={{ include "dot_config/mise/config.toml" | sha256sum }}
+# mise_config_sha256={{ include "dot_config/mise/config.toml.tmpl" | sha256sum }}
 
 echo "check if all the mise tools are installed..."
 ~/.local/bin/mise install --yes

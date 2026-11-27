@@ -9,7 +9,7 @@
 - ルートの `AGENTS.md`、`README.md`、`tests/` は配布対象外。共通の AI 指示と自作スキルは `dot_config/opencode/AGENTS.md` と `dot_config/opencode/skills/` に置く。natural-japanese、yomiyasu、academic-pptx、imozuru は `.chezmoiexternal.toml` で上流の最新版を配置する。plugin 本体と更新は各ツールに任せ、導入元と一覧だけを管理する。Codex の指示はシンボリックリンク、Claude Code の指示はテンプレートから同じファイルを指し、Antigravity CLI は指示のシンボリックリンクとスキルディレクトリを指す `skills.json` でここを参照する。共通スキルはそれぞれのリンクで参照する。
 - ホームのパスはテンプレートでは `.chezmoi.homeDir`、シェルでは `$HOME` を使う。
 - `desktop` はデスクトップ環境の有無を表す真偽値。配布範囲は `.chezmoiignore`、OS パッケージは前提パッケージのスクリプト、`startx` は Bash のテンプレートに分岐がある。
-- ツールの追加先は原則 `dot_config/mise/config.toml`。Codex CLI は standalone installer、Python 本体は uv で導入する。Codex の検出・実行には `~/.local/bin/codex` を使う。
+- ツールの追加先は原則 `dot_config/mise/config.toml.tmpl`。Codex CLI は standalone installer、Python 本体は uv で導入する。Codex の検出・実行には `~/.local/bin/codex` を使う。
 - 壁紙、`monitor-hotplug.sh`、Sunshine 本体・user service は管理外。起動処理の変更では [リポジトリ外で用意するもの](README.md#リポジトリ外で用意するもの) も確認する。
 - rtk の Claude Code hook は `dot_claude/settings.json` が管理し、`~/.claude/RTK.md` は `rtk init -g --no-patch` が生成する。OpenCode 用プラグインは `rtk init -g --opencode` が生成するため管理対象に加えない。`--codex` が共通指示のリンク先へ追記する `@RTK.md` 参照は初期化時に消し、`--no-patch` を維持する。
 - plugin 本体・キャッシュ・認証情報は管理対象に加えない。秘密情報は `chezmoi add --encrypt <target-path>` で追加し、秘密鍵や復号結果をソース・ログに残さない（age の設定は `.chezmoi.toml.tmpl`）。

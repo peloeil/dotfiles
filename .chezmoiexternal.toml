@@ -21,3 +21,11 @@
     stripComponents = 1
     exact = true
     refreshPeriod = "1h"
+
+[".config/opencode/skills/imozuru"]
+    type = "archive"
+    url = "https://github.com/MaryCache/imozuru/archive/refs/heads/main.tar.gz"
+    stripComponents = 3
+    include = ["*/skills/imozuru/**"]
+    exact = true
+    refreshPeriod = "1h"
